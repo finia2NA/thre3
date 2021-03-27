@@ -2,7 +2,9 @@ import React, { useRef, useState, useMemo, useEffect } from "react";
 import { Canvas, useFrame, useThree, extend } from "react-three-fiber";
 import * as THREE from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+
 import Box from "./components/Box"
+import ControlPanel from "./components/ControlPanel"
 
 extend({OrbitControls})
 
@@ -27,7 +29,7 @@ const App = () => {
       </Canvas>
     </div>
     <div style={{display:'flex', flex:3}}></div>
-      
+      <ControlPanel></ControlPanel>
     </div>
   );
 }
