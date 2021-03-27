@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 
 import {
   Slider,
-  Typography,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -20,6 +19,7 @@ const Radiositypanel = () => {
 
   return (
     <div style={{ minWidth: '100' }}>
+      <b>Radiosity Options</b> <br/>
       <FormControl>
         <FormLabel>Texture Size</FormLabel>
         <Slider
@@ -35,7 +35,7 @@ const Radiositypanel = () => {
           <FormControlLabel value={0} control={<Radio />} label="Progressive Refinement" onClick={() => setMethod(0)} />
           <FormControlLabel value={1} control={<Radio />} label="LGS" onClick={() => setMethod(1)} />
         </RadioGroup>
-        {method == 1 &&
+        {method === 1 &&
           <div>
             <FormLabel>Unshot Radiosity Threshold</FormLabel>
             <Slider

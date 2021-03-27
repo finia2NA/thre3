@@ -1,8 +1,9 @@
 import React from "react"
-import Card from "./Card"
-import Slider from "@material-ui/core/Slider"
-import Typography from "@material-ui/core/Typography"
 import Radiositypanel from "./UI/Radiosity"
+import Renderpanel from "./UI/Render"
+import Indicators from "./UI/Indicators"
+import Exportpanel from "./UI/Export"
+import Explorepanel from "./UI/Explore";
 
 /*
 Required Settings:
@@ -23,8 +24,9 @@ Required Settings:
     - Diff
     - Unshot_Radiosity
 
-- RT-Effects
+- Rendering
   - Use Blinn-Phong Specularity
+  - Use Texture Interpolation
 
 - Indicator:
   - Progressive Model generated!
@@ -46,14 +48,17 @@ Required Settings:
 */
 
 
-const ControlPanel = (props) => {
+const Controlpanel = (props) => {
 
   return (
     <div>
       <Radiositypanel/>
-        
+      <Renderpanel/>
+      <Indicators matrix_ready= {false} working={false}/>
+      <Exportpanel/>
+      <Explorepanel/>
     </div>
   );
 }
 
-export default ControlPanel
+export default Controlpanel
