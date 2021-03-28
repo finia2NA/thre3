@@ -1,12 +1,13 @@
-import React, { useState } from "react"
-import Radiositypanel from "components/UI/Radiosity"
-import Displaypanel from "components/UI/Display"
-import Indicators from "components/UI/Indicators"
-import Exportpanel from "components/UI/Export"
+import React, { useState } from "react";
+import Radiositypanel from "components/UI/Radiosity";
+import Displaypanel from "components/UI/Display";
+import Indicators from "components/UI/Indicators";
+import Exportpanel from "components/UI/Export";
 import Explorepanel from "components/UI/Explore";
 import Channelbox from "components/UI/Channelbox";
-import { Button } from "@material-ui/core"
-import { LightContainer, Collapsing } from "components/UI/Containers"
+import { Button } from "@material-ui/core";
+import styled from "styled-components";
+import { LightContainer, Collapsing } from "components/UI/Containers";
 
 /*
 Required Settings:
@@ -51,12 +52,15 @@ Required Settings:
   - Export Scene
 */
 
+const Controldiv = styled.div`
+  overflow-y: scroll;
+  scroll-behavior: "smooth";
+  height: 95vh;
+`;
 
 const Controlpanel = (props) => {
-
   return (
-    <div>
-
+    <Controldiv>
       <Collapsing name="Channel Box">
         <Channelbox />
       </Collapsing>
@@ -76,10 +80,8 @@ const Controlpanel = (props) => {
       <Collapsing name="Indicators" initiallyOpened={true}>
         <Indicators matrix_ready={false} working={false} />
       </Collapsing>
-
-    </div>
+    </Controldiv>
   );
-}
+};
 
-export default Controlpanel
-
+export default Controlpanel;
