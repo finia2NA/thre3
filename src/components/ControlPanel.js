@@ -1,11 +1,10 @@
 import React, { useState } from "react"
 import Radiositypanel from "components/UI/Radiosity"
-import Renderpanel from "components/UI/Render"
+import Displaypanel from "components/UI/Display"
 import Indicators from "components/UI/Indicators"
 import Exportpanel from "components/UI/Export"
 import Explorepanel from "components/UI/Explore";
 import Channelbox from "components/UI/Channelbox";
-import { Collapse } from "react-collapse"
 import { Button } from "@material-ui/core"
 import {LightContainer, Collapsing} from "components/UI/Containers"
 
@@ -54,42 +53,35 @@ Required Settings:
 
 const Controlpanel = (props) => {
 
-  const [collapsed, setCollapsed] = useState([false, false, false, false, false, false]) // TODO: https://i.pinimg.com/originals/95/eb/33/95eb3384257ba3174cdf71341f9bc65a.jpg
+  const [Collapsingd, setCollapsingd] = useState([false, false, false, false, false, false]) // TODO: https://i.pinimg.com/originals/95/eb/33/95eb3384257ba3174cdf71341f9bc65a.jpg
 
   return (
     <div>
-      <div>
-        <Button variant="text">test</Button>
-        <Collapse isOpened={collapsed[0]}>
-          <Radiositypanel />
-        </Collapse>
-      </div>
-      <div>
-        1
-        <Collapse isOpened={collapsed[1]}>
-          <Renderpanel />
-        </Collapse>
-      </div>
-      <div>
-        3
-        <Collapse isOpened={collapsed[3]}>
-          <Exportpanel />
-        </Collapse>
-      </div>
-      <div>
-        4
-        <Collapse isOpened={collapsed[4]}>
-          <Explorepanel />
-        </Collapse>
-      </div>
-      <div>
-        5
-        <Collapse isOpened={collapsed[5]}>
+      
+        <Collapsing name="Channel Box">
           <Channelbox />
-        </Collapse>
-      </div>
+        </Collapsing>
 
-      <Collapsing name="dieter" initiallyOpened={true}>
+        <Collapsing name="Radiosity Controls">
+          <Radiositypanel />
+        </Collapsing>
+
+        <Collapsing name="Display Controls">
+          <Displaypanel />
+        </Collapsing>
+
+        <Collapsing name="Transfer Controls">
+          <Exportpanel />
+        </Collapsing>
+
+      {/* <div>
+        <Collapsing name = "Explore Panel">
+          <Explorepanel />
+        </Collapsing>
+      </div> */}
+
+
+      <Collapsing name="Indicators" initiallyOpened={true}>
         <Indicators matrix_ready={false} working={false} />
       </Collapsing>
 

@@ -13,7 +13,7 @@ const Indicators = (props) => {
       <CheckCircle style={{color:"green"}}/>}
       {!props.matrix_ready&&
         <Close style={{color:"red"}}/>
-      } Matrix Radiosity Status
+      } Matrix Radiosity {!props.matrix_ready && <b>not</b>} available
     </div>
 
       <div>
@@ -21,7 +21,7 @@ const Indicators = (props) => {
       <CheckCircle style={{color:"green"}}/>}
       {!props.prog_ready&&
         <Close style={{color:"red"}}/>
-      } Progressive Radiosity Status
+      } Progressive Radiosity {!props.prog_ready && <b>not</b>} available
 
       {props.working&&
       <div>

@@ -12,19 +12,20 @@ import {
 
 const Explorepanel = (props) => {
 
-  const [viewMode, setView] = useState(1)
-  const [compareMethod, setMethod] = useState(1)
+  const [viewMode, setView] = useState(0)
+  const [compareMethod, setMethod] = useState(0)
 
   return (
     <div>
       <FormLabel>Mode</FormLabel>
       <RadioGroup value={viewMode}>
         <FormControlLabel value={0} control={<Radio />} label="View" onClick={() => setView(0)} />
-        <FormControlLabel value={1} control={<Radio />} disabled={!props.prog_available} label="Diff" onClick={() => setView(1)} />
-        <FormControlLabel value={2} control={<Radio />} disabled={!props.prog_available} label="Unshot Radiosity" onClick={() => setView(2)} />
+        <FormControlLabel value={1} control={<Radio />} label="Patches" onClick={() => setView(1)} />
+        <FormControlLabel value={2} control={<Radio />} disabled={!props.prog_available} label="Diff" onClick={() => setView(2)} />
+        <FormControlLabel value={3} control={<Radio />} disabled={!props.prog_available} label="Unshot Radiosity" onClick={() => setView(3)} />
       </RadioGroup>
 
-      {viewMode === 1 &&
+      {viewMode === 2 &&
         <>
           <FormLabel>Diff Type</FormLabel>
           <RadioGroup value={compareMethod}>
@@ -33,7 +34,7 @@ const Explorepanel = (props) => {
           </RadioGroup>
         </>
       }
-      {viewMode === 1 && compareMethod === 1 &&
+      {viewMode === 2 && compareMethod === 1 &&
         <>
           <FormLabel>Iterations to Compare</FormLabel>
           <Slider
@@ -45,7 +46,7 @@ const Explorepanel = (props) => {
           />
         </>
       }
-      {viewMode === 2 || (viewMode === 1 && compareMethod === 0) &&
+      {(viewMode === 3 || (viewMode === 2 && compareMethod === 0)) &&
         <>
           <FormLabel>Progressive Iteration</FormLabel>
           <Slider
@@ -56,7 +57,7 @@ const Explorepanel = (props) => {
           />
         </>
       }
-      {viewMode !== 0 &&
+      {viewMode === 2 &&
         <Button variant="contained">Compare</Button> // since comparisons need new textures, I don't want the dragging of the slider to instantly trigger the comparison for performance reasons.
       }
 

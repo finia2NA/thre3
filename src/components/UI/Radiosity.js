@@ -32,9 +32,9 @@ const Radiositypanel = () => {
         <FormLabel>Render Method</FormLabel>
         <RadioGroup value={method}>
           <FormControlLabel value={0} control={<Radio />} label="Progressive Refinement" onClick={() => setMethod(0)} />
-          <FormControlLabel value={1} control={<Radio />} label="LGS" onClick={() => setMethod(1)} />
+          <FormControlLabel value={1} control={<Radio />} label="Matrix Solver" onClick={() => setMethod(1)} />
         </RadioGroup>
-        {method === 1 &&
+        {method === 0 &&
           <div>
             <FormLabel>Unshot Radiosity Threshold</FormLabel>
             <Slider
