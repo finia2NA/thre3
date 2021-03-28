@@ -17,8 +17,6 @@ const Explorepanel = (props) => {
 
   return (
     <div>
-      <b>Explore</b> <br />
-
       <FormLabel>Mode</FormLabel>
       <RadioGroup value={viewMode}>
         <FormControlLabel value={0} control={<Radio />} label="View" onClick={() => setView(0)} />

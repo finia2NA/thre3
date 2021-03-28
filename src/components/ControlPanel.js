@@ -1,10 +1,13 @@
-import React from "react"
-import Radiositypanel from "./UI/Radiosity"
-import Renderpanel from "./UI/Render"
-import Indicators from "./UI/Indicators"
-import Exportpanel from "./UI/Export"
-import Explorepanel from "./UI/Explore";
-import Channelbox from "./UI/Channelbox";
+import React, { useState } from "react"
+import Radiositypanel from "components/UI/Radiosity"
+import Renderpanel from "components/UI/Render"
+import Indicators from "components/UI/Indicators"
+import Exportpanel from "components/UI/Export"
+import Explorepanel from "components/UI/Explore";
+import Channelbox from "components/UI/Channelbox";
+import { Collapse } from "react-collapse"
+import { Button } from "@material-ui/core"
+import {LightContainer, Collapsing} from "components/UI/Containers"
 
 /*
 Required Settings:
@@ -51,16 +54,48 @@ Required Settings:
 
 const Controlpanel = (props) => {
 
+  const [collapsed, setCollapsed] = useState([false, false, false, false, false, false]) // TODO: https://i.pinimg.com/originals/95/eb/33/95eb3384257ba3174cdf71341f9bc65a.jpg
+
   return (
     <div>
-      <Radiositypanel/>
-      <Renderpanel/>
-      <Indicators matrix_ready= {false} working={false}/>
-      <Exportpanel/>
-      <Explorepanel/>
-      <Channelbox/>
+      <div>
+        <Button variant="text">test</Button>
+        <Collapse isOpened={collapsed[0]}>
+          <Radiositypanel />
+        </Collapse>
+      </div>
+      <div>
+        1
+        <Collapse isOpened={collapsed[1]}>
+          <Renderpanel />
+        </Collapse>
+      </div>
+      <div>
+        3
+        <Collapse isOpened={collapsed[3]}>
+          <Exportpanel />
+        </Collapse>
+      </div>
+      <div>
+        4
+        <Collapse isOpened={collapsed[4]}>
+          <Explorepanel />
+        </Collapse>
+      </div>
+      <div>
+        5
+        <Collapse isOpened={collapsed[5]}>
+          <Channelbox />
+        </Collapse>
+      </div>
+
+      <Collapsing name="dieter" initiallyOpened={true}>
+        <Indicators matrix_ready={false} working={false} />
+      </Collapsing>
+
     </div>
   );
 }
 
 export default Controlpanel
+

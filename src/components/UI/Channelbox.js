@@ -7,9 +7,7 @@ const Channelbox = (props) => {
 
   return (
     <div>
-      <b>Channel Box</b>
       <FormControl>
-        
         <FormLabel>Translate</FormLabel>
         <FormControlLabel control={<TextField type="number" />} label="x" />
         <FormControlLabel control={<TextField type="number" />} label="y" />

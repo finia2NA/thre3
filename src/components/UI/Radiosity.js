@@ -19,7 +19,6 @@ const Radiositypanel = () => {
 
   return (
     <div style={{ minWidth: '100' }}>
-      <b>Radiosity Options</b> <br/>
       <FormControl>
         <FormLabel>Texture Size</FormLabel>
         <Slider

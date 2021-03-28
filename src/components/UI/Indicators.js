@@ -8,7 +8,6 @@ const Indicators = (props) => {
 
   return(
     <div>
-      <b>Status Display</b>
       <div>
       {props.matrix_ready&&
       <CheckCircle style={{color:"green"}}/>}

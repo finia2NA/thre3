@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 import Box from "./components/Box"
-import Controlpanel from "./components/ControlPanel"
+import Controlpanel from "components/ControlPanel"
 
 extend({OrbitControls})
 
@@ -29,7 +29,7 @@ const App = () => {
       </Canvas>
     </div>
     <div style={{display:'flex', flex:3}}></div>
-      <Controlpanel></Controlpanel>
+      <Controlpanel/>
     </div>
   );
 }
