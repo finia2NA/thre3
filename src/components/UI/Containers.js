@@ -26,17 +26,13 @@ const Collapsing = (props) => {
 
   const [open, setOpen] = useState(props.initiallyOpened)
 
-
-
   return (
 
     <LightContainer>
 
-
       <div style={{ display: "flex", alignItems: "center" }} onClick={() => setOpen(!open)}>
-
         <SectionHeading>{props.name}</SectionHeading>
-
+        
         {open &&
           <ExpandLess />
         }

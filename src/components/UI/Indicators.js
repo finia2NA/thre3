@@ -6,34 +6,34 @@ import { LinearProgress } from "@material-ui/core"
 
 const Indicators = (props) => {
 
-  return(
+  return (
     <div>
       <div>
-      {props.matrix_ready&&
-      <CheckCircle style={{color:"green"}}/>}
-      {!props.matrix_ready&&
-        <Close style={{color:"red"}}/>
-      } Matrix Radiosity {!props.matrix_ready && <b>not</b>} available
+        {props.matrix_ready &&
+          <CheckCircle style={{ color: "green" }} />}
+        {!props.matrix_ready &&
+          <Close style={{ color: "red" }} />
+        } Matrix Radiosity {!props.matrix_ready && <b>not</b>} available
+      </div>
+
+      <div>
+        {props.prog_ready &&
+          <CheckCircle style={{ color: "green" }} />}
+        {!props.prog_ready &&
+          <Close style={{ color: "red" }} />
+        } Progressive Radiosity {!props.prog_ready && <b>not</b>} available
+
+        {props.working &&
+          <div>
+            Calculating Radiosity...
+            <LinearProgress />
+          </div>
+        }
+
+
+      </div>
+
     </div>
-
-      <div>
-      {props.prog_ready&&
-      <CheckCircle style={{color:"green"}}/>}
-      {!props.prog_ready&&
-        <Close style={{color:"red"}}/>
-      } Progressive Radiosity {!props.prog_ready && <b>not</b>} available
-
-      {props.working&&
-      <div>
-        Calculating Radiosity...
-      <LinearProgress />
-      </div>
-      }
-
-
-      </div>
-
-      </div>
   )
 }
 

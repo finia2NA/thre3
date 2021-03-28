@@ -6,7 +6,7 @@ import Exportpanel from "components/UI/Export"
 import Explorepanel from "components/UI/Explore";
 import Channelbox from "components/UI/Channelbox";
 import { Button } from "@material-ui/core"
-import {LightContainer, Collapsing} from "components/UI/Containers"
+import { LightContainer, Collapsing } from "components/UI/Containers"
 
 /*
 Required Settings:
@@ -16,7 +16,7 @@ Required Settings:
   - Render Button
   - Progressive: Threshold
 
-- Exploring
+- Exploring (MOVED INTO DISPLAY SECTION)
   - Compare selector
     - Intra-Progressive
       - Iteration A, Iteration B (On one slider perhaps)
@@ -24,10 +24,11 @@ Required Settings:
       - Progressive Iteration
   - Mode Selector
     - Normal
+    - Patches
     - Diff
     - Unshot_Radiosity
 
-- Rendering
+- Display
   - Use Blinn-Phong Specularity
   - Use Texture Interpolation
 
@@ -53,33 +54,24 @@ Required Settings:
 
 const Controlpanel = (props) => {
 
-  const [Collapsingd, setCollapsingd] = useState([false, false, false, false, false, false]) // TODO: https://i.pinimg.com/originals/95/eb/33/95eb3384257ba3174cdf71341f9bc65a.jpg
-
   return (
     <div>
-      
-        <Collapsing name="Channel Box">
-          <Channelbox />
-        </Collapsing>
 
-        <Collapsing name="Radiosity Controls">
-          <Radiositypanel />
-        </Collapsing>
+      <Collapsing name="Channel Box">
+        <Channelbox />
+      </Collapsing>
 
-        <Collapsing name="Display Controls">
-          <Displaypanel />
-        </Collapsing>
+      <Collapsing name="Radiosity Controls">
+        <Radiositypanel />
+      </Collapsing>
 
-        <Collapsing name="Transfer Controls">
-          <Exportpanel />
-        </Collapsing>
+      <Collapsing name="Display Controls">
+        <Displaypanel />
+      </Collapsing>
 
-      {/* <div>
-        <Collapsing name = "Explore Panel">
-          <Explorepanel />
-        </Collapsing>
-      </div> */}
-
+      <Collapsing name="Transfer Controls">
+        <Exportpanel />
+      </Collapsing>
 
       <Collapsing name="Indicators" initiallyOpened={true}>
         <Indicators matrix_ready={false} working={false} />

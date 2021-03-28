@@ -8,13 +8,13 @@ const Displaypanel = () => {
   return (
     <div>
       <div>
-        Display <br/>
+        Display <br />
         <FormControlLabel label="Use Phong Specularity" control={<Checkbox />} />
         <FormControlLabel label="Use Texel Interpolation" control={<Checkbox />} />
       </div>
 
       <div style={{ marginTop: "5px", border: "0px", borderTop: "1px", borderStyle: "dashed" }}>
-        Explore<br/>
+        Explore<br />
         <Explorepanel />
       </div>
     </div>
