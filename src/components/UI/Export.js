@@ -8,6 +8,7 @@ const Exportpanel = () => {
 
   return(
     <div>
+      <Button variant="contained">Import Object</Button>
       <Button variant="contained">Export Scene</Button>
     </div>
   );

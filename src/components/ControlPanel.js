@@ -4,6 +4,7 @@ import Renderpanel from "./UI/Render"
 import Indicators from "./UI/Indicators"
 import Exportpanel from "./UI/Export"
 import Explorepanel from "./UI/Explore";
+import Channelbox from "./UI/Channelbox";
 
 /*
 Required Settings:
@@ -35,16 +36,16 @@ Required Settings:
   - Progress bar
 
 - Channelbox
-  - Import Model
-  - Channel Box
-    - Translation
-    - Rotation
-    - Scale..ation
-    - Blinn-Phong Specularity Constant
-    - ((Texture Resolution))
+- Channel Box
+- Translation
+- Rotation
+- Scale..ation
+- Blinn-Phong Specularity Constant
+- ((Texture Resolution))
 
-  - Exporting
-    - Export Scene
+- Export/Import
+  - Import Model
+  - Export Scene
 */
 
 
@@ -57,6 +58,7 @@ const Controlpanel = (props) => {
       <Indicators matrix_ready= {false} working={false}/>
       <Exportpanel/>
       <Explorepanel/>
+      <Channelbox/>
     </div>
   );
 }
