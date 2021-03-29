@@ -3,6 +3,7 @@ import CheckCircle from "@material-ui/icons/CheckCircle";
 // import AddCircleOutline from "@material-ui/icons/AddCircleOutline" // could use this rotated by 45 degrees (if figured out how to do that :thinking:)
 import Close from "@material-ui/icons/Close";
 import { LinearProgress } from "@material-ui/core";
+import styled from "styled-components";
 import { applyProps } from "react-three-fiber";
 
 const Indicator = ({ ready }) => {
@@ -17,30 +18,42 @@ const Indicator = ({ ready }) => {
   );
 };
 
+const Div1 = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 2px 0px 2px;
+`;
+
 const Indicators = (props) => {
   return (
-    <div>
-      <div>
+    <>
+      <Div1>
         <Indicator ready={props.patches_ready} />
-        Patch Distribution {!props.patches_ready && <b>not</b>} available
-      </div>
+        <span>
+          Patch Distribution {!props.patches_ready && <b>not</b>} available
+        </span>
+      </Div1>
 
-      <div>
+      <Div1>
         <Indicator ready={props.matrix_ready} />
-        Matrix Radiosity {!props.matrix_ready && <b>not</b>} available
-      </div>
+        <span>
+          Matrix Radiosity {!props.matrix_ready && <b>not</b>} available
+        </span>
+      </Div1>
 
-      <div>
+      <Div1>
         <Indicator ready={props.prog_ready} />
-        Progressive Radiosity {!props.prog_ready && <b>not</b>} available
-        {props.working && (
-          <div>
-            Calculating Radiosity...
-            <LinearProgress />
-          </div>
-        )}
-      </div>
-    </div>
+        <span>
+          Progressive Radiosity {!props.prog_ready && <b>not</b>} available
+        </span>
+      </Div1>
+      {props.working && (
+        <div>
+          Calculating Radiosity...
+          <LinearProgress />
+        </div>
+      )}
+    </>
   );
 };
 
