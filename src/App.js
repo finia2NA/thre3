@@ -1,10 +1,16 @@
 import React, { useRef, useState, useMemo, useEffect } from "react";
-
 import styled from "styled-components";
+
+import { createStore } from "redux";
 
 import Viewport from "components/Viewport";
 import Controlpanel from "components/ControlPanel";
 
+import { Checkerboard } from "components/3D/Textures";
+
+// Redux
+
+// Components
 const Maindiv = styled.div`
   display: flex;
   flex-direction: row;
@@ -18,17 +24,37 @@ const Controldiv = styled.div`
   flex: 1;
 `;
 
+// App
 const App = () => {
-  return (
-    <Maindiv>
-      <Viewdiv>
-        <Viewport />
-      </Viewdiv>
+  // create the ref to the canvas element
+  const canvasRef = useRef(null);
 
-      <Controldiv>
-        <Controlpanel />
-      </Controldiv>
-    </Maindiv>
+  const draw = () => {
+    console.log(canvasRef.current.toDataURL());
+  };
+
+  return (
+    // <Maindiv>
+    //   <Viewdiv>
+    //     <Viewport />
+    //   </Viewdiv>
+
+    //   <Controldiv>
+    //     <Controlpanel />
+    //   </Controldiv>
+    // </Maindiv>
+
+    <>
+      <Checkerboard ref={canvasRef} width={100} height={100} />
+
+      <button
+        onClick={() => {
+          draw();
+        }}
+      >
+        click me
+      </button>
+    </>
   );
 };
 

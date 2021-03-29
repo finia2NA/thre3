@@ -4,7 +4,6 @@ import CheckCircle from "@material-ui/icons/CheckCircle";
 import Close from "@material-ui/icons/Close";
 import { LinearProgress } from "@material-ui/core";
 import styled from "styled-components";
-import { applyProps } from "react-three-fiber";
 
 const Indicator = ({ ready }) => {
   return (
