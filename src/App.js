@@ -34,27 +34,15 @@ const App = () => {
   };
 
   return (
-    // <Maindiv>
-    //   <Viewdiv>
-    //     <Viewport />
-    //   </Viewdiv>
+    <Maindiv>
+      <Viewdiv>
+        <Viewport />
+      </Viewdiv>
 
-    //   <Controldiv>
-    //     <Controlpanel />
-    //   </Controldiv>
-    // </Maindiv>
-
-    <>
-      <Checkerboard ref={canvasRef} width={100} height={100} />
-
-      <button
-        onClick={() => {
-          draw();
-        }}
-      >
-        click me
-      </button>
-    </>
+      <Controldiv>
+        <Controlpanel />
+      </Controldiv>
+    </Maindiv>
   );
 };
 

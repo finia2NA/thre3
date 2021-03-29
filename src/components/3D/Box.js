@@ -5,6 +5,8 @@ import { useFrame } from "react-three-fiber";
 
 import five from "../../assets/five.png";
 
+import getCheckerboardTexture from "./TX";
+
 const Box = (props) => {
   const mesh = useRef();
 
@@ -14,7 +16,10 @@ const Box = (props) => {
     mesh.current.rotation.x = mesh.current.rotation.y += 0.01;
   });
 
-  const texture = useMemo(() => new THREE.TextureLoader().load(five), []);
+  const texture = useMemo(
+    () => new THREE.CanvasTexture(getCheckerboardTexture(10, 10)),
+    []
+  );
 
   return (
     <mesh
