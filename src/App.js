@@ -6,8 +6,6 @@ import { createStore } from "redux";
 import Viewport from "components/Viewport";
 import Controlpanel from "components/ControlPanel";
 
-import { Checkerboard } from "components/3D/Textures";
-
 // Redux
 
 // Components

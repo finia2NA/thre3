@@ -1,23 +1,22 @@
-import React, { useEffect, useRef, forwardRef } from "react";
+export const checkerboardTexture = (
+  width,
+  height,
+  color1 = "black",
+  color2 = "white"
+) => {
+  var canvas = new OffscreenCanvas(width, height);
+  var context = canvas.getContext("2d");
 
-export const Checkerboard = forwardRef((props, ref) => {
-  // when the canvas has mounted, draw
-  useEffect(() => {
-    const canvas = ref.current;
-    const context = canvas.getContext("2d");
-
-    // Draw the checkerboard
-    for (var col = 0; col < props.width; col++) {
-      for (var row = 0; row < props.width; row++) {
-        context.fillStyle = (col + row) % 2 === 0 ? "black" : "white";
-        context.fillRect(col, row, 1, 1);
-      }
+  for (var col = 0; col < width; col++) {
+    for (var row = 0; row < width; row++) {
+      context.fillStyle = (col + row) % 2 === 0 ? color1 : color2;
+      context.fillRect(col, row, 1, 1);
     }
-  }, [props.width, props.height]);
+  }
 
-  return (
-    <>
-      <canvas width={props.width} height={props.height} ref={ref} {...props} />
-    </>
-  );
-});
+  return canvas.transferToImageBitmap();
+};
+
+export const defaultTexture = (width = 32, height = 32) => {
+  return checkerboardTexture(width, height, "black", "#ff00dc");
+};

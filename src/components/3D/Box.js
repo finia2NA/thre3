@@ -3,9 +3,7 @@ import React, { useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { useFrame } from "react-three-fiber";
 
-import five from "../../assets/five.png";
-
-import getCheckerboardTexture from "./TX";
+import { defaultTexture, checkerboardTexture } from "./Textures";
 
 const Box = (props) => {
   const mesh = useRef();
@@ -16,10 +14,11 @@ const Box = (props) => {
     mesh.current.rotation.x = mesh.current.rotation.y += 0.01;
   });
 
-  const texture = useMemo(
-    () => new THREE.CanvasTexture(getCheckerboardTexture(10, 10)),
-    []
-  );
+  const texture = useMemo(() => {
+    const re = new THREE.CanvasTexture(defaultTexture(10, 10));
+    re.magFilter = THREE.NearestFilter;
+    return re;
+  }, []);
 
   return (
     <mesh
