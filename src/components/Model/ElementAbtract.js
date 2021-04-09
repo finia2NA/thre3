@@ -2,10 +2,10 @@
  * Base class for 3D Objects. Stores channel box info and provides a method to get patches.
  */
 
-const { checkerboardTexture } = require("./Textures");
+const { checkerboardTexture, rainbowTexture } = require("./Textures");
 
 // TODO: support scale and rotation. This is not trivial when allowing object groups!
-class Entity3D {
+class EntityAbstract {
   constructor(position = [0, 0, 0]) {
     this.position = position;
     this.scale = [1, 1, 1];
@@ -20,23 +20,29 @@ class Entity3D {
 /**
  * The abstract superclass for objects that have a mesh and can be textured
  */
-class Tangible3D extends Entity3D {
+class TangibleAbstract extends EntityAbstract {
   constructor(...args) {
     super(...args);
 
     this.texture = checkerboardTexture(16, 16); // default texture
-    this.mesh = None;
+    this.mesh = undefined;
   }
 }
 
 /**
  * Represents a cube, already UV-mapped
  */
-class Cube3D extends Tangible3D {}
+export class CubeAbstract extends TangibleAbstract {} // TODO:
 
-class Plane3D extends Tangible3D {}
+export class PlaneAbstract extends TangibleAbstract {} // TODO:
 
 /**
  * Represents a Teapot, already UV-mapped
  */
-class Teapot3D extends Tangible3D {}
+export class TeapotAbstract extends TangibleAbstract {
+  constructor(...args) {
+    super(...args);
+    this.mesh = "assets/teapot.js";
+    this.texture = rainbowTexture(16, 16); // TODO: this aint sposed to be static ya know
+  }
+}

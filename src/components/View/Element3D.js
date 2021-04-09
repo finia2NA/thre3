@@ -3,16 +3,10 @@ import React, { useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { useFrame } from "react-three-fiber";
 
-import { defaultTexture, checkerboardTexture } from "components/Model/Textures";
+import { defaultTexture, checkerboardTexture } from "../Model/Textures";
 
-const Box = (props) => {
+export const Tangible3D = ({ tangerine }) => {
   const mesh = useRef();
-
-  const [active, setActive] = useState(false);
-
-  useFrame(() => {
-    mesh.current.rotation.x = mesh.current.rotation.y += 0.01;
-  });
 
   const texture = useMemo(() => {
     const re = new THREE.CanvasTexture(defaultTexture());
@@ -22,10 +16,9 @@ const Box = (props) => {
 
   return (
     <mesh
-      {...props}
       ref={mesh}
-      scale={active ? [2, 2, 2] : [1.5, 1.5, 1.5]}
-      onClick={(e) => setActive(!active)}
+      // scale={tangerine.scale}
+      // rotation={tangerine.rotation}
     >
       <boxBufferGeometry args={[1, 1, 1]} />
       <meshBasicMaterial attach="material" transparent side={THREE.DoubleSide}>
@@ -34,5 +27,3 @@ const Box = (props) => {
     </mesh>
   );
 };
-
-export default Box;

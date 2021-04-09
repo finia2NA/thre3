@@ -5,6 +5,7 @@ import { createStore } from "redux";
 
 import Viewport from "components/Viewport";
 import Controlpanel from "components/ControlPanel";
+import { TeapotAbstract } from "components/Model/ElementAbtract";
 
 // Redux
 
@@ -24,17 +25,12 @@ const Controldiv = styled.div`
 
 // App
 const App = () => {
-  // create the ref to the canvas element
-  const canvasRef = useRef(null);
-
-  const draw = () => {
-    console.log(canvasRef.current.toDataURL());
-  };
+  var objects = [new TeapotAbstract()];
 
   return (
     <Maindiv>
       <Viewdiv>
-        <Viewport />
+        <Viewport objects={objects} />
       </Viewdiv>
 
       <Controldiv>

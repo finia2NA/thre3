@@ -4,6 +4,7 @@ import { Canvas, useFrame, useThree, extend } from "react-three-fiber";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 import Box from "components/View/Box";
+import { Tangible3D } from "./View/Element3D";
 
 extend({ OrbitControls });
 
@@ -25,7 +26,7 @@ const CameraControls = () => {
   return <orbitControls ref={controls} args={[camera, domElement]} />;
 };
 
-const Viewport = () => {
+const Viewport = (props) => {
   return (
     <Canvas
       onCreated={({ gl }) => {
@@ -37,7 +38,11 @@ const Viewport = () => {
       <ambientLight intensity={0.5} />
 
       {/* Objects */}
-      <Box position={[0, 0, 0]} />
+      {/* <Box position={[0, 0, 0]} /> */}
+
+      {props.objects.map((o, i) => (
+        <Tangible3D key={i} position={[0, i, 0]} />
+      ))}
     </Canvas>
   );
 };

@@ -34,6 +34,8 @@ export const checkerboardTexture = (
  * @param {*} height
  */
 export const rainbowTexture = (width, height) => {
+  const maxBrightness = 220;
+
   var canvas = new OffscreenCanvas(width, height);
   var context = canvas.getContext("2d");
 
@@ -45,9 +47,9 @@ export const rainbowTexture = (width, height) => {
       context.fillStyle =
         "#" +
         rgbHex(
-          col * factor_col * 255,
-          ((row * factor_row + col * factor_col) / 4) * 255,
-          row * factor_row * 255
+          col * factor_col * maxBrightness,
+          ((row * factor_row + col * factor_col) / 4) * maxBrightness,
+          row * factor_row * maxBrightness
         );
       context.fillRect(col, row, 1, 1);
     }
