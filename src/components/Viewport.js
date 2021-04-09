@@ -3,7 +3,7 @@ import React, { useRef } from "react";
 import { Canvas, useFrame, useThree, extend } from "react-three-fiber";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-import Box from "components/3D/Box";
+import Box from "components/View/Box";
 
 extend({ OrbitControls });
 
