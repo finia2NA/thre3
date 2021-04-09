@@ -15,7 +15,7 @@ const Box = (props) => {
   });
 
   const texture = useMemo(() => {
-    const re = new THREE.CanvasTexture(defaultTexture(10, 10));
+    const re = new THREE.CanvasTexture(defaultTexture());
     re.magFilter = THREE.NearestFilter;
     return re;
   }, []);
