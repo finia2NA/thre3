@@ -3,8 +3,8 @@ import React, { useRef } from "react";
 import { Canvas, useFrame, useThree, extend } from "react-three-fiber";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-import Box from "components/View/Box";
-import { Tangible3D } from "./View/Element3D";
+import Box from "components/3D/Box";
+import { Tangible3D } from "./3D/Element3D";
 
 extend({ OrbitControls });
 
@@ -22,7 +22,7 @@ const CameraControls = () => {
 
   // Ref to the controls, so that we can update them on every frame using useFrame
   const controls = useRef();
-  useFrame((state) => controls.current.update());
+  useFrame((state) => controls.current.update()); // TODO: this maxes CPU, should probably be changed to only update when mouse moves or something
   return <orbitControls ref={controls} args={[camera, domElement]} />;
 };
 

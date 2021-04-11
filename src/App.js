@@ -4,8 +4,8 @@ import styled from "styled-components";
 import { createStore } from "redux";
 
 import Viewport from "components/Viewport";
-import Controlpanel from "components/ControlPanel";
-import { TeapotAbstract } from "components/Model/ElementAbtract";
+import Controlpanel from "components/UI/ControlPanel";
+import { TeapotAbstract } from "model/ElementAbtract";
 
 // Redux
 

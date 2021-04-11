@@ -3,7 +3,7 @@ import React, { useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { useFrame } from "react-three-fiber";
 
-import { defaultTexture, checkerboardTexture } from "components/Model/Textures";
+import { defaultTexture, checkerboardTexture } from "model/Textures";
 
 const Box = (props) => {
   const mesh = useRef();
