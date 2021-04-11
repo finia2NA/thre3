@@ -6,6 +6,8 @@ import { createStore } from "redux";
 import Viewport from "components/UI/Viewport";
 import Controlpanel from "components/UI/ControlPanel";
 import { TeapotAbstract } from "model/ElementAbtract";
+import { objToPatches } from "controller/Obj";
+import testcube from "assets/testcube.obj";
 
 // Redux
 
@@ -26,6 +28,8 @@ const Controldiv = styled.div`
 // App
 const App = () => {
   var objects = [new TeapotAbstract()];
+
+  objToPatches(testcube);
 
   return (
     <Maindiv>
