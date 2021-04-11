@@ -4,7 +4,7 @@ import { Canvas, useFrame, useThree, extend } from "react-three-fiber";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 import Box from "components/3D/Box";
-import { Tangible3D } from "./3D/Element3D";
+import { Tangible3D } from "components/3D/Element3D";
 
 extend({ OrbitControls });
 

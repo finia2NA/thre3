@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import { createStore } from "redux";
 
-import Viewport from "components/Viewport";
+import Viewport from "components/UI/Viewport";
 import Controlpanel from "components/UI/ControlPanel";
 import { TeapotAbstract } from "model/ElementAbtract";
 
