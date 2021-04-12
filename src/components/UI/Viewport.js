@@ -4,7 +4,7 @@ import { Canvas, useFrame, useThree, extend } from "react-three-fiber";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 import Box from "components/3D/Box";
-import { Tangible3D, Teapot3D } from "components/3D/Element3D";
+import { LoadingBox, Tangible3D } from "components/3D/Element3D";
 
 extend({ OrbitControls });
 
@@ -38,11 +38,9 @@ const Viewport = (props) => {
       <ambientLight intensity={0.5} />
 
       {/* Objects */}
-      {/* <Box position={[0, 0, 0]} /> */}
 
       {props.objects.map((o, i) => (
-        // <Tangible3D key={i} position={[0, i, 0]} />
-        <Teapot3D />
+        <Tangible3D />
       ))}
     </Canvas>
   );
