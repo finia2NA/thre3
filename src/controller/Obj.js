@@ -14,6 +14,20 @@ export const objToPatches = async (path) => {
   // parse file
   const parsed = new OBJFile(text).parse();
 
-  debugger;
-  // triangulate faces
+  // array that faces will be written to
+  // var faces = []
+
+  // for (var model = 0; model < parsed.models.length; model++) {
+  //   for (var face = 0; face < parsed.models[model].faces.length; face++) {
+  //     // triangulate faces
+  //     // copy verts into new array
+  //     var verts = parsed.models[model].faces.map(x => x) // TODO: i hope this is a way to copy elements
+
+  //     while (verts.length > 3) {
+
+  //     }
+  //   }
+  // }
+
+  // debugger;
 };

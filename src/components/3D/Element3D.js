@@ -1,12 +1,13 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { Suspense, useMemo, useRef, useState } from "react";
 
 import * as THREE from "three";
-import { useFrame } from "react-three-fiber";
+import { useFrame, useGraph, useLoader } from "react-three-fiber";
+import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 
 import { defaultTexture, checkerboardTexture } from "../../model/Textures";
 import { TeapotAbstract } from "model/ElementAbtract";
 
-export const Tangible3D = ({ tangerine }) => {
+export const Tangible3D = () => {
   const mesh = useRef();
 
   useFrame(() => {
@@ -19,12 +20,6 @@ export const Tangible3D = ({ tangerine }) => {
     return re;
   }, []);
 
-  var object;
-
-  if (tangerine instanceof TeapotAbstract) {
-  } else {
-  }
-
   return (
     <mesh
       ref={mesh}
@@ -36,5 +31,18 @@ export const Tangible3D = ({ tangerine }) => {
       </meshBasicMaterial>
       <boxBufferGeometry args={[1, 1, 1]} />
     </mesh>
+  );
+};
+
+function Asset() {
+  const scene = useLoader(OBJLoader, "teapot.obj");
+  return <primitive object={scene.children[0]} />;
+}
+
+export const Teapot3D = () => {
+  return (
+    <Suspense fallback={<Tangible3D />}>
+      <Asset />
+    </Suspense>
   );
 };
