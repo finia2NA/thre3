@@ -24,8 +24,14 @@ function Teapot() {
   }, []);
 
   const scene = useLoader(OBJLoader, "teapot.obj");
-  scene.children[0].scale.set(0.2, 0.2, 0.2);
-  return <primitive object={scene.children[0]} />;
+  scene.children[0].scale.set(0.05, 0.05, 0.05);
+  return (
+    <primitive object={scene.children[0]}>
+      <meshBasicMaterial attach="material" transparent side={THREE.DoubleSide}>
+        <primitive attach="map" object={texture} />
+      </meshBasicMaterial>
+    </primitive>
+  );
 }
 
 export const Tangible3D = () => {
