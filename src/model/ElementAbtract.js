@@ -10,6 +10,7 @@ class EntityAbstract {
     this.position = position;
     this.scale = [1, 1, 1];
     this.rotation = [0, 0, 0];
+    this.name = "EntityAbstract";
   }
 
   get_patches(resolution = [64, 64]) {
@@ -26,13 +27,19 @@ class TangibleAbstract extends EntityAbstract {
 
     this.texture = checkerboardTexture(16, 16); // default texture
     this.mesh = undefined;
+    this.name = "TangibleAbstract";
   }
 }
 
 /**
  * Represents a cube, already UV-mapped
  */
-export class CubeAbstract extends TangibleAbstract {} // TODO:
+export class CubeAbstract extends TangibleAbstract {
+  constructor(...args) {
+    super(...args);
+    this.name = "CubeAbstract";
+  }
+} // TODO:
 
 export class PlaneAbstract extends TangibleAbstract {} // TODO:
 
@@ -44,5 +51,6 @@ export class TeapotAbstract extends TangibleAbstract {
     super(...args);
     this.mesh = "assets/teapot.js";
     this.texture = rainbowTexture(16, 16); // TODO: this aint sposed to be static ya know
+    this.name = "TeapotAbstract";
   }
 }

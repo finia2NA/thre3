@@ -40,7 +40,7 @@ const Viewport = (props) => {
       {/* Objects */}
 
       {props.objects.map((o, i) => (
-        <Tangible3D />
+        <Tangible3D abstract={o} />
       ))}
     </Canvas>
   );
