@@ -9,13 +9,18 @@ import { defaultTexture, checkerboardTexture } from "model/Textures";
 export const LoadingBox = (props) => {
   return (
     <mesh>
-      <boxBufferGeometry />
+      <boxBufferGeometry translate={props.position} />
     </mesh>
   );
 };
 
 export const Cube = (props) => {
   const scene = useLoader(OBJLoader, "testcube.obj");
+  scene.children[0].position.set(
+    props.position[0],
+    props.position[1],
+    props.position[2]
+  );
   return (
     <primitive object={scene.children[0]}>
       {props.texture && (
@@ -34,6 +39,11 @@ export const Cube = (props) => {
 export const Teapot = (props) => {
   const scene = useLoader(OBJLoader, "teapot.obj");
   scene.children[0].scale.set(0.05, 0.05, 0.05);
+  scene.children[0].position.set(
+    props.position[0],
+    props.position[1],
+    props.position[2]
+  );
   return (
     <primitive object={scene.children[0]}>
       {props.texture && (
@@ -63,12 +73,12 @@ export const Tangible3D = (props) => {
   switch (props.abstract.name) {
     case "TeapotAbstract":
       console.log("loading a teapot!");
-      re = <Teapot texture={texture} />;
+      re = <Teapot {...props.abstract} texture={texture} />;
       break;
 
     case "CubeAbstract":
       console.log("loading a cube!");
-      re = <Cube texture={texture} />;
+      re = <Cube {...props.abstract} texture={texture} />;
       break;
 
     default:

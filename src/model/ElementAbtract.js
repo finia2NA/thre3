@@ -22,8 +22,8 @@ class EntityAbstract {
  * The abstract superclass for objects that have a mesh and can be textured
  */
 class TangibleAbstract extends EntityAbstract {
-  constructor(...args) {
-    super(...args);
+  constructor(position = [0, 0, 0]) {
+    super(position);
 
     this.texture = checkerboardTexture(16, 16); // default texture
     this.mesh = undefined;
@@ -35,8 +35,8 @@ class TangibleAbstract extends EntityAbstract {
  * Represents a cube, already UV-mapped
  */
 export class CubeAbstract extends TangibleAbstract {
-  constructor(...args) {
-    super(...args);
+  constructor(position = [0, 0, 0]) {
+    super(position);
     this.name = "CubeAbstract";
   }
 } // TODO:
