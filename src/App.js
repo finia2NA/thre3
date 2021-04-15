@@ -29,7 +29,7 @@ const Controldiv = styled.div`
 const App = () => {
   var objects = [new CubeAbstract([0, 0, 0])];
 
-  objToPatches(testcube);
+  objToPatches(testcube, 16, 16);
 
   return (
     <Maindiv>

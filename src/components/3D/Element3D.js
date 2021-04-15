@@ -1,7 +1,7 @@
 import React, { Suspense, useMemo, useRef, useState } from "react";
 
 import * as THREE from "three";
-import { useFrame, useGraph, useLoader } from "react-three-fiber";
+import { useLoader } from "react-three-fiber";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 
 import { defaultTexture, checkerboardTexture } from "model/Textures";
@@ -38,7 +38,7 @@ export const Cube = (props) => {
 
 export const Teapot = (props) => {
   const scene = useLoader(OBJLoader, "teapot.obj");
-  scene.children[0].scale.set(0.05, 0.05, 0.05);
+  // scene.children[0].scale.set(0.05, 0.05, 0.05);
   scene.children[0].position.set(
     props.position[0],
     props.position[1],

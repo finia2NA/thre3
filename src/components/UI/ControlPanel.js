@@ -3,11 +3,9 @@ import Radiositypanel from "components/UI/Radiosity";
 import Displaypanel from "components/UI/Display";
 import Indicators from "components/UI/Indicators";
 import Exportpanel from "components/UI/Export";
-import Explorepanel from "components/UI/Explore";
 import Channelbox from "components/UI/Channelbox";
-import { Button } from "@material-ui/core";
 import styled from "styled-components";
-import { LightContainer, Collapsing } from "components/UI/Containers";
+import { Collapsing } from "components/UI/Containers";
 
 /*
 Required Settings:

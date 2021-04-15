@@ -1,10 +1,7 @@
+import { Tangible3D } from "components/3D/Element3D";
 import React, { useRef } from "react";
-
-import { Canvas, useFrame, useThree, extend } from "react-three-fiber";
+import { Canvas, extend, useFrame, useThree } from "react-three-fiber";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-
-import Box from "components/3D/Box";
-import { LoadingBox, Tangible3D } from "components/3D/Element3D";
 
 extend({ OrbitControls });
 
@@ -40,7 +37,7 @@ const Viewport = (props) => {
       {/* Objects */}
 
       {props.objects.map((o, i) => (
-        <Tangible3D abstract={o} />
+        <Tangible3D abstract={o} key={i} />
       ))}
     </Canvas>
   );
