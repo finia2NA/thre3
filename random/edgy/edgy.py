@@ -7,10 +7,10 @@ import re
 
 
 def dPrint(x):
-    frame = inspect.currentframe().f_back
-    s = inspect.getframeinfo(frame).code_context[0]
-    r = re.search(r"\((.*)\)", s).group(1)
-    print("{} = {}".format(r, x))
+  frame = inspect.currentframe().f_back
+  s = inspect.getframeinfo(frame).code_context[0]
+  r = re.search(r"\((.*)\)", s).group(1)
+  print("{} = {}".format(r, x))
 
 
 class Vertex:
@@ -83,6 +83,8 @@ def draw(shape, xRes=16, yRes=16):
     startTexel = uvToTexel(edge.start.txCoord, edge, xRes, yRes)
     endTexel = uvToTexel(edge.end.txCoord, edge, xRes, yRes)
 
+    dPrint([edge.start.txCoord, edge.end.txCoord])
+
     x0 = startTexel.x
     y0 = startTexel.y
     x1 = endTexel.x
@@ -110,7 +112,8 @@ def draw(shape, xRes=16, yRes=16):
         err = err + dx
         y0 = y0+sy
 
-      time.sleep(2)
+      time.sleep(0.25)
+    print()
 
 
 if(__name__ == "__main__"):

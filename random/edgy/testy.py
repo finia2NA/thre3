@@ -1,6 +1,13 @@
 import unittest
 import vectormath as ve
-from edgy import uvToTexel, Edge
+from edgy import uvToTexel, Edge, Vertex
+
+
+def sEdge(start: ve.Vector2, end: ve.Vector2):
+
+  startVertex = Vertex(start, ve.Vector2(0, 0))
+  endVertex = Vertex(end, ve.Vector2(0,0))
+  return Edge(start=startVertex, end=endVertex)
 
 
 class TestUVToTexel(unittest.TestCase):
@@ -10,7 +17,7 @@ class TestUVToTexel(unittest.TestCase):
   def test_straightup(self):
     uv = ve.Vector2(0.5, 0.5)
 
-    edge = Edge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.5, 0.25))
+    edge = sEdge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.5, 0.25))
 
     res = uvToTexel(uv=uv, edge=edge, xRes=self.xRes,
                     yRes=self.yRes)
@@ -21,7 +28,7 @@ class TestUVToTexel(unittest.TestCase):
   def test_leftup(self):
     uv = ve.Vector2(0.5, 0.5)
 
-    edge = Edge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.25, 0.25))
+    edge = sEdge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.25, 0.25))
 
     res = uvToTexel(uv=uv, edge=edge, xRes=self.xRes,
                     yRes=self.yRes)
@@ -32,7 +39,7 @@ class TestUVToTexel(unittest.TestCase):
   def test_left(self):
     uv = ve.Vector2(0.5, 0.5)
 
-    edge = Edge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.25, 0.5))
+    edge = sEdge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.25, 0.5))
 
     res = uvToTexel(uv=uv, edge=edge, xRes=self.xRes,
                     yRes=self.yRes)
@@ -43,7 +50,7 @@ class TestUVToTexel(unittest.TestCase):
   def test_downleft(self):
     uv = ve.Vector2(0.5, 0.5)
 
-    edge = Edge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.25, 0.75))
+    edge = sEdge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.25, 0.75))
 
     res = uvToTexel(uv=uv, edge=edge, xRes=self.xRes,
                     yRes=self.yRes)
@@ -54,7 +61,7 @@ class TestUVToTexel(unittest.TestCase):
   def test_down(self):
     uv = ve.Vector2(0.5, 0.5)
 
-    edge = Edge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.5, 0.75))
+    edge = sEdge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.5, 0.75))
 
     res = uvToTexel(uv=uv, edge=edge, xRes=self.xRes,
                     yRes=self.yRes)
@@ -65,7 +72,7 @@ class TestUVToTexel(unittest.TestCase):
   def test_downright(self):
     uv = ve.Vector2(0.5, 0.5)
 
-    edge = Edge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.75, 0.75))
+    edge = sEdge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.75, 0.75))
 
     res = uvToTexel(uv=uv, edge=edge, xRes=self.xRes,
                     yRes=self.yRes)
@@ -76,7 +83,7 @@ class TestUVToTexel(unittest.TestCase):
   def test_right(self):
     uv = ve.Vector2(0.5, 0.5)
 
-    edge = Edge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.75, 0.5))
+    edge = sEdge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.75, 0.5))
 
     res = uvToTexel(uv=uv, edge=edge, xRes=self.xRes,
                     yRes=self.yRes)
@@ -87,7 +94,7 @@ class TestUVToTexel(unittest.TestCase):
   def test_rightup(self):
     uv = ve.Vector2(0.5, 0.5)
 
-    edge = Edge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.75, 0.25))
+    edge = sEdge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.75, 0.25))
 
     res = uvToTexel(uv=uv, edge=edge, xRes=self.xRes,
                     yRes=self.yRes)
