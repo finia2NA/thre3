@@ -61,7 +61,7 @@ export const objToPatches = async (path, txwidth, txheight) => {
       const dy = -Math.abs(y1 - y0); // how many v steps
       const sy = y0 < y1 ? 1 : -1; // in what direction
       var err = dx + dy; // total number of pixels to fill
-      var e2; /* error value e_xy */
+      // var e2; /* error value e_xy */
 
       while (true) {
         console.log(x0, y0); // TODO: replace the log with actually calculating a patch
