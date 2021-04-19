@@ -10,6 +10,8 @@ function uvDimToTexel(numPixels, uvCoordinate) {
   return Math.floor(numPixels * uvCoordinate);
 }
 
+function genPatch(vertex0, vertex1, pixelProgress, pixelsTotal, structure) {}
+
 export const objToPatches = async (path, txwidth, txheight) => {
   // Load file
   const text = await request(path);
@@ -52,6 +54,8 @@ export const objToPatches = async (path, txwidth, txheight) => {
       var x1 = uvDimToTexel(u1, txwidth);
       var y1 = uvDimToTexel(v1, txheight);
 
+      // generate the first and last patch, which will be interpolated between
+
       const dx = Math.abs(x1 - x0); // how many u steps
       const sx = x0 < x1 ? 1 : -1; // in what direction
       const dy = -Math.abs(y1 - y0); // how many v steps
@@ -64,24 +68,17 @@ export const objToPatches = async (path, txwidth, txheight) => {
         if (x0 === x1 && y0 === y1) break;
         const e2 = 2 * err;
         if (e2 > dy) {
+          // case e_xy+e_x > 0
           err += dy;
           x0 += sx;
-        } /* e_xy+e_x > 0 */
+        }
         if (e2 < dx) {
+          // case e_xy+e_y < 0
           err += dx;
           y0 += sy;
-        } /* e_xy+e_y < 0 */
+        }
       }
-
-      // the dominant direction is the one we need to iterate over.
-      // (random/illustration_1)
-      // const dominant = dominant(edge)
-
-      // dominant(edge[0], edge[1])
     }
-    // calculate patch coordinate values for corners
-
-    // calculate edge representations w/ breseham algorithm (doing it like this solves random/problem_2.png)
 
     // calculate fill with linear interpolations per scanline.
   }
