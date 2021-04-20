@@ -1,106 +1,37 @@
 import unittest
 import vectormath as ve
-from edgy import uvToTexel, Edge, Vertex
-
-
-def sEdge(start: ve.Vector2, end: ve.Vector2):
-
-  startVertex = Vertex(start, ve.Vector2(0, 0))
-  endVertex = Vertex(end, ve.Vector2(0,0))
-  return Edge(start=startVertex, end=endVertex)
+from edgy import edgeToTexel, Edge, Vertex
 
 
 class TestUVToTexel(unittest.TestCase):
-  xRes = 4
-  yRes = 4
+  xRes = 16
+  yRes = 16
 
-  def test_straightup(self):
-    uv = ve.Vector2(0.5, 0.5)
+  def gen(self, start, end, startExpected, endExpected):
+    start, end = edgeToTexel(start, end, self.xRes, self.yRes)
 
-    edge = sEdge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.5, 0.25))
+    self.assertEqual(start.x, startExpected.x)
+    self.assertEqual(start.y, startExpected.y)
+    self.assertEqual(end.x, endExpected.x)
+    self.assertEqual(end.y, endExpected.y)
 
-    res = uvToTexel(uv=uv, edge=edge, xRes=self.xRes,
-                    yRes=self.yRes)
+  def test_StraightDown(self):
+    start = ve.Vector2(0, 0)
+    end = ve.Vector2(0, 0.3)
 
-    self.assertEqual(res.x, 1)
-    self.assertEqual(res.y, 1)
+    startExpected = ve.Vector2(0, 0)
+    endExpected = ve.Vector2(0, 4)
 
-  def test_leftup(self):
-    uv = ve.Vector2(0.5, 0.5)
+    self.gen(start, end, startExpected, endExpected)
 
-    edge = sEdge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.25, 0.25))
+  def test_upright(self):
+    start = ve.Vector2(0, 0.3)
+    end = ve.Vector2(1, 0)
 
-    res = uvToTexel(uv=uv, edge=edge, xRes=self.xRes,
-                    yRes=self.yRes)
+    startExpected = ve.Vector2(0, 4)
+    endExpected = ve.Vector2(15, 0)
 
-    self.assertEqual(res.x, 1)
-    self.assertEqual(res.y, 1)
-
-  def test_left(self):
-    uv = ve.Vector2(0.5, 0.5)
-
-    edge = sEdge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.25, 0.5))
-
-    res = uvToTexel(uv=uv, edge=edge, xRes=self.xRes,
-                    yRes=self.yRes)
-
-    self.assertEqual(res.x, 1)
-    self.assertEqual(res.y, 2)
-
-  def test_downleft(self):
-    uv = ve.Vector2(0.5, 0.5)
-
-    edge = sEdge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.25, 0.75))
-
-    res = uvToTexel(uv=uv, edge=edge, xRes=self.xRes,
-                    yRes=self.yRes)
-
-    self.assertEqual(res.x, 1)
-    self.assertEqual(res.y, 2)
-
-  def test_down(self):
-    uv = ve.Vector2(0.5, 0.5)
-
-    edge = sEdge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.5, 0.75))
-
-    res = uvToTexel(uv=uv, edge=edge, xRes=self.xRes,
-                    yRes=self.yRes)
-
-    self.assertEqual(res.x, 2)
-    self.assertEqual(res.y, 2)
-
-  def test_downright(self):
-    uv = ve.Vector2(0.5, 0.5)
-
-    edge = sEdge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.75, 0.75))
-
-    res = uvToTexel(uv=uv, edge=edge, xRes=self.xRes,
-                    yRes=self.yRes)
-
-    self.assertEqual(res.x, 2)
-    self.assertEqual(res.y, 2)
-
-  def test_right(self):
-    uv = ve.Vector2(0.5, 0.5)
-
-    edge = sEdge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.75, 0.5))
-
-    res = uvToTexel(uv=uv, edge=edge, xRes=self.xRes,
-                    yRes=self.yRes)
-
-    self.assertEqual(res.x, 2)
-    self.assertEqual(res.y, 1)
-
-  def test_rightup(self):
-    uv = ve.Vector2(0.5, 0.5)
-
-    edge = sEdge(start=ve.Vector2(0.5, 0.5), end=ve.Vector2(0.75, 0.25))
-
-    res = uvToTexel(uv=uv, edge=edge, xRes=self.xRes,
-                    yRes=self.yRes)
-
-    self.assertEqual(res.x, 2)
-    self.assertEqual(res.y, 1)
+    self.gen(start, end, startExpected, endExpected)
 
 
 if __name__ == '__main__':
