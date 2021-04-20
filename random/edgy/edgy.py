@@ -37,6 +37,59 @@ shape = [Vertex(ve.Vector2(0.0, 0.0), ve.Vector2(0, 0, 0)),
          ]
 
 
+def edgeToTexel(edge: [ve.Vector2], xRes, yRes):
+  direction: ve.Vector2 = ve.Vector2(edge[1].x-edge[0].x, edge[1].y-edge[0].y)
+
+  startquadrant = -1
+  if direction.x <= 0 and direction.y < 0:
+    startquadrant = 1
+  elif direction.x < 0 and direction.y >= 0:
+    startquadrant = 2
+  elif direction.x >= 0 and direction.y > 0:
+    startquadrant = 3
+  elif direction.x > 0 and direction.y <= 0:
+    startquadrant = 4
+
+  # start
+  sx = edge[0].x*xRes
+  sy = edge[0].y*yRes
+
+  if sx.is_integer():
+    sx = sx+1 if startquadrant in [3, 4] else sx
+  else:
+    sx = math.floor(sx)
+
+  if sy.is_integer():
+    sy = sy+1 if startquadrant in [2, 3] else sy
+  else:
+    sy = math.floor(sy)
+
+  # end
+  endquadrant = -1
+  if direction.x < 0 and direction.y <= 0:
+    endquadrant = 1
+  elif direction.x <= 0 and direction.y > 0:
+    endquadrant = 2
+  elif direction.x > 0 and direction.y >= 0:
+    endquadrant = 3
+  elif direction.x >= 0 and direction.y < 0:
+    endquadrant = 4
+  ex = edge[1].x*xRes
+  ey = edge[1].y*yRes
+
+  if ex.is_integer():
+    ex = ex+1 if endquadrant in [3, 4] else ex
+  else:
+    ex = math.floor(ex)
+
+  if ey.is_integer():
+    ey = ey+1 if endquadrant in [2, 3] else ey
+  else:
+    ey = math.floor(ey)
+
+  return ve.Vector2(sx, sy), ve.Vector2(ex, ey)
+
+
 def uvToTexel(uv: ve.Vector2, edge: Edge, xRes, yRes):
   """convert uv coordinate to texel coordinates. If the coordinate is exactly inbetween two texels, the one that will be in the shape is returned."""  # (hence why the edge is needed as a parameter.)
 
@@ -72,14 +125,11 @@ def draw(shape, xRes=16, yRes=16):
   # for now, just determine which texels have to be calculated
   texels = []
 
-  # get edges in a list
-  edges: [Edge] = []
   for i in range(3):
     start = shape[i]
     end = shape[(i+1) % 3]
-    edges.append(Edge(start, end))
+    edge = Edge(start, end)
 
-  for edge in edges:
     startTexel = uvToTexel(edge.start.txCoord, edge, xRes, yRes)
     endTexel = uvToTexel(edge.end.txCoord, edge, xRes, yRes)
 
