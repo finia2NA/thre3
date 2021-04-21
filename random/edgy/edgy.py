@@ -37,7 +37,7 @@ shape = [Vertex(ve.Vector2(0.0, 0.0), ve.Vector2(0, 0, 0)),
          ]
 
 
-def edgeToTexel(start: ve.Vector2, end: ve.Vector2, xRes, yRes):
+def edgePointsToTexel(start: ve.Vector2, end: ve.Vector2, xRes, yRes):
   direction: ve.Vector2 = ve.Vector2(end.x-start.x, end.y-start.y)
 
   startquadrant = -1
@@ -90,16 +90,14 @@ def edgeToTexel(start: ve.Vector2, end: ve.Vector2, xRes, yRes):
   return ve.Vector2(sx, sy), ve.Vector2(ex, ey)
 
 
-def draw(shape, xRes=16, yRes=16):
-
-  # for now, just determine which texels have to be calculated
-  texels = []
+def breseham(shape, xRes=16, yRes=1):
 
   for i in range(3):
     start: Vertex = shape[i]
     end: Vertex = shape[(i+1) % 3]
 
-    startTexel, endTexel = edgeToTexel(start.txCoord, end.txCoord, xRes, yRes)
+    startTexel, endTexel = edgePointsToTexel(
+        start.txCoord, end.txCoord, xRes, yRes)
 
     dPrint([startTexel, endTexel])
 
@@ -134,5 +132,39 @@ def draw(shape, xRes=16, yRes=16):
     print()
 
 
+def dda(shape, xRes=16, yRes=16):
+  # DDA algorithm, adapted from https://en.wikipedia.org/wiki/Digital_differential_analyzer_(graphics_algorithm)
+  for i in range(3):
+    startVertex: Vertex = shape[i]
+    endVertex: Vertex = shape[(i+1) % 3]
+
+    start = startVertex.txCoord*ve.Vector2(xRes, yRes)
+    end = endVertex.txCoord*ve.Vector2(xRes, yRes)
+
+    dPrint([start, end])
+
+    dx = end.x-start.x
+    dy = end.y-start.y
+
+    step = max(abs(dx), abs(dy))
+
+    dx = float(dx)/float(step)
+    dx = float(dy)/float(step)
+
+    x = start.x
+    y = start.y
+    i = 1
+
+    while i <= step:
+      dPrint([x/xRes, y/yRes])
+      x = x+dx
+      y = y+dy
+      i = i+1
+      time.sleep(0.0625)
+
+    print()
+
+
 if(__name__ == "__main__"):
-  draw(shape)
+  # breseham(shape)
+  dda(shape)
