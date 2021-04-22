@@ -91,8 +91,9 @@ def edgePointsToTexel(start: ve.Vector2, end: ve.Vector2, xRes, yRes):
 
 
 def myAlg(shape, xRes=16, yRes=16):
+  texels = []
+
   for i in range(3):
-    texels = []
 
     startVertex: Vertex = shape[i]
     endVertex: Vertex = shape[(i+1) % 3]
@@ -114,15 +115,31 @@ def myAlg(shape, xRes=16, yRes=16):
 
       direction = 1 if endTexel.x > startTexel.x else -1
 
-      for x in range(int(startTexel.x), int(endTexel.x), direction): # TODO:/16...
+      for x in range(int(startTexel.x), int(endTexel.x), direction):
         x = x/xRes
         y = m*x+b
-        # dPrint([x, y])
         texel, _ = edgePointsToTexel(ve.Vector2(x, y), endPoint, xRes, yRes)
         dPrint(texel)
-        # texels.append(texel)
+        texels.append(texel)
 
     print()
+
+  # now, create a list that is sorted first by x and then by y.
+  s = sorted(texels, key=lambda t: (t.x, t.y))
+
+  fill = []
+  # go through the list. whenever there are two vertices that share an x but have more than 1 y between them, fill.
+  for i in range(len(s)-1):
+    first = s[i]
+    second = s[i+1]
+    if first.x == second.x:
+      deltaY = second.y-first.y
+      for i in range(1, int(deltaY)):
+        filledTexel = ve.Vector2(first.x, first.y+i)
+        dPrint(filledTexel)
+        fill.append(filledTexel)
+
+  return texels+fill
 
 
 if(__name__ == "__main__"):
