@@ -90,99 +90,6 @@ def edgePointsToTexel(start: ve.Vector2, end: ve.Vector2, xRes, yRes):
   return ve.Vector2(sx, sy), ve.Vector2(ex, ey)
 
 
-def breseham(shape, xRes=16, yRes=1):
-
-  for i in range(3):
-    start: Vertex = shape[i]
-    end: Vertex = shape[(i+1) % 3]
-
-    startTexel, endTexel = edgePointsToTexel(
-        start.txCoord, end.txCoord, xRes, yRes)
-
-    dPrint([startTexel, endTexel])
-
-    x0 = startTexel.x
-    y0 = startTexel.y
-    x1 = endTexel.x
-    y1 = endTexel.y
-
-    dx = abs(x1-x0)
-    sx = 1 if x0 < x1 else -1
-    dy = -abs(y1-y0)
-    sy = 1 if y0 < y1 else -1
-
-    dPrint([x0, y0, x1, y1])
-    dPrint([dx, sx, dy, sy])
-
-    err = dx+dy
-
-    while True:
-      dPrint([x0, y0])
-      if x0 == x1 and y0 == y1:
-        break
-      e2 = 2*err
-      if e2 > dy:
-        err = err+dy
-        x0 = x0+sx
-      if e2 < dx:
-        err = err + dx
-        y0 = y0+sy
-
-      time.sleep(0.0625)
-    print()
-
-
-def dda(shape, xRes=16, yRes=16):
-  # DDA algorithm, adapted from https://en.wikipedia.org/wiki/Digital_differential_analyzer_(graphics_algorithm)
-  for i in range(3):
-    startVertex: Vertex = shape[i]
-    endVertex: Vertex = shape[(i+1) % 3]
-
-    start = startVertex.txCoord*ve.Vector2(xRes, yRes)
-    end = endVertex.txCoord*ve.Vector2(xRes, yRes)
-
-    dPrint([start, end])
-
-    dx = end.x-start.x
-    dy = end.y-start.y
-
-    step = max(abs(dx), abs(dy))
-
-    dx = float(dx)/float(step)
-    dx = float(dy)/float(step)
-
-    x = start.x
-    y = start.y
-    i = 1
-
-    for _ in range(int(step)):
-      dPrint([x/xRes, y/yRes])
-      x = x+dx
-      y = y+dy
-      time.sleep(0.0625)
-
-    print()
-
-
-def dda2(shape, xRes, yRes):
-  for i in range(3):
-    startVertex: Vertex = shape[i]
-    endVertex: Vertex = shape[(i+1) % 3]
-
-    start = startVertex.txCoord*ve.Vector2(xRes, yRes)
-    end = endVertex.txCoord*ve.Vector2(xRes, yRes)
-
-    dPrint([start, end])
-
-    dx = end.x-start.x
-    dy = end.y-start.y
-
-    m = dy/dx
-
-    x = start.x
-    y = start.y
-
-
 def myAlg(shape, xRes=16, yRes=16):
   for i in range(3):
     texels = []
@@ -193,10 +100,11 @@ def myAlg(shape, xRes=16, yRes=16):
     startTexel, endTexel = \
         edgePointsToTexel(startVertex.txCoord, endVertex.txCoord, xRes, yRes)
 
-    dPrint([startTexel, endTexel])
+    texels.append(startTexel)
+    dPrint(startTexel)
 
-    startPoint: ve.Vector2 = startVertex.txCoord*ve.Vector2(xRes, yRes)
-    endPoint: ve.Vector2 = endVertex.txCoord*ve.Vector2(xRes, yRes)
+    startPoint: ve.Vector2 = startVertex.txCoord
+    endPoint: ve.Vector2 = endVertex.txCoord
 
     if not (startPoint.x == endPoint.x):
 
@@ -206,34 +114,16 @@ def myAlg(shape, xRes=16, yRes=16):
 
       direction = 1 if endTexel.x > startTexel.x else -1
 
-      for x in range(int(startTexel.x), int(endTexel.x), direction):
+      for x in range(int(startTexel.x), int(endTexel.x), direction): # TODO:/16...
+        x = x/xRes
         y = m*x+b
-        dPrint([x, y])
+        # dPrint([x, y])
+        texel, _ = edgePointsToTexel(ve.Vector2(x, y), endPoint, xRes, yRes)
+        dPrint(texel)
+        # texels.append(texel)
 
     print()
 
 
 if(__name__ == "__main__"):
-  # breseham(shape)
-  # dda(shape)
-  # dda2(shape)
   myAlg(shape)
-
-
-# def ROUND(a):
-#   return int(a + 0.5)
-
-# def drawDDA(x1,y1,x2,y2):
-#   x,y = x1,y1
-#   length = abs((x2-x1) if abs(x2-x1) > abs(y2-y1) else (y2-y1))
-#   dx = (x2-x1)/float(length)
-#   dy = (y2-y1)/float(length)
-#   dPrint([dx,dy])
-
-#   dPrint([ROUND(x),ROUND(y)])
-#   for i in range(length):
-#     x += dx
-#     y += dy
-#     dPrint([ROUND(x),ROUND(y)])
-
-# drawDDA(2,5,10,20)
