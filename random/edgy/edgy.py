@@ -89,6 +89,32 @@ def edgePointsToTexel(start: ve.Vector2, end: ve.Vector2, xRes, yRes):
 
   return ve.Vector2(sx, sy), ve.Vector2(ex, ey)
 
+# Adapted from https://gamedev.stackexchange.com/questions/23743/whats-the-most-efficient-way-to-find-barycentric-coordinates
+
+
+def getBayecentric(p: ve.Vector2, a: ve.Vector2, b: ve.Vector2, c: ve.Vector2):
+  # Vector v0 = b - a, v1 = c - a, v2 = p - a;
+  v0: ve.Vector2 = b-a
+  v1: ve.Vector2 = c-a
+  v2: ve.Vector2 = p-a
+  # float d00 = Dot(v0, v0);
+  d00 = v0.dot(v0)
+  # float d01 = Dot(v0, v1);
+  d01 = v0.dot(v1)
+  # float d11 = Dot(v1, v1);
+  d11 = v1.dot(v1)
+  # float d20 = Dot(v2, v0);
+  d20 = v2.dot(v0)
+  # float d21 = Dot(v2, v1);
+  d21 = v2.dot(v1)
+  # float denom = d00 * d11 - d01 * d01;
+  denom = d00*d11-math.pow(d01, 2)
+  v = (d11 * d20 - d01 * d21) / denom
+  w = (d00 * d21 - d01 * d20) / denom
+  u = 1.0 - v - w
+
+  return u, v, w
+
 
 def myAlg(shape, xRes=16, yRes=16):
   texels = []
@@ -142,5 +168,17 @@ def myAlg(shape, xRes=16, yRes=16):
   return texels+fill
 
 
+def bayExample():
+  p = ve.Vector2(6.5, 7.5)
+  a = ve.Vector2(4, 6)
+  b = ve.Vector2(11, 6)
+  c = ve.Vector2(6, 10)
+  u, v, w = getBayecentric(p, a, b, c)
+
+  dPrint([u, v, w])
+  dPrint([p, u*a+v*b+w*c])
+
+
 if(__name__ == "__main__"):
-  myAlg(shape)
+  # myAlg(shape)
+  bayExample()
