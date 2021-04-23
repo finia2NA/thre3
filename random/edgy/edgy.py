@@ -5,12 +5,34 @@ import time
 import inspect
 import re
 
+# debug helper
 
-def dPrint(x):
+
+def dPrint(x):  # ✔
   frame = inspect.currentframe().f_back
   s = inspect.getframeinfo(frame).code_context[0]
   r = re.search(r"\((.*)\)", s).group(1)
   print("{} = {}".format(r, x))
+
+# classes
+
+
+class Object3D:
+  def __init__(self, tris: [[Vertex]], translate):
+    self.tris: [[Vertex]] = tris
+    self.translate = translate
+
+  def getFaces(self) -> [[Vertex]]:
+    return self.tris  # todo: consider translate
+
+
+class Patch:
+  def __init__(self, position, normal, selfIlluminance, backwriteCoord, nice=0):
+    self.position = position
+    self.normal = normal
+    self.selfIlluminance = selfIlluminance
+    self.backWriteCoord = backwriteCoord
+    self.nice = nice
 
 
 class Vertex:
@@ -31,13 +53,15 @@ class Edge:
     return ve.Vector2((self.end.txCoord.x-self.start.txCoord.x), (self.end.txCoord.y-self.start.txCoord.y))
 
 
-shape = [Vertex(ve.Vector2(0.0, 0.0), ve.Vector2(0, 0, 0)),
-         Vertex(ve.Vector2(0.0, 0.3), ve.Vector2(0, 1, 1)),
-         Vertex(ve.Vector2(1.0, 0.0), ve.Vector2(0, 0, 1))
-         ]
+class Color:
+  def __init__(self, r, g, b):
+    self.r = r
+    self.g = g
+    self.b = b
 
 
-def edgePointsToTexel(start: ve.Vector2, end: ve.Vector2, xRes, yRes):
+# helper methods
+def edgePointsToTexel(start: ve.Vector2, end: ve.Vector2, xRes, yRes):  # X
   direction: ve.Vector2 = ve.Vector2(end.x-start.x, end.y-start.y)
 
   startquadrant = -1
@@ -92,23 +116,19 @@ def edgePointsToTexel(start: ve.Vector2, end: ve.Vector2, xRes, yRes):
 # Adapted from https://gamedev.stackexchange.com/questions/23743/whats-the-most-efficient-way-to-find-barycentric-coordinates
 
 
-def getBayecentric(p: ve.Vector2, a: ve.Vector2, b: ve.Vector2, c: ve.Vector2):
-  # Vector v0 = b - a, v1 = c - a, v2 = p - a;
+def getBayecentric(p: ve.Vector2, a: ve.Vector2, b: ve.Vector2, c: ve.Vector2):  # ✔
   v0: ve.Vector2 = b-a
   v1: ve.Vector2 = c-a
   v2: ve.Vector2 = p-a
-  # float d00 = Dot(v0, v0);
+
   d00 = v0.dot(v0)
-  # float d01 = Dot(v0, v1);
   d01 = v0.dot(v1)
-  # float d11 = Dot(v1, v1);
   d11 = v1.dot(v1)
-  # float d20 = Dot(v2, v0);
   d20 = v2.dot(v0)
-  # float d21 = Dot(v2, v1);
   d21 = v2.dot(v1)
-  # float denom = d00 * d11 - d01 * d01;
+
   denom = d00*d11-math.pow(d01, 2)
+
   v = (d11 * d20 - d01 * d21) / denom
   w = (d00 * d21 - d01 * d20) / denom
   u = 1.0 - v - w
@@ -116,13 +136,17 @@ def getBayecentric(p: ve.Vector2, a: ve.Vector2, b: ve.Vector2, c: ve.Vector2):
   return u, v, w
 
 
-def myAlg(shape, xRes=16, yRes=16):
+def txCoordToUV(tx: ve.Vector2, xRes, yRes):
+  return ve.Vector2(tx.x/xRes, tx.y/yRes) + ve.Vector2(1/2*xRes, 1/2*yRes)
+
+
+def rasterizeFace(face, xRes=16, yRes=16):
   texels = []
 
   for i in range(3):
 
-    startVertex: Vertex = shape[i]
-    endVertex: Vertex = shape[(i+1) % 3]
+    startVertex: Vertex = face[i]
+    endVertex: Vertex = face[(i+1) % 3]
 
     startTexel, endTexel = \
         edgePointsToTexel(startVertex.txCoord, endVertex.txCoord, xRes, yRes)
@@ -167,6 +191,40 @@ def myAlg(shape, xRes=16, yRes=16):
 
   return texels+fill
 
+  def getPatches(mesh: Object3D, xRes: int, yRes: int, lightmap: [[Color]]):
+    patches = []
+    for face in mesh.getFaces():
+      a: Vertex = face[0]
+      b: Vertex = face[1]
+      c: Vertex = face[2]
+
+      texelLocations = rasterizeFace(face, xRes, yRes)
+
+      for location in texelLocations:
+        u, v, w = getBayecentric(txCoordToUV(location, xRes, yRes), a, b, c)
+
+        if u < 0 or v < 0 or w < 0:
+          # do some magic that gets us a new u,v,w that represents the closest point that IS in the face.
+          pass
+
+        position = u*a.vertexCoord+v*b.vertexCoord+w*c.vertexCoord
+        normal = u*a.vertexNormal+v*b.vertexNormal+w*c.vertexNormal
+        selfIlluminance = 0  # TODO
+        backwriteCoord = location
+        nice = 0  # TODO
+
+        patch = Patch(position=position, normal=normal,
+                      selfIlluminance=selfIlluminance, backwriteCoord=backwriteCoord, nice=nice)
+
+
+# test
+
+
+face = [Vertex(ve.Vector2(0.0, 0.0), ve.Vector2(0, 0, 0)),
+        Vertex(ve.Vector2(0.0, 0.3), ve.Vector2(0, 1, 1)),
+        Vertex(ve.Vector2(1.0, 0.0), ve.Vector2(0, 0, 1))
+        ]
+
 
 def bayExample1():
   # (possible)
@@ -182,7 +240,7 @@ def bayExample1():
 
 def bayExample2():
   # (impossible)
-  p = ve.Vector2(9.5,9.5)
+  p = ve.Vector2(9.5, 9.5)
   a = ve.Vector2(4, 6)
   b = ve.Vector2(11, 6)
   c = ve.Vector2(6, 10)
