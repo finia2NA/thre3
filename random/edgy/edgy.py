@@ -6,23 +6,32 @@ import time
 import vectormath as ve
 
 from classes import Color, Edge, Object3D, Patch, Texel, Vertex
-from helpers import dPrint, getArea, getBayecentric, txCoordToUV, edgePointsToMidpoint
+from helpers import dPrint, getArea, getBayecentric, discreteToMidpoint, discretizeStartEnd, sampleTexture
 
 # debug helper
 
 
-def rasterizeFace(face: [Vertex], xRes=16, yRes=16):
-  """get the coordinates of all texels belonging to the given face"""
-  texels = []
+def rasterizeFace(face: [Vertex], xRes=16, yRes=16) -> [Texel]:
+  """Given a tri and the dimensions of a canvas, return all texels in the canvas that make up the face."""
+
+  assert len(face) == 3
+
+  texels: [Texel] = []
+  area = getArea(face)
 
   for i in range(3):
 
     startVertex: Vertex = face[i]
     endVertex: Vertex = face[(i+1) % 3]
 
-    startTexel, endTexel = \
-        edgePointsToMidpoint(startVertex.txCoord,
-                             endVertex.txCoord, xRes, yRes)
+    startPos, endPos = \
+        discretizeStartEnd(startVertex.txCoord,
+                           endVertex.txCoord, xRes, yRes)
+
+    startTexel: Texel = \
+        Texel(discreteToMidpoint(startPos, xRes, yRes), startPos, area)
+    endTexel: Texel = \
+        Texel(discreteToMidpoint(endPos, xRes, yRes), endPos, area)
 
     texels.append(startTexel)
     dPrint(startTexel)
@@ -36,29 +45,31 @@ def rasterizeFace(face: [Vertex], xRes=16, yRes=16):
       b = startPoint.y
       dPrint([m, b])
 
-      direction = 1 if endTexel.x > startTexel.x else -1
+      direction = 1 if endTexel.discretePos.x > startTexel.discretePos.x else -1
 
-      for x in range(int(startTexel.x), int(endTexel.x), direction):
+      for x in range(startTexel.discretePos.x, endTexel.discretePos.x, direction):
         x = x/xRes
         y = m*x+b
-        texel, _ = edgePointsToMidpoint(ve.Vector2(x, y), endPoint, xRes, yRes)
+        pos, _ = discretizeStartEnd(ve.Vector2(x, y), endPoint, xRes, yRes)
+        texel = Texel(discreteToMidpoint(pos, xRes, yRes), pos, area)
         dPrint(texel)
         texels.append(texel)
 
     print()
 
   # now, create a list that is sorted first by x and then by y.
-  s = sorted(texels, key=lambda t: (t.x, t.y))
+  s = sorted(texels, key=lambda t: (t.discretePos.x, t.discretePos.y))
 
-  fill = []
+  fill: [Texel] = []
   # go through the list. whenever there are two vertices that share an x but have more than 1 y between them, fill.
   for i in range(len(s)-1):
-    first = s[i]
-    second = s[i+1]
-    if first.x == second.x:
-      deltaY = second.y-first.y
+    first: Texel = s[i]
+    second: Texel = s[i+1]
+    if first.discretePos.x == second.discretePos.x:
+      deltaY = second.discretePos.y - first.discretePos.y
       for i in range(1, int(deltaY)):
-        filledTexel = ve.Vector2(first.x, first.y+i)
+        pos = ve.Vector2(first.x, first.y+i)
+        filledTexel = Texel(discreteToMidpoint(pos, xRes, yRes), pos, area)
         dPrint(filledTexel)
         fill.append(filledTexel)
 
@@ -71,20 +82,23 @@ def rasterizeFace(face: [Vertex], xRes=16, yRes=16):
       b: Vertex = face[1]
       c: Vertex = face[2]
 
-      texelLocations = rasterizeFace(face, xRes, yRes)
+      texels: [Texel] = rasterizeFace(face, xRes, yRes)
 
-      for location in texelLocations:
-        u, v, w = getBayecentric(txCoordToUV(location, xRes, yRes), a, b, c)
+      texel: Texel
+      for texel in texels:
+        u, v, w = getBayecentric(texel.midpointPos, a, b, c)
 
         if u < 0 or v < 0 or w < 0:
           # do some magic that gets us a new u,v,w that represents the closest point that IS in the face.
           pass
 
-        position = u*a.vertexCoord+v*b.vertexCoord+w*c.vertexCoord
-        normal = u*a.vertexNormal+v*b.vertexNormal+w*c.vertexNormal
-        selfIlluminance = 0  # TODO
-        backwriteCoord = location
-        nice = 0  # TODO
+        position = u*a.vertexCoord + v*b.vertexCoord + w*c.vertexCoord
+        normal = u*a.vertexNormal + v*b.vertexNormal + w*c.vertexNormal
+        selfIlluminance = \
+            sampleTexture(texel.midpointPos.x, texel.midpointPos.y, None) \
+            * texel.area  # Since the lightmap specifies light/area, multiplying with area should give the absolute power for the patch. # TODO: remove lightmap dummy
+        backwriteCoord = texel.discretePos
+        nice = 0  # TODO: the nice value should specify how far the midpoint of the texel is from the tri it is a part of. 0 in most cases, but in other cases I want to have some metric to determine which texel "wins"
 
         patch = Patch(position=position, normal=normal,
                       selfIlluminance=selfIlluminance, backwriteCoord=backwriteCoord, nice=nice)

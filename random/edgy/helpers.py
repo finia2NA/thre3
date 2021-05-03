@@ -3,6 +3,8 @@ import inspect
 import re
 import vectormath as ve
 
+# debug helper
+
 
 def dPrint(x):  # ✔
   frame = inspect.currentframe().f_back
@@ -10,10 +12,12 @@ def dPrint(x):  # ✔
   r = re.search(r"\((.*)\)", s).group(1)
   print("{} = {}".format(r, x))
 
-# classes
-
 
 # helper methods
+
+def sampleTexture(u, v, tx):
+  return 0  # TODO:
+
 
 def getArea(a: Vertex, b: Vertex, c: Vertex):
   """Takes the vertices of a tri and returns the Area of the tri in 3D-Space"""
@@ -23,7 +27,13 @@ def getArea(a: Vertex, b: Vertex, c: Vertex):
   return (1/2) * ab.cross(ac)
 
 
-def edgePointsToMidpoint(start: ve.Vector2, end: ve.Vector2, xRes, yRes):  # X
+def getArea(face: [Vertex]):
+  assert len(face) == 3
+  return getArea(face[0], face[1], face[2])
+
+
+def discretizeStartEnd(start: ve.Vector2, end: ve.Vector2, xRes, yRes):  # X
+  """takes a start and end vector of a line and returns the start and end texel indices in a canvas of given size"""
   direction: ve.Vector2 = ve.Vector2(end.x-start.x, end.y-start.y)
 
   startquadrant = -1
@@ -97,5 +107,6 @@ def getBayecentric(p: ve.Vector2, a: ve.Vector2, b: ve.Vector2, c: ve.Vector2): 
   return u, v, w
 
 
-def txCoordToUV(tx: ve.Vector2, xRes, yRes):
-  return ve.Vector2(tx.x/xRes, tx.y/yRes) + ve.Vector2(1/2*xRes, 1/2*yRes)
+def discreteToMidpoint(tx: ve.Vector2, xRes, yRes):
+  """Takes a discrete texel coordinate and returns the vector of real coordinates of the texels midpoint on a scale of 0 to 1."""
+  return ve.Vector2(tx.x/xRes, tx.y/yRes) + 1/2*ve.Vector2(xRes, yRes)

@@ -1,9 +1,12 @@
 import vectormath as ve
+
+
 class Texel:
-  def __init__(self, position, parent_size):
+  def __init__(self, midpointPos, discretePos, area):
     super().__init__()
-    self.position = position
-    self.parent_size = parent_size
+    self.midpointPos = midpointPos
+    self.discretePos = discretePos
+    self.area = area
 
 
 class Object3D:
@@ -12,7 +15,7 @@ class Object3D:
     self.translate = translate
 
   def getFaces(self) -> [[Vertex]]:
-    return self.tris  # todo: consider translate
+    return self.tris
 
 
 class Patch:
