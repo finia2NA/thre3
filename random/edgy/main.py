@@ -8,10 +8,16 @@ import vectormath as ve
 from classes import Color, Edge, Object3D, Patch, Texel, Vertex
 from helpers import dPrint, getArea, getBayecentric, discreteToMidpoint
 
-face = [Vertex(ve.Vector2(0.0, 0.0), ve.Vector2(0, 0, 0)),
-        Vertex(ve.Vector2(0.0, 0.3), ve.Vector2(0, 1, 1)),
-        Vertex(ve.Vector2(1.0, 0.0), ve.Vector2(0, 0, 1))
-        ]
+face = [
+    Vertex(ve.Vector2(0.0, 0.0), ve.Vector2(0, 0, 0)),
+    Vertex(ve.Vector2(0.0, 0.3), ve.Vector2(0, 1, 1)),
+    Vertex(ve.Vector2(1.0, 0.0), ve.Vector2(0, 0, 1))
+]
+
+luminance = [
+    [Color(255, 255, 255), Color(255, 0, 0)],
+    [Color(0, 0, 255), Color(0, 255, 0)]
+]
 
 
 def bayExample1():
@@ -38,7 +44,15 @@ def bayExample2():
   dPrint([p, u*a+v*b+w*c])
 
 
-if(__name__ == "__main__"):
-  # myAlg(shape)
+def test1():
+  # myAlg()
+  pass
+
+
+def test2():
   bayExample1()
   bayExample2()
+
+
+if(__name__ == "__main__"):
+  test1()

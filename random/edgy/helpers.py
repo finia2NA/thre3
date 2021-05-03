@@ -3,6 +3,8 @@ import inspect
 import re
 import vectormath as ve
 
+from classes import Color
+
 # debug helper
 
 
@@ -15,25 +17,32 @@ def dPrint(x):  # ✔
 
 # helper methods
 
-def sampleTexture(u, v, tx):
-  return 0  # TODO:
+def sampleTexture(u, v, tx: [[Color]]):
+  """samples the texture at given [0,1]-coordinates"""
+  uRes = len(tx)
+  vRes = len(tx[0])
+
+  # TODO: don't know if this might need to be more sophisticated but should at least work for now.
+  # Since the incoming u,v are midpointpositions, I don't think there's substantial harm that could come from fenceposting
+  return tx[math.floor(u*uRes)][math.floor(v*vRes)]
 
 
-def getArea(a: Vertex, b: Vertex, c: Vertex):
-  """Takes the vertices of a tri and returns the Area of the tri in 3D-Space"""
-  ab: ve.Vector2 = b.txCoord-a.txCoord
-  ac: ve.Vector2 = c.txCoord-a.txCoord
+def getArea(a: ve.Vector2, b: ve.Vector2, c: ve.Vector2):
+  """Returns the area of the triangle defined by the 3 given positions"""
+  ab: ve.Vector2 = b-a
+  ac: ve.Vector2 = c-a
 
   return (1/2) * ab.cross(ac)
 
 
-def getArea(face: [Vertex]):
-  assert len(face) == 3
-  return getArea(face[0], face[1], face[2])
+def getArea(positions: [ve.Vector2]):
+  """Returns the area of the triangle defined by the 3 given positions"""
+  assert len(positions) == 3
+  return getArea(positions[0], positions[1], positions[2])
 
 
 def discretizeStartEnd(start: ve.Vector2, end: ve.Vector2, xRes, yRes):  # X
-  """takes a start and end vector of a line and returns the start and end texel indices in a canvas of given size"""
+  """takes a start and end vector of a line and returns the start and end discrete texel positions for a canvas of given size"""
   direction: ve.Vector2 = ve.Vector2(end.x-start.x, end.y-start.y)
 
   startquadrant = -1
@@ -87,6 +96,7 @@ def discretizeStartEnd(start: ve.Vector2, end: ve.Vector2, xRes, yRes):  # X
 
 
 def getBayecentric(p: ve.Vector2, a: ve.Vector2, b: ve.Vector2, c: ve.Vector2):  # ✔
+  """returns the factors for bayecentrically calculating point p using vectors a,b,c"""
   # Adapted from https://gamedev.stackexchange.com/questions/23743/whats-the-most-efficient-way-to-find-barycentric-coordinates
   v0: ve.Vector2 = b-a
   v1: ve.Vector2 = c-a
@@ -108,5 +118,5 @@ def getBayecentric(p: ve.Vector2, a: ve.Vector2, b: ve.Vector2, c: ve.Vector2): 
 
 
 def discreteToMidpoint(tx: ve.Vector2, xRes, yRes):
-  """Takes a discrete texel coordinate and returns the vector of real coordinates of the texels midpoint on a scale of 0 to 1."""
+  """Takes a discrete texel coordinate and returns the vector of[0,1]- coordinates of the texels midpoint on a scale of 0 to 1."""
   return ve.Vector2(tx.x/xRes, tx.y/yRes) + 1/2*ve.Vector2(xRes, yRes)

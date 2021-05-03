@@ -2,11 +2,11 @@ import vectormath as ve
 
 
 class Texel:
-  def __init__(self, midpointPos, discretePos, area):
+  def __init__(self, midpointPos, discretePos, ratio):
     super().__init__()
     self.midpointPos = midpointPos
     self.discretePos = discretePos
-    self.area = area
+    self.ratio = ratio
 
 
 class Object3D:

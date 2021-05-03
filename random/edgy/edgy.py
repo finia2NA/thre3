@@ -17,7 +17,8 @@ def rasterizeFace(face: [Vertex], xRes=16, yRes=16) -> [Texel]:
   assert len(face) == 3
 
   texels: [Texel] = []
-  area = getArea(face)
+  vertexArea = getArea(map(lambda x: x.txCoord, face))
+  textureArea = getArea(map(lambda x: x.txCoord, face))
 
   for i in range(3):
 
@@ -29,9 +30,11 @@ def rasterizeFace(face: [Vertex], xRes=16, yRes=16) -> [Texel]:
                            endVertex.txCoord, xRes, yRes)
 
     startTexel: Texel = \
-        Texel(discreteToMidpoint(startPos, xRes, yRes), startPos, area)
+        Texel(discreteToMidpoint(startPos, xRes, yRes),
+              startPos, vertexArea/textureArea)
     endTexel: Texel = \
-        Texel(discreteToMidpoint(endPos, xRes, yRes), endPos, area)
+        Texel(discreteToMidpoint(endPos, xRes, yRes),
+              endPos, vertexArea/textureArea)
 
     texels.append(startTexel)
     dPrint(startTexel)
@@ -51,7 +54,8 @@ def rasterizeFace(face: [Vertex], xRes=16, yRes=16) -> [Texel]:
         x = x/xRes
         y = m*x+b
         pos, _ = discretizeStartEnd(ve.Vector2(x, y), endPoint, xRes, yRes)
-        texel = Texel(discreteToMidpoint(pos, xRes, yRes), pos, area)
+        texel = Texel(discreteToMidpoint(pos, xRes, yRes),
+                      pos, vertexArea/textureArea)
         dPrint(texel)
         texels.append(texel)
 
@@ -69,13 +73,14 @@ def rasterizeFace(face: [Vertex], xRes=16, yRes=16) -> [Texel]:
       deltaY = second.discretePos.y - first.discretePos.y
       for i in range(1, int(deltaY)):
         pos = ve.Vector2(first.x, first.y+i)
-        filledTexel = Texel(discreteToMidpoint(pos, xRes, yRes), pos, area)
+        filledTexel = Texel(discreteToMidpoint(
+            pos, xRes, yRes), pos, vertexArea)
         dPrint(filledTexel)
         fill.append(filledTexel)
 
   return texels+fill
 
-  def getPatches(mesh: Object3D, xRes: int, yRes: int, lightmap: [[Color]]):
+  def getPatches(mesh: Object3D, xRes: int, yRes: int, luminanceMap: [[Color]]):
     patches = []
     for face in mesh.getFaces():
       a: Vertex = face[0]
@@ -95,8 +100,8 @@ def rasterizeFace(face: [Vertex], xRes=16, yRes=16) -> [Texel]:
         position = u*a.vertexCoord + v*b.vertexCoord + w*c.vertexCoord
         normal = u*a.vertexNormal + v*b.vertexNormal + w*c.vertexNormal
         selfIlluminance = \
-            sampleTexture(texel.midpointPos.x, texel.midpointPos.y, None) \
-            * texel.area  # Since the lightmap specifies light/area, multiplying with area should give the absolute power for the patch. # TODO: remove lightmap dummy
+            sampleTexture(texel.midpointPos.x, texel.midpointPos.y, luminanceMap) \
+            * texel.ratio  # Since the lightmap specifies light/area, multiplying with area should give the absolute power for the patch. # TODO: remove lightmap dummy
         backwriteCoord = texel.discretePos
         nice = 0  # TODO: the nice value should specify how far the midpoint of the texel is from the tri it is a part of. 0 in most cases, but in other cases I want to have some metric to determine which texel "wins"
 
