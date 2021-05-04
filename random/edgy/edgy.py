@@ -4,9 +4,9 @@ import re
 import time
 
 import vectormath as ve
-
-from classes import Color, Edge, Object3D, Patch, Texel, Vertex
-from helpers import dPrint, getArea, getBayecentric, discreteToMidpoint, discretizeStartEnd, sampleTexture
+from functools import reduce
+from classes import Color, Edge, Object3D, Patch, Texel, Vertex, ClosestRes
+from helpers import dPrint, getArea, getBayecentric, discreteToMidpoint, discretizeStartEnd, sampleTexture, getClosestInside, mult_components
 
 # debug helper
 
@@ -83,29 +83,36 @@ def rasterizeFace(face: [Vertex], xRes=16, yRes=16) -> [Texel]:
   def getPatches(mesh: Object3D, xRes: int, yRes: int, luminanceMap: [[Color]]):
     patches = []
     for face in mesh.getFaces():
-      a: Vertex = face[0]
-      b: Vertex = face[1]
-      c: Vertex = face[2]
-
       texels: [Texel] = rasterizeFace(face, xRes, yRes)
 
       texel: Texel
       for texel in texels:
-        u, v, w = getBayecentric(texel.midpointPos, a, b, c)
+        sampleDist = 0
+        bayecentrics = getBayecentric(texel.midpointPos, face)
 
-        if u < 0 or v < 0 or w < 0:
-          # in this case, the midpoint of the texel is not inside the shape. this is problematic, since we can't simply use bayecentric coordinates to determine the position of the patch in 3D space now.
-          # As a substitute, we find the closest point that *is* inside the shape and place the patch there.
-          # do some magic that gets us a new u,v,w that represents the closest point that IS in the face.
-          pass
+        if reduce(lambda a, b: min(a, b), bayecentrics) < 0:
+          closestRes: ClosestRes = getClosestInside(texel.midpointPos, face)
+          bayecentrics[closestRes.startIndex] = closestRes.bay1
+          bayecentrics[(closestRes.startIndex+1) % 3] = 1 - closestRes.bay1
+          bayecentrics[(closestRes.startIndex+2) % 3] = 0
 
-        position = u*a.vertexCoord + v*b.vertexCoord + w*c.vertexCoord
-        normal = u*a.vertexNormal + v*b.vertexNormal + w*c.vertexNormal
+          sampleDist = closestRes.distance
+
+          # TODO: don't know if changing the midpoint to reflect the samplepoint is good or bad...
+          texel.midpointPos = mult_components(
+              bayecentrics, map(lambda x: x.txcoord, face))
+
+        position = mult_components(
+            bayecentrics, map(lambda x: x.vertexCoord, face))
+        normal = mult_components(
+            bayecentrics, map(lambda x: x.normalCoords, face))
         selfIlluminance = \
             sampleTexture(texel.midpointPos.x, texel.midpointPos.y, luminanceMap) \
             * texel.ratio  # Since the lightmap specifies light/area, multiplying with area should give the absolute power for the patch. # TODO: remove lightmap dummy
         backwriteCoord = texel.discretePos
-        nice = 0  # TODO: the nice value should specify how far the midpoint of the texel is from the tri it is a part of. 0 in most cases, but in other cases I want to have some metric to determine which texel "wins"
+        nice = sampleDist  # the nice value should specify how far the midpoint of the texel is from the tri it is a part of. 0 in most cases, but in other cases I want to have some metric to determine which texel "wins"
 
         patch = Patch(position=position, normal=normal,
                       selfIlluminance=selfIlluminance, backwriteCoord=backwriteCoord, nice=nice)
+
+      

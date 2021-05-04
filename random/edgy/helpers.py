@@ -101,7 +101,10 @@ def distance(p1: ve.Vector2, p2: ve.Vector2):
   return math.sqrt(a*a+b*b)
 
 
-def closestToLineSegment(p: ve.Vector2, start: ve.Vector2, end: ve.Vector2) -> ClosestRes:
+def closestToLineSegment(p: ve.Vector2, face: [Vertex], startIndex: int) -> ClosestRes:
+  start = face[startIndex]
+  end = face[(startIndex+1) % 3]
+
   ls = (p-start).dot(end-start) / (end-start).dot(end-start)
   if ls <= 0:
     point = start
@@ -112,24 +115,32 @@ def closestToLineSegment(p: ve.Vector2, start: ve.Vector2, end: ve.Vector2) -> C
   else:
     point = (1-ls)*start+ls*end
 
-  return ClosestRes(ls, start, end, distance(p, point), point)
+  return ClosestRes(ls, startIndex, distance(p, point), point)
 
 
 def getClosestInside(p: ve.Vector2, face: [Vertex]) -> ClosestRes:
   """given a position that is outside of the given face, return the closest point that is in the face"""
-  # TODO: implement from here: https://diego.assencio.com/?index=ec3d5dfdfc0b6a0d147a656f0af332bd#mjx-eqn-post_ec3d5dfdfc0b6a0d147a656f0af332bd_lambda_closest_point_line_to_point. 3x.
+  # from here: https://diego.assencio.com/?index=ec3d5dfdfc0b6a0d147a656f0af332bd#mjx-eqn-post_ec3d5dfdfc0b6a0d147a656f0af332bd_lambda_closest_point_line_to_point.
 
   re: ClosestRes = None
 
   for i in range(3):
-    start = face[i]
-    end = face[(i+1) % 3]
-    this = closestToLineSegment(p, start, end)
+    this = closestToLineSegment(p, face, i)
 
     if re == None or re.distance > this.distance:
       re = this
 
     return re
+
+
+def mult_components(a, b):
+  # yeah i know this could be done more neatly
+  assert len(a) == len(b)
+  re = []
+  for i in range(len(a)):
+    re.append(a[i]*b[i])
+
+  return re
 
 
 def getBayecentric(p: ve.Vector2, a: ve.Vector2, b: ve.Vector2, c: ve.Vector2):  # ✔
@@ -151,7 +162,11 @@ def getBayecentric(p: ve.Vector2, a: ve.Vector2, b: ve.Vector2, c: ve.Vector2): 
   w = (d00 * d21 - d01 * d20) / denom
   u = 1.0 - v - w
 
-  return u, v, w
+  return [u, v, w]
+
+def getBayecentric(p: ve.Vector2, arr:[ve.Vector2]):
+  assert(len(arr)==3)
+  return getBayecentric(p, arr[0],arr[1],arr[2])
 
 
 def discreteToMidpoint(tx: ve.Vector2, xRes, yRes):
