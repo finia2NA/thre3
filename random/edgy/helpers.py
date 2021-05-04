@@ -3,7 +3,7 @@ import inspect
 import re
 import vectormath as ve
 
-from classes import Color
+from classes import Color, Vertex, ClosestRes
 
 # debug helper
 
@@ -93,6 +93,43 @@ def discretizeStartEnd(start: ve.Vector2, end: ve.Vector2, xRes, yRes):  # X
     ey = math.floor(ey)
 
   return ve.Vector2(sx, sy), ve.Vector2(ex, ey)
+
+
+def distance(p1: ve.Vector2, p2: ve.Vector2):
+  a = p2.x-p1.x
+  b = p2.y-p1.y
+  return math.sqrt(a*a+b*b)
+
+
+def closestToLineSegment(p: ve.Vector2, start: ve.Vector2, end: ve.Vector2) -> ClosestRes:
+  ls = (p-start).dot(end-start) / (end-start).dot(end-start)
+  if ls <= 0:
+    point = start
+    ls = 0
+  elif ls >= 1:
+    point = end
+    ls = 1
+  else:
+    point = (1-ls)*start+ls*end
+
+  return ClosestRes(ls, start, end, distance(p, point), point)
+
+
+def getClosestInside(p: ve.Vector2, face: [Vertex]) -> ClosestRes:
+  """given a position that is outside of the given face, return the closest point that is in the face"""
+  # TODO: implement from here: https://diego.assencio.com/?index=ec3d5dfdfc0b6a0d147a656f0af332bd#mjx-eqn-post_ec3d5dfdfc0b6a0d147a656f0af332bd_lambda_closest_point_line_to_point. 3x.
+
+  re: ClosestRes = None
+
+  for i in range(3):
+    start = face[i]
+    end = face[(i+1) % 3]
+    this = closestToLineSegment(p, start, end)
+
+    if re == None or re.distance > this.distance:
+      re = this
+
+    return re
 
 
 def getBayecentric(p: ve.Vector2, a: ve.Vector2, b: ve.Vector2, c: ve.Vector2):  # ✔

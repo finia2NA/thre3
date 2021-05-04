@@ -94,6 +94,8 @@ def rasterizeFace(face: [Vertex], xRes=16, yRes=16) -> [Texel]:
         u, v, w = getBayecentric(texel.midpointPos, a, b, c)
 
         if u < 0 or v < 0 or w < 0:
+          # in this case, the midpoint of the texel is not inside the shape. this is problematic, since we can't simply use bayecentric coordinates to determine the position of the patch in 3D space now.
+          # As a substitute, we find the closest point that *is* inside the shape and place the patch there.
           # do some magic that gets us a new u,v,w that represents the closest point that IS in the face.
           pass
 

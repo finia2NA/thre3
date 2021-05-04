@@ -50,3 +50,13 @@ class Color:
     self.r = r
     self.g = g
     self.b = b
+
+
+class ClosestRes:
+  def __init__(self, point1, point2, bay1, distance, pos):
+    super().__init__()
+    self, point1 = point1
+    self.point2 = point2
+    self.bay1 = bay1
+    self.distance = distance
+    self.pos = pos
