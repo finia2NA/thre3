@@ -2,9 +2,9 @@ import vectormath as ve
 
 
 class Texel:
-  def __init__(self, midpointPos, discretePos, ratio):
+  def __init__(self, samplePos, discretePos, ratio):
     super().__init__()
-    self.midpointPos = midpointPos
+    self.samplePos = samplePos
     self.discretePos = discretePos
     self.ratio = ratio
 
@@ -19,12 +19,16 @@ class Object3D:
 
 
 class Patch:
-  def __init__(self, position, normal, selfIlluminance, backwriteCoord, nice=0):
+  def __init__(self, position, normal, selfIlluminance, ratio, backwriteCoord, nice=0):
     self.position = position
     self.normal = normal
     self.selfIlluminance = selfIlluminance
     self.backWriteCoord = backwriteCoord
     self.nice = nice
+    self.ratio = ratio
+
+  def getWattage(self):
+    return self.selfIlluminance*self.ratio
 
 
 class Vertex:

@@ -164,9 +164,10 @@ def getBayecentric(p: ve.Vector2, a: ve.Vector2, b: ve.Vector2, c: ve.Vector2): 
 
   return [u, v, w]
 
-def getBayecentric(p: ve.Vector2, arr:[ve.Vector2]):
-  assert(len(arr)==3)
-  return getBayecentric(p, arr[0],arr[1],arr[2])
+
+def getBayecentric(p: ve.Vector2, arr: [ve.Vector2]):
+  assert(len(arr) == 3)
+  return getBayecentric(p, arr[0], arr[1], arr[2])
 
 
 def discreteToMidpoint(tx: ve.Vector2, xRes, yRes):

@@ -88,31 +88,29 @@ def rasterizeFace(face: [Vertex], xRes=16, yRes=16) -> [Texel]:
       texel: Texel
       for texel in texels:
         sampleDist = 0
-        bayecentrics = getBayecentric(texel.midpointPos, face)
+        bayecentrics = getBayecentric(texel.samplePos, face)
 
         if reduce(lambda a, b: min(a, b), bayecentrics) < 0:
-          closestRes: ClosestRes = getClosestInside(texel.midpointPos, face)
+          closestRes: ClosestRes = getClosestInside(texel.samplePos, face)
           bayecentrics[closestRes.startIndex] = closestRes.bay1
           bayecentrics[(closestRes.startIndex+1) % 3] = 1 - closestRes.bay1
           bayecentrics[(closestRes.startIndex+2) % 3] = 0
 
           sampleDist = closestRes.distance
 
-          # TODO: don't know if changing the midpoint to reflect the samplepoint is good or bad...
-          texel.midpointPos = mult_components(
-              bayecentrics, map(lambda x: x.txcoord, face))
+          # TODO don't know if changing the midpoint to reflect the samplepoint is good or bad... A: I think so, bc the sample point is where the RT will start from
+          texel.midpointPos = closestRes.pos
 
         position = mult_components(
             bayecentrics, map(lambda x: x.vertexCoord, face))
         normal = mult_components(
             bayecentrics, map(lambda x: x.normalCoords, face))
         selfIlluminance = \
-            sampleTexture(texel.midpointPos.x, texel.midpointPos.y, luminanceMap) \
-            * texel.ratio  # Since the lightmap specifies light/area, multiplying with area should give the absolute power for the patch. # TODO: remove lightmap dummy
+            sampleTexture(texel.samplePos.x,
+                          texel.samplePos.y, luminanceMap)
         backwriteCoord = texel.discretePos
         nice = sampleDist  # the nice value should specify how far the midpoint of the texel is from the tri it is a part of. 0 in most cases, but in other cases I want to have some metric to determine which texel "wins"
+        ratio = texel.ratio
 
         patch = Patch(position=position, normal=normal,
-                      selfIlluminance=selfIlluminance, backwriteCoord=backwriteCoord, nice=nice)
-
-      
+                      selfIlluminance=selfIlluminance, ratio=ratio, backwriteCoord=backwriteCoord, nice=nice)
