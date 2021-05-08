@@ -9,6 +9,14 @@ class Texel:
     self.ratio = ratio
 
 
+class Vertex:
+  def __init__(self, txCoord, vertexCoord, vertexNormal=ve.Vector2(0, 0)):
+    super().__init__()
+    self.txCoord: ve.Vector2 = txCoord
+    self.vertexCoord: ve.Vector3 = vertexCoord
+    self.vertexNormal: ve.Vector3 = vertexNormal
+
+
 class Object3D:
   def __init__(self, tris: [[Vertex]], translate):
     self.tris: [[Vertex]] = tris
@@ -29,14 +37,6 @@ class Patch:
 
   def getWattage(self):
     return self.selfIlluminance*self.ratio
-
-
-class Vertex:
-  def __init__(self, txCoord, vertexCoord, vertexNormal=ve.Vector2(0, 0)):
-    super().__init__()
-    self.txCoord: ve.Vector2 = txCoord
-    self.vertexCoord: ve.Vector3 = vertexCoord
-    self.vertexNormal: ve.Vector3 = vertexNormal
 
 
 class Edge:
