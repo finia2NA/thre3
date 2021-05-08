@@ -23,13 +23,14 @@ class Boundingbox:
 class Implicit:
   def __init__(self, start: ve.Vector2, end: ve.Vector2):
     super().__init__()
-    assert start != end
+    assert not(start.x == end.x and start.y == end.y)
 
     self.normal = getOrthNormal(start, end)
-    self.offset = start.dot(normal)
+    self.offset = start.dot(self.normal)
 
   def apply(self, point):
-    return self.normal.dot(point)-self.offset
+    re = self.normal.dot(point)-self.offset
+    return re
 
 
 def getOrthNormal(start: ve.Vector2, end: ve.Vector2):
@@ -64,19 +65,22 @@ def conservative(start, end, xRes, yRes):
 def rasterize(face: [ve.Vector2], xRes, yRes):
   locations = []
   boundingbox = Boundingbox(face, xRes, yRes)
-  conservative_edges = map(lambda i:
-                           conservative(face[i], face[(i+1) % 3], xRes, yRes), range(3))
+  conservative_edges = list(map(lambda i:
+                                conservative(face[i], face[(i+1) % 3], xRes, yRes), range(3)))
 
-  equations = map(lambda x: Implicit(x), conservative_edges)
+  equations = map(lambda x: Implicit(x[0], x[1]), conservative_edges)
 
-  for x in range(boundingbox.xMin, boundingbox.xMax+1):
-    for y in range(boundingbox.yMin, boundingbox.yMax+1):
-      loc = discreteToMidpoint(x, y, xRes, yRes)
+  for x in range(boundingbox.xMin, boundingbox.xMax):
+    for y in range(boundingbox.yMin, boundingbox.yMax):
+      midpoint = ve.Vector2((x+0.5)/xRes, (y+0.5)/yRes)
+      canary = True
       for eq in equations:
 
-        if eq.apply(loc) <= 0:  # TODO: fenceposting :D
+        if eq.apply(midpoint) >= 0:  # TODO: fenceposting :D
+          canary = False
           break
 
+      if canary:
         locations.append([x, y])
 
   return locations

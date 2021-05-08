@@ -58,7 +58,7 @@ def test2():
 
 def test3():
   txpoints = map(lambda x: x.txCoord, face)
-  rasterize(face)
+  print(rasterize(list(txpoints),16,16))
 
 
 if(__name__ == "__main__"):
