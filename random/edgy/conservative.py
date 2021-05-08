@@ -1,3 +1,4 @@
+# TODO: remove list() statements, which are here for debugging purposes
 import math
 
 import vectormath as ve
@@ -33,9 +34,14 @@ class Implicit:
     return re
 
 
+def length(v: ve.Vector2):
+  return math.sqrt(v.x*v.x+v.y*v.y)
+
+
 def getOrthNormal(start: ve.Vector2, end: ve.Vector2):
   direction: ve.Vector2 = end-start
-  return ve.Vector2(-direction.y, direction.x).normalize()
+  turned: ve.Vector2 = ve.Vector2(-direction.y, direction.x)
+  return turned*(1/length(turned))
 
 
 def getCandidate(texel_midpoint, normal, xRes, yRes):
@@ -68,7 +74,7 @@ def rasterize(face: [ve.Vector2], xRes, yRes):
   conservative_edges = list(map(lambda i:
                                 conservative(face[i], face[(i+1) % 3], xRes, yRes), range(3)))
 
-  equations = map(lambda x: Implicit(x[0], x[1]), conservative_edges)
+  equations = list(map(lambda x: Implicit(x[0], x[1]), conservative_edges))
 
   for x in range(boundingbox.xMin, boundingbox.xMax):
     for y in range(boundingbox.yMin, boundingbox.yMax):
