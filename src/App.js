@@ -9,6 +9,8 @@ import { CubeAbstract, TeapotAbstract } from "model/ElementAbtract";
 import { objToPatches } from "controller/Obj";
 import testcube from "assets/testcube.obj";
 
+import { Raycaster } from "three";
+
 // Redux
 
 // Components
@@ -29,12 +31,19 @@ const Controldiv = styled.div`
 const App = () => {
   var objects = [new CubeAbstract([0, 0, 0])];
 
+  // https://threejs.org/docs/#api/en/core/Raycaster
+  var raycaster;
+
+  var setraycaster = (rc) => {
+    raycaster = rc;
+  };
+
   objToPatches(testcube, 16, 16);
 
   return (
     <Maindiv>
       <Viewdiv>
-        <Viewport objects={objects} />
+        <Viewport objects={objects} setraycaster={setraycaster} />
       </Viewdiv>
 
       <Controldiv>
