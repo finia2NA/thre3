@@ -1,14 +1,6 @@
 import vectormath as ve
 
 
-class Texel:
-  def __init__(self, samplePos, discretePos, ratio):
-    super().__init__()
-    self.samplePos = samplePos
-    self.discretePos = discretePos
-    self.ratio = ratio
-
-
 class Vertex:
   def __init__(self, txCoord, vertexCoord, vertexNormal=ve.Vector2(0, 0)):
     super().__init__()
@@ -17,13 +9,13 @@ class Vertex:
     self.vertexNormal: ve.Vector3 = vertexNormal
 
 
-class Object3D:
-  def __init__(self, tris: [[Vertex]], translate):
-    self.tris: [[Vertex]] = tris
-    self.translate = translate
+class Szene:
+  def __init__(self):
+    super().__init__()
+    self.objects = []
 
-  def getFaces(self) -> [[Vertex]]:
-    return self.tris
+  def addObjects(self):
+    pass
 
 
 class Patch:
@@ -38,6 +30,26 @@ class Patch:
 
   def getWattage(self):
     return self.selfIlluminance*self.ratio
+
+
+class Object3D:
+  def __init__(self, tris: [[Vertex]], reflectanceMap, translate=0):
+    self.tris: [[Vertex]] = tris
+    self.translate = translate
+    self.formFlag = False
+
+    self.patches = []
+    self.patchRes = None
+
+  def getFaces(self) -> [[Vertex]]:
+    return self.tris
+
+  def getPatches(self, xRes, yRes, translate=self.translate) -> [Patch]:
+    update = False
+    if self.patchRes != [xRes,yRes]:
+      self.patchRes = [xRes, yRes]
+      update = True
+    self.patches 
 
 
 class Edge:

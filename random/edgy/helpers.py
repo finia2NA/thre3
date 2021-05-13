@@ -3,6 +3,8 @@ import inspect
 import re
 import vectormath as ve
 
+from multipledispatch import dispatch
+
 from classes import Color, Vertex, ClosestRes
 
 # debug helper
@@ -26,7 +28,7 @@ def sampleTexture(u, v, tx: [[Color]]):
   # Since the incoming u,v are midpointpositions, I don't think there's substantial harm that could come from fenceposting
   return tx[math.floor(u*uRes)][math.floor(v*vRes)]
 
-
+@dispatch(ve.Vector2,ve.Vector2,ve.Vector2)
 def getArea(a: ve.Vector2, b: ve.Vector2, c: ve.Vector2):
   """Returns the area of the triangle defined by the 3 given positions"""
   ab: ve.Vector2 = b-a
@@ -34,7 +36,7 @@ def getArea(a: ve.Vector2, b: ve.Vector2, c: ve.Vector2):
 
   return (1/2) * ab.cross(ac)
 
-
+@dispatch([ve.Vector2])
 def getArea(positions: [ve.Vector2]):
   """Returns the area of the triangle defined by the 3 given positions"""
   assert len(positions) == 3
@@ -88,7 +90,7 @@ def mult_components(a, b):
 
   return re
 
-
+@dispatch(ve.Vector2,ve.Vector2,ve.Vector2,ve.Vector2)
 def getBayecentric(p: ve.Vector2, a: ve.Vector2, b: ve.Vector2, c: ve.Vector2):  # ✔
   """returns the factors for bayecentrically calculating point p using vectors a,b,c"""
   # Adapted from https://gamedev.stackexchange.com/questions/23743/whats-the-most-efficient-way-to-find-barycentric-coordinates
@@ -110,7 +112,7 @@ def getBayecentric(p: ve.Vector2, a: ve.Vector2, b: ve.Vector2, c: ve.Vector2): 
 
   return [u, v, w]
 
-
+@dispatch(ve.Vector2,[ve.Vector2])
 def getBayecentric(p: ve.Vector2, arr: [ve.Vector2]):
   assert(len(arr) == 3)
   return getBayecentric(p, arr[0], arr[1], arr[2])

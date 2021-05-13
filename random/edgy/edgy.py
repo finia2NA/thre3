@@ -2,12 +2,15 @@ import inspect
 import math
 import re
 import time
+from functools import reduce
 
 import vectormath as ve
-from functools import reduce
+from multipledispatch import dispatch
+
 import conservative
-from classes import Color, Object3D, Patch, Texel, Vertex, ClosestRes
-from helpers import dPrint, getArea, getBayecentric, discreteToMidpoint, sampleTexture, getClosestInside, mult_components
+from classes import ClosestRes, Color, Object3D, Patch, Vertex
+from helpers import (discreteToMidpoint, dPrint, getArea, getBayecentric,
+                     getClosestInside, mult_components, sampleTexture)
 
 
 def getPatches(mesh: Object3D, xRes: int, yRes: int, luminanceMap: [[Color]], reflectanceMap: [[Color]]):
