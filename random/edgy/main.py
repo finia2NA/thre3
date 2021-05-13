@@ -7,6 +7,7 @@ import vectormath as ve
 
 from classes import Color, Edge, Object3D, Patch, Texel, Vertex
 from helpers import dPrint, getArea, getBayecentric, discreteToMidpoint
+from edgy import rasterizeFace
 
 from conservative import rasterize
 
@@ -47,7 +48,8 @@ def bayExample2():
 
 
 def test1():
-  # myAlg()
+  txpoints = list(map(lambda x: x.txCoord, face))
+  rasterizeFace(txpoints,16,16)
   pass
 
 
@@ -57,9 +59,9 @@ def test2():
 
 
 def test3():
-  txpoints = map(lambda x: x.txCoord, face)
+  txpoints = list(map(lambda x: x.txCoord, face))
   print(rasterize(list(txpoints),16,16))
 
 
 if(__name__ == "__main__"):
-  test3()
+  test1()

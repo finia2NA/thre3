@@ -27,10 +27,11 @@ class Object3D:
 
 
 class Patch:
-  def __init__(self, position, normal, selfIlluminance, ratio, backwriteCoord, nice=0):
+  def __init__(self, position, normal, selfIlluminance, reflectance, ratio, backwriteCoord, nice=0):
     self.position = position
     self.normal = normal
     self.selfIlluminance = selfIlluminance
+    self.reflectance = reflectance
     self.backWriteCoord = backwriteCoord
     self.nice = nice
     self.ratio = ratio

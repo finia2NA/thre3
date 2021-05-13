@@ -41,60 +41,6 @@ def getArea(positions: [ve.Vector2]):
   return getArea(positions[0], positions[1], positions[2])
 
 
-def discretizeStartEnd(start: ve.Vector2, end: ve.Vector2, xRes, yRes):  # X
-  """takes a start and end vector of a line and returns the start and end discrete texel positions for a canvas of given size"""
-  direction: ve.Vector2 = ve.Vector2(end.x-start.x, end.y-start.y)
-
-  startquadrant = -1
-  if direction.x <= 0 and direction.y < 0:
-    startquadrant = 1
-  elif direction.x < 0 and direction.y >= 0:
-    startquadrant = 2
-  elif direction.x >= 0 and direction.y > 0:
-    startquadrant = 3
-  elif direction.x > 0 and direction.y <= 0:
-    startquadrant = 4
-
-  # start
-  sx = start.x*xRes
-  sy = start.y*yRes
-
-  if sx.is_integer():
-    sx = sx if startquadrant in [3, 4] else sx-1
-  else:
-    sx = math.floor(sx)
-
-  if sy.is_integer():
-    sy = sy if startquadrant in [2, 3] else sy-1
-  else:
-    sy = math.floor(sy)
-
-  # end
-  endquadrant = -1
-  if direction.x < 0 and direction.y <= 0:
-    endquadrant = 1
-  elif direction.x <= 0 and direction.y > 0:
-    endquadrant = 2
-  elif direction.x > 0 and direction.y >= 0:
-    endquadrant = 3
-  elif direction.x >= 0 and direction.y < 0:
-    endquadrant = 4
-  ex = end.x*xRes
-  ey = end.y*yRes
-
-  if ex.is_integer():
-    ex = ex-1 if endquadrant in [3, 4] else ex
-  else:
-    ex = math.floor(ex)
-
-  if ey.is_integer():
-    ey = ey-1 if endquadrant in [2, 3] else ey
-  else:
-    ey = math.floor(ey)
-
-  return ve.Vector2(sx, sy), ve.Vector2(ex, ey)
-
-
 def distance(p1: ve.Vector2, p2: ve.Vector2):
   a = p2.x-p1.x
   b = p2.y-p1.y
@@ -115,7 +61,7 @@ def closestToLineSegment(p: ve.Vector2, face: [Vertex], startIndex: int) -> Clos
   else:
     point = (1-ls)*start+ls*end
 
-  return ClosestRes(ls, startIndex, distance(p, point), point)
+  return ClosestRes(startIndex=ls, bay1=ls, distance=distance(p, point), pos=point)
 
 
 def getClosestInside(p: ve.Vector2, face: [Vertex]) -> ClosestRes:
@@ -173,3 +119,8 @@ def getBayecentric(p: ve.Vector2, arr: [ve.Vector2]):
 def discreteToMidpoint(tx: ve.Vector2, xRes, yRes):
   """Takes a discrete texel coordinate and returns the vector of[0,1]- coordinates of the texels midpoint on a scale of 0 to 1."""
   return ve.Vector2(tx.x/xRes, tx.y/yRes) + 1/2*ve.Vector2(xRes, yRes)
+
+
+def discreteToMidpoint(pos: [int], xRes, yRes):
+  vector = ve.Vector2(pos[0], pos[1])
+  return discreteToMidpoint(vector, xRes, yRes)

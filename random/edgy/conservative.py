@@ -68,8 +68,8 @@ def conservative(start, end, xRes, yRes):
   return [re_start, re_end]
 
 
-def rasterize(face: [ve.Vector2], xRes, yRes):
-  locations = []
+def rasterize(face: [ve.Vector2], xRes, yRes) -> [[int]]:
+  locations:[[int]] = []
   boundingbox = Boundingbox(face, xRes, yRes)
   conservative_edges = list(map(lambda i:
                                 conservative(face[i], face[(i+1) % 3], xRes, yRes), range(3)))
