@@ -2,12 +2,28 @@ import math
 import inspect
 import re
 import vectormath as ve
+import random
+
+from typing import List
 
 from multipledispatch import dispatch
 
-from classes import Color, Vertex, ClosestRes
+from classes import Color, Patch, Vertex, ClosestRes
 
 # debug helper
+
+
+def rt(a: ve.Vector3, b: ve.Vector3):
+  # obviously not what'll be done in the end
+  return random.randint(0, 1)
+
+
+def computeFormFactor(a: Patch, b: Patch):
+  dist = distance(a.position, b.position)
+  # eigentlich noch durch produkt der beiden längen, aber ich gehe mal davon aus, dass die normals normalized sind
+  angleFactor = min(-a.normal.dot(b.normal), 0)
+  unobscured = rt(a.position, b.position)
+  return dist*angleFactor*unobscured
 
 
 def dPrint(x):  # ✔
@@ -19,7 +35,7 @@ def dPrint(x):  # ✔
 
 # helper methods
 
-def sampleTexture(u, v, tx: [[Color]]):
+def sampleTexture(u, v, tx: List[List[Color]]):
   """samples the texture at given [0,1]-coordinates"""
   uRes = len(tx)
   vRes = len(tx[0])
@@ -28,7 +44,8 @@ def sampleTexture(u, v, tx: [[Color]]):
   # Since the incoming u,v are midpointpositions, I don't think there's substantial harm that could come from fenceposting
   return tx[math.floor(u*uRes)][math.floor(v*vRes)]
 
-@dispatch(ve.Vector2,ve.Vector2,ve.Vector2)
+
+@dispatch(ve.Vector2, ve.Vector2, ve.Vector2)
 def getArea(a: ve.Vector2, b: ve.Vector2, c: ve.Vector2):
   """Returns the area of the triangle defined by the 3 given positions"""
   ab: ve.Vector2 = b-a
@@ -36,8 +53,9 @@ def getArea(a: ve.Vector2, b: ve.Vector2, c: ve.Vector2):
 
   return (1/2) * ab.cross(ac)
 
+
 @dispatch([ve.Vector2])
-def getArea(positions: [ve.Vector2]):
+def getArea(positions: List[ve.Vector2]):
   """Returns the area of the triangle defined by the 3 given positions"""
   assert len(positions) == 3
   return getArea(positions[0], positions[1], positions[2])
@@ -49,7 +67,7 @@ def distance(p1: ve.Vector2, p2: ve.Vector2):
   return math.sqrt(a*a+b*b)
 
 
-def closestToLineSegment(p: ve.Vector2, face: [Vertex], startIndex: int) -> ClosestRes:
+def closestToLineSegment(p: ve.Vector2, face: List[Vertex], startIndex: int) -> ClosestRes:
   start = face[startIndex]
   end = face[(startIndex+1) % 3]
 
@@ -66,7 +84,7 @@ def closestToLineSegment(p: ve.Vector2, face: [Vertex], startIndex: int) -> Clos
   return ClosestRes(startIndex=ls, bay1=ls, distance=distance(p, point), pos=point)
 
 
-def getClosestInside(p: ve.Vector2, face: [Vertex]) -> ClosestRes:
+def getClosestInside(p: ve.Vector2, face: List[Vertex]) -> ClosestRes:
   """given a position that is outside of the given face, return the closest point that is in the face"""
   # from here: https://diego.assencio.com/?index=ec3d5dfdfc0b6a0d147a656f0af332bd#mjx-eqn-post_ec3d5dfdfc0b6a0d147a656f0af332bd_lambda_closest_point_line_to_point.
 
@@ -90,7 +108,8 @@ def mult_components(a, b):
 
   return re
 
-@dispatch(ve.Vector2,ve.Vector2,ve.Vector2,ve.Vector2)
+
+@dispatch(ve.Vector2, ve.Vector2, ve.Vector2, ve.Vector2)
 def getBayecentric(p: ve.Vector2, a: ve.Vector2, b: ve.Vector2, c: ve.Vector2):  # ✔
   """returns the factors for bayecentrically calculating point p using vectors a,b,c"""
   # Adapted from https://gamedev.stackexchange.com/questions/23743/whats-the-most-efficient-way-to-find-barycentric-coordinates
@@ -112,8 +131,9 @@ def getBayecentric(p: ve.Vector2, a: ve.Vector2, b: ve.Vector2, c: ve.Vector2): 
 
   return [u, v, w]
 
-@dispatch(ve.Vector2,[ve.Vector2])
-def getBayecentric(p: ve.Vector2, arr: [ve.Vector2]):
+
+@dispatch(ve.Vector2, [ve.Vector2])
+def getBayecentric(p: ve.Vector2, arr: List[ve.Vector2]):
   assert(len(arr) == 3)
   return getBayecentric(p, arr[0], arr[1], arr[2])
 
@@ -123,6 +143,6 @@ def discreteToMidpoint(tx: ve.Vector2, xRes, yRes):
   return ve.Vector2(tx.x/xRes, tx.y/yRes) + 1/2*ve.Vector2(xRes, yRes)
 
 
-def discreteToMidpoint(pos: [int], xRes, yRes):
+def discreteToMidpoint(pos: List[int], xRes, yRes):
   vector = ve.Vector2(pos[0], pos[1])
   return discreteToMidpoint(vector, xRes, yRes)

@@ -4,6 +4,8 @@ import re
 import time
 from functools import reduce
 
+from typing import List
+
 import vectormath as ve
 from multipledispatch import dispatch
 
@@ -13,7 +15,7 @@ from helpers import (discreteToMidpoint, dPrint, getArea, getBayecentric,
                      getClosestInside, mult_components, sampleTexture)
 
 
-def getPatches(mesh: Object3D, xRes: int, yRes: int, luminanceMap: [[Color]], reflectanceMap: [[Color]]):
+def getPatches(mesh: Object3D, xRes: int, yRes: int, luminanceMap: List[List[Color]], reflectanceMap: List[List[Color]]):
   patches = []
 
   for face in mesh.getFaces():
@@ -26,7 +28,7 @@ def getPatches(mesh: Object3D, xRes: int, yRes: int, luminanceMap: [[Color]], re
 
     texels = conservative.rasterize(tx_cornerPoints, xRes, yRes)
 
-    texel: [int]
+    texel: List[int]
     for texel in texels:
       samplePoint = discreteToMidpoint(texel)
       sampleDistance = 0
@@ -46,10 +48,12 @@ def getPatches(mesh: Object3D, xRes: int, yRes: int, luminanceMap: [[Color]], re
 
         samplePoint = closestRes.pos
 
-      position = mult_components(
+      position: ve.Vector3 = mult_components(
           bayecentrics, map(lambda x: x.vertexCoord, face))
-      normal = mult_components(
+      normal: ve.Vector3 = mult_components(
           bayecentrics, map(lambda x: x.normalCoords, face))
+      normal = normal/math.sqrt(normal.x*normal.x +
+                                normal.y*normal.y+normal.z*normal.z)
       selfIlluminance = \
           sampleTexture(samplePoint.x,
                         samplePoint.y, luminanceMap)
@@ -57,7 +61,7 @@ def getPatches(mesh: Object3D, xRes: int, yRes: int, luminanceMap: [[Color]], re
                                   samplePoint.y, reflectanceMap)
       nice = sampleDistance  # the nice value should specify how far the midpoint of the texel is from the tri it is a part of. 0 in most cases, but in other cases I want to have some metric to determine which texel "wins"
 
-      patch = Patch(position=position, normal=normal,
+      patch = Patch(position=position, owner=mesh, normal=normal,
                     selfIlluminance=selfIlluminance, reflectance=reflectance, ratio=ratio, backwriteCoord=texel, nice=nice)
 
       patches.append(patch)

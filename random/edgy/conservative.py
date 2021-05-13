@@ -1,6 +1,6 @@
 # TODO: remove list() statements, which are here for debugging purposes
 import math
-
+from typing import List
 import vectormath as ve
 
 from helpers import discreteToMidpoint
@@ -68,8 +68,8 @@ def conservative(start, end, xRes, yRes):
   return [re_start, re_end]
 
 
-def rasterize(face: [ve.Vector2], xRes, yRes) -> [[int]]:
-  locations:[[int]] = []
+def rasterize(face: List[ve.Vector2], xRes, yRes) -> List[List[int]]:
+  locations: List[List[int]] = []
   boundingbox = Boundingbox(face, xRes, yRes)
   conservative_edges = list(map(lambda i:
                                 conservative(face[i], face[(i+1) % 3], xRes, yRes), range(3)))
