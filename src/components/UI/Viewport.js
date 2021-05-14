@@ -26,8 +26,9 @@ const CameraControls = () => {
 const Viewport = (props) => {
   return (
     <Canvas
-      onCreated={({ gl }) => {
+      onCreated={({ gl, raycaster }) => {
         gl.setClearColor("darkgrey");
+        props.setraycaster(raycaster);
       }}
     >
       {/* Canvas Config */}

@@ -5,7 +5,7 @@ import time
 
 import vectormath as ve
 
-from classes import Color, Edge, Object3D, Patch, Texel, Vertex
+from classes import Color, Edge, Object3D, Patch, Vertex
 from helpers import dPrint, getArea, getBayecentric, discreteToMidpoint
 from edgy import rasterizeFace
 
