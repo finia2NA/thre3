@@ -33,25 +33,53 @@ class Patch:
     return self.finalWattage*self.ratio
 
 
+class FormFactorKey:
+  def __init__(self, primary: Patch, secondary: Patch):
+    super().__init__()
+    self.primary_id = primary.owner.id
+    self.primary_x = primary.x
+    self.primary_y = primary.y
+
+    self.secondary_id = secondary.owner.id
+    self.secondary_x = secondary.x
+    self.secondary_y = secondary.y
+
+
 class FormFactorStorage:
   def __init__(self):
     super().__init__()
     self.theDict = {}
 
-  def add(self, a: Patch, b: Patch, factor: float):
-    primary:Patch = min(a, b, key=lambda x: x.owner.id)
-    if not primary.owner.id in self.theDict:
-      self.theDict[primary.owner.id] = [[None]*primary.owner.patchRes[1] for _ in primary.owner.patch] # TODO: not length ysize, but ysize-xSize or something.
+  def __determine_primary(self, a: Patch, b: Patch):
+    return min(a, b, key=lambda x: (x.owner.id, x.backwriteCoord.x, x.backwriteCoord.y))
 
-  def getFF(a: Patch, b: Patch):
-    pass
+  def add(self, a: Patch, b: Patch, factor: float):
+    if a == b:
+      return
+
+    # the primary is the one with lowest objectID, x, then y.
+    primary: self.__determine_primary(a, b)
+    secondary = a if a != primary else b
+
+    self.theDict[FormFactorKey(primary, secondary)] = factor
+
+  def getFF(self, a: patch, b: Patch):
+
+    if a == b:
+      return 0
+
+    primary: self.__determine_primary(a, b)
+    secondary = a if a != primary else b
+
+    return self.theDict[FormFactorKey(a, b)]
 
 
 class Scene:
   def __init__(self):
     super().__init__()
     self.objects = []
-    self.__formFactors = {}  # Form Factors are a dictionary over <mesh, x,y>
+    # Form Factors are essentially a dictionary over <mesh, x,y> that has been optimized for symmetry.
+    self.__formFactors = FormFactorStorage()
 
   def addObjects(self, new_o):
     # Adding the object to a szene definitly means the form factors have to be recomputed, but patches might be right.
@@ -73,10 +101,10 @@ class Scene:
         patches.append(o.getPatches())
 
       for i in range(len(patches)):
-        self.__formFactors[patches[i], patches[i]] = 0
+        self.__formFactors.add(patches[i], patches[i], 0)
         for j in range(i+1, len(patches)):
-          self.__formFactors[(patches[i], patches[j])] = computeFormFactor(
-              patches[i], patches[j])
+          self.__formFactors.add(
+              (patches[i], patches[j], computeFormFactor(patches[i], patches[j])))
 
       for o in self.objects:
         canary = o.formFlag = True

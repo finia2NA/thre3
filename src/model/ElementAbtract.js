@@ -4,12 +4,10 @@
 
 const { checkerboardTexture, rainbowTexture } = require("./Textures");
 
-// TODO: support scale and rotation. This is not trivial when allowing object groups!
+// TODO support scale and rotation. This is not trivial when allowing object groups!
 class EntityAbstract {
   constructor(position = [0, 0, 0]) {
     this.position = position;
-    this.scale = [1, 1, 1];
-    this.rotation = [0, 0, 0];
     this.name = "EntityAbstract";
   }
 
