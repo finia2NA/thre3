@@ -39,6 +39,13 @@ export class CubeAbstract extends TangibleAbstract {
     super(position);
     this.name = "CubeAbstract";
   }
+}
+// TODO:
+export class TestBoxAbstract extends TangibleAbstract {
+  constructor(position = [0, 0, 0]) {
+    super(position);
+    this.name = "TestBoxAbstract";
+  }
 } // TODO:
 
 export class PlaneAbstract extends TangibleAbstract {} // TODO:

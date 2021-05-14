@@ -14,6 +14,28 @@ export const LoadingBox = (props) => {
   );
 };
 
+export const TestBox = (props) => {
+  const scene = useLoader(OBJLoader, "robj/package/obj.obj");
+  scene.children[0].position.set(
+    props.position[0],
+    props.position[1],
+    props.position[2]
+  );
+  return (
+    <primitive object={scene.children[0]}>
+      {props.texture && (
+        <meshBasicMaterial
+          attach="material"
+          transparent
+          side={THREE.DoubleSide}
+        >
+          <primitive attach="map" object={props.texture} />
+        </meshBasicMaterial>
+      )}
+    </primitive>
+  );
+};
+
 export const Cube = (props) => {
   const scene = useLoader(OBJLoader, "testcube.obj");
   scene.children[0].position.set(
@@ -79,6 +101,11 @@ export const Tangible3D = (props) => {
     case "CubeAbstract":
       console.log("loading a cube!");
       re = <Cube {...props.abstract} texture={texture} />;
+      break;
+
+    case "TestBoxAbstract":
+      console.log("loading the testbox!!");
+      re = <TestBox {...props.abstract} texture={texture} />;
       break;
 
     default:
