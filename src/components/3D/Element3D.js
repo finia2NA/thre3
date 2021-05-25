@@ -14,103 +14,38 @@ export const LoadingBox = (props) => {
   );
 };
 
-export const TestBox = (props) => {
-  const scene = useLoader(OBJLoader, "robj/package/obj.obj");
-  scene.children[0].position.set(
-    props.position[0],
-    props.position[1],
-    props.position[2]
-  );
-  return (
-    <primitive object={scene.children[0]}>
-      {props.texture && (
-        <meshBasicMaterial
-          attach="material"
-          transparent
-          side={THREE.DoubleSide}
-        >
-          <primitive attach="map" object={props.texture} />
-        </meshBasicMaterial>
-      )}
-    </primitive>
-  );
-};
-
-export const Cube = (props) => {
-  const scene = useLoader(OBJLoader, "testcube.obj");
-  scene.children[0].position.set(
-    props.position[0],
-    props.position[1],
-    props.position[2]
-  );
-  return (
-    <primitive object={scene.children[0]}>
-      {props.texture && (
-        <meshBasicMaterial
-          attach="material"
-          transparent
-          side={THREE.DoubleSide}
-        >
-          <primitive attach="map" object={props.texture} />
-        </meshBasicMaterial>
-      )}
-    </primitive>
-  );
-};
-
-export const Teapot = (props) => {
-  const scene = useLoader(OBJLoader, "teapot.obj");
-  // scene.children[0].scale.set(0.05, 0.05, 0.05);
-  scene.children[0].position.set(
-    props.position[0],
-    props.position[1],
-    props.position[2]
-  );
-  return (
-    <primitive object={scene.children[0]}>
-      {props.texture && (
-        <meshBasicMaterial
-          attach="material"
-          transparent
-          side={THREE.DoubleSide}
-        >
-          <primitive attach="map" object={props.texture} />
-        </meshBasicMaterial>
-      )}
-    </primitive>
-  );
-};
-
-export const Tangible3D = (props) => {
-  // load texture
+// Takes an ObjTXBundle and displays it.
+const Element3D = (props) => {
   const texture = useMemo(() => {
     const re = new THREE.CanvasTexture(defaultTexture()); // TODO: use tx from props instead of just using default
     re.magFilter = THREE.NearestFilter;
     return re;
   }, []);
-  // TODO: maybe move the creation of the material here too
 
-  var re = <LoadingBox />;
+  console.log(props.obj);
 
-  switch (props.abstract.name) {
-    case "TeapotAbstract":
-      console.log("loading a teapot!");
-      re = <Teapot {...props.abstract} texture={texture} />;
-      break;
+  const scene = useLoader(OBJLoader, props.obj.meshPath);
+  // scene.children[0].position.set(
+  //   obj.translate[0],
+  //   obj.translate[1],
+  //   obj.translate[2]
+  // );
 
-    case "CubeAbstract":
-      console.log("loading a cube!");
-      re = <Cube {...props.abstract} texture={texture} />;
-      break;
+  const re = (
+    <primitive object={scene.children[0]}>
+      {
+        <meshBasicMaterial
+          attach="material"
+          transparent
+          side={THREE.DoubleSide}
+        >
+          <primitive attach="map" object={texture} />
+        </meshBasicMaterial>
+      }
+    </primitive>
+  );
 
-    case "TestBoxAbstract":
-      console.log("loading the testbox!!");
-      re = <TestBox {...props.abstract} texture={texture} />;
-      break;
-
-    default:
-      break;
-  }
-
-  return <Suspense fallback={<LoadingBox />}>{re}</Suspense>;
+  return re;
 };
+
+export default Element3D;

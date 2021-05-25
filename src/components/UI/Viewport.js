@@ -1,5 +1,6 @@
-import { Tangible3D } from "components/3D/Element3D";
+import Element3D, { LoadingBox } from "components/3D/Element3D";
 import React, { useRef } from "react";
+import { Suspense } from "react";
 import { Canvas, extend, useFrame, useThree } from "react-three-fiber";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
@@ -24,6 +25,8 @@ const CameraControls = () => {
 };
 
 const Viewport = (props) => {
+  const objects = props.scene.objects;
+
   return (
     <Canvas
       onCreated={({ gl, raycaster }) => {
@@ -37,8 +40,10 @@ const Viewport = (props) => {
 
       {/* Objects */}
 
-      {props.objects.map((o, i) => (
-        <Tangible3D abstract={o} key={i} />
+      {props.scene.objects.map((o, i) => (
+        <Suspense fallback={<LoadingBox />} key={i}>
+          <Element3D obj={o} key={i} />
+        </Suspense>
       ))}
     </Canvas>
   );
