@@ -1,5 +1,5 @@
 import { request } from "util/network.js";
-import { defaultTexture } from "model/Textures";
+import { defaultTexture } from "model/textures";
 import generatePatches from "controller/rasterizer/rasterizer";
 
 const OBJFile = require("obj-file-parser");
@@ -27,12 +27,6 @@ export class ObjectRepresentation {
     this.patchRes = [16, 16]; //TODO: change
     this.patchFlag = false;
     this.patches = null;
-  }
-
-  getPatches(params) {
-    // TODO: caching
-    const structure = this.parsedMesh.models[0];
-    const faces = this.parsedMesh.models[0].faces;
   }
 
   async loadObjText() {

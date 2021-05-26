@@ -6,7 +6,9 @@ export function getArea(positions) {
   const ab = b.clone().sub(a);
   const ac = c.clone().sub(a);
 
-  debugger;
-  const re = (1 / 2) * ab.clone().cross(ac).length();
-  return re;
+  const cross = ab.clone().cross(ac);
+
+  // sometimes the resulting cp is a number, sometimes it's a vector whose length is the value we're looking for.
+  if (typeof cross == "number") return cross / 2;
+  else return cross.length() / 2;
 }

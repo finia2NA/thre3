@@ -1,14 +1,14 @@
-import React, { useRef, useState, useMemo, useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 
 import Viewport from "components/UI/Viewport";
 import Controlpanel from "components/UI/ControlPanel";
 
-import { SceneRepresentation } from "model/classes";
+import { SceneRepresentation } from "model/representations";
 
 import { Raycaster } from "three";
 
-import { ObjectRepresentation } from "model/classes";
+import { ObjectRepresentation } from "model/representations";
 
 // Redux
 
@@ -39,7 +39,9 @@ const App = () => {
   cornell.loadObjText();
 
   cornell.patchRes = [16, 16];
+  console.log("start");
   cornell.getPatches();
+  console.log("end");
 
   scene.addObject(cornell);
 

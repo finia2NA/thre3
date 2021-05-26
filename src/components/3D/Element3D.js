@@ -1,10 +1,9 @@
-import React, { Suspense, useMemo, useRef, useState } from "react";
+import React from "react";
 
 import * as THREE from "three";
-import { Canvas, useFrame, useLoader } from "react-three-fiber";
+import { useLoader } from "react-three-fiber";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 
-import { defaultTexture, checkerboardTexture } from "model/Textures";
 import { TextureLoader } from "three/src/loaders/TextureLoader";
 
 export const LoadingBox = (props) => {
@@ -40,7 +39,7 @@ const Element3D = (props) => {
 
   const texture = useLoader(TextureLoader, texturePath);
 
-  console.log(props.obj);
+  // console.log(props.obj);
 
   const scene = useLoader(OBJLoader, props.obj.meshPath);
   // scene.children[0].position.set(

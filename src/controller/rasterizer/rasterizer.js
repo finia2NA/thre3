@@ -1,5 +1,6 @@
 import { Vector2, Vector3 } from "three";
 import { getArea } from "./helpers";
+import { Boundingbox } from "./rasterclasses";
 const OBJFile = require("obj-file-parser");
 
 class Vertex {
@@ -36,6 +37,11 @@ function resolveActualValues(structure) {
   return re;
 }
 
+function rasterize(corners, xRes, yRes) {
+  const locations = [];
+  const boundingbox = new Boundingbox(corners, xRes, yRes);
+}
+
 // Takes a parsed obj,
 function generatePatches(objText, xRes, yRes, luminancePath, reflectancePath) {
   const parsed = new OBJFile(objText).parse();
@@ -48,6 +54,12 @@ function generatePatches(objText, xRes, yRes, luminancePath, reflectancePath) {
     const textureArea = getArea(face.map((x) => x.txCoord));
     const texelSize = 1 / (xRes * yRes);
     const ratio = vertexArea / (textureArea * texelSize);
+
+    const texels = rasterize(
+      face.map((o) => o.txCoord),
+      xRes,
+      yRes
+    );
   }
 }
 
