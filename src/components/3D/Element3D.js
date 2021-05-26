@@ -1,10 +1,11 @@
 import React, { Suspense, useMemo, useRef, useState } from "react";
 
 import * as THREE from "three";
-import { useLoader } from "react-three-fiber";
+import { Canvas, useFrame, useLoader } from "react-three-fiber";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 
 import { defaultTexture, checkerboardTexture } from "model/Textures";
+import { TextureLoader } from "three/src/loaders/TextureLoader";
 
 export const LoadingBox = (props) => {
   return (
@@ -16,11 +17,28 @@ export const LoadingBox = (props) => {
 
 // Takes an ObjTXBundle and displays it.
 const Element3D = (props) => {
-  const texture = useMemo(() => {
-    const re = new THREE.CanvasTexture(defaultTexture()); // TODO: use tx from props instead of just using default
-    re.magFilter = THREE.NearestFilter;
-    return re;
-  }, []);
+  // this is how you'd use one of the canvas textures
+  // const texture = useMemo(() => {
+  //   const re = new THREE.CanvasTexture(defaultTexture()); // TODO: use tx from props instead of just using default
+  //   re.magFilter = THREE.NearestFilter;
+  //   return re;
+  // }, []);
+
+  var texturePath = props.obj.reflectancePath;
+
+  switch (props.displaymode) {
+    case "rad":
+      texturePath = props.obj.radiosityPath;
+      break;
+    case "reflectance":
+      texturePath = props.obj.reflectancePath;
+      break;
+    case "luminance":
+      texturePath = props.obj.luminancePath;
+      break;
+  }
+
+  const texture = useLoader(TextureLoader, texturePath);
 
   console.log(props.obj);
 

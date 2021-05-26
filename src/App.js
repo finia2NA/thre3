@@ -8,7 +8,7 @@ import { SceneRepresentation } from "model/classes";
 
 import { Raycaster } from "three";
 
-import { Object3D } from "model/classes";
+import { ObjectRepresentation } from "model/classes";
 
 // Redux
 
@@ -30,21 +30,25 @@ const Controldiv = styled.div`
 const App = () => {
   const scene = new SceneRepresentation();
 
-  const cornell = new Object3D(
+  const cornell = new ObjectRepresentation(
     "robj/package/obj.obj",
     "robj/package/light.png",
     "robj/package/reflectance.png"
   );
+
   cornell.loadObjText();
+
+  cornell.patchRes = [16, 16];
+  cornell.getPatches();
 
   scene.addObject(cornell);
 
-  const blub = (x) => {};
+  const a = (x) => {};
 
   return (
     <Maindiv>
       <Viewdiv>
-        <Viewport scene={scene} setraycaster={blub} />
+        <Viewport scene={scene} displaymode="reflectance" setraycaster={a} />
       </Viewdiv>
 
       <Controldiv>
