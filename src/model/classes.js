@@ -1,6 +1,6 @@
 import { request } from "util/network.js";
 import { defaultTexture } from "model/Textures";
-import generatePatches from "controller/rasterizer";
+import generatePatches from "controller/rasterizer/rasterizer";
 
 const OBJFile = require("obj-file-parser");
 
