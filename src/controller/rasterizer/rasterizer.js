@@ -37,9 +37,56 @@ function resolveActualValues(structure) {
   return re;
 }
 
+function getOrthNormal(start, end) {
+  const direction = end.clone().sub(start);
+  const re = new Vector2(-direction.y, direction.x);
+  re.divideScalar(re.length());
+
+  return re;
+}
+
+function getCandidate(texel_midpoint, normal, xRes, yRes) {
+  const xIncrement = 1 / xRes;
+  const yIncrement = 1 / yRes;
+
+  const positions = [];
+
+  for (const i of [-0.5, 0.5]) {
+    for (const j of [-0.5, 0.5]) {
+      positions.push(
+        texel_midpoint.clone().add(new Vector2(i * xIncrement, j * yIncrement))
+      );
+    }
+  }
+
+  // This takes the max of the positions array. I won't blame you if this isn't immediatly obvious.
+  const re = positions.reduce((a, b) =>
+    normal.dot(a) > normal.dot(b) ? a : b
+  );
+  // Just for fun, here's how you'd do that in python:
+  // > re =max(positions, key=lambda p: normal.dot(p))
+  // Not saying python is better, buuuuut
+
+  return re;
+}
+
+function conservative(start, end, xRes, yRes) {
+  const n = getOrthNormal(start, end);
+
+  const re_start = getCandidate(start, n, xRes, yRes);
+  const re_end = getCandidate(end, n, xRes, yRes);
+
+  return [re_start, re_end];
+}
+
 function rasterize(corners, xRes, yRes) {
   const locations = [];
   const boundingbox = new Boundingbox(corners, xRes, yRes);
+
+  const conservativeEdges = [];
+  for (var i = 0; i < 3; i++) {
+    const edge = conservative(corners[i], corners[(i + 1) % 3], xRes, yRes);
+  }
 }
 
 // Takes a parsed obj,
