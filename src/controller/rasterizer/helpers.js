@@ -27,7 +27,7 @@ export function resolveActualValues(structure) {
   return re;
 }
 
-function getOrthNormal(start, end) {
+export function getOrthNormal(start, end) {
   const direction = end.clone().sub(start);
   const re = new Vector2(-direction.y, direction.x);
   re.divideScalar(re.length());
@@ -53,9 +53,6 @@ function getCandidate(texel_midpoint, normal, xRes, yRes) {
   const re = positions.reduce((a, b) =>
     normal.dot(a) > normal.dot(b) ? a : b
   );
-  // Just for fun, here's how you'd do that in python:
-  // > re =max(positions, key=lambda p: normal.dot(p))
-  // Not saying python is better, buuuuut
 
   return re;
 }

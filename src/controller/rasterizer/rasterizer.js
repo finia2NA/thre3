@@ -1,6 +1,6 @@
 import { Vector2, Vector3 } from "three";
 import { resolveActualValues, conservative, getArea } from "./helpers";
-import { Boundingbox } from "./rasterclasses";
+import { Boundingbox, Implicit } from "./rasterclasses";
 const OBJFile = require("obj-file-parser");
 
 function rasterize(corners, xRes, yRes) {
@@ -10,7 +10,32 @@ function rasterize(corners, xRes, yRes) {
   const conservativeEdges = [];
   for (var i = 0; i < 3; i++) {
     const edge = conservative(corners[i], corners[(i + 1) % 3], xRes, yRes);
+    conservativeEdges.push(edge);
   }
+
+  const equations = conservativeEdges.map((x) => new Implicit(x[0], x[1]));
+
+  for (var x = boundingbox.xMin; x <= boundingbox.xMax; x++) {
+    for (var y = boundingbox.yMin; y <= boundingbox.yMax; y++) {
+      const midpoint = new Vector2((x + 0.5) / xRes, (y + 0.5) / yRes);
+
+      // debugger;
+      var eqCanary = true;
+
+      for (const eq of equations) {
+        if (eq.apply(midpoint) > 0) {
+          // TODO: fenceposting :D
+          eqCanary = false;
+          break;
+        }
+      }
+
+      if (eqCanary) locations.push([x, y]);
+    }
+  }
+
+  debugger;
+  return locations;
 }
 
 // Takes a parsed obj,
