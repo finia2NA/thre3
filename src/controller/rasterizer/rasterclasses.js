@@ -14,3 +14,11 @@ export class Boundingbox {
     const yMin = Math.floor(Math.min(...ys) * yRes);
   }
 }
+
+export class Vertex {
+  constructor(vertexCoord, txCoord, vertexNormal) {
+    this.txCoord = txCoord;
+    this.vertexCoord = vertexCoord;
+    this.vertexNormal = vertexNormal;
+  }
+}
