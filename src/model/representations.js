@@ -1,6 +1,7 @@
 import { request } from "util/network.js";
 import { defaultTexture } from "model/textures";
 import generatePatches from "controller/rasterizer/rasterizer";
+import { Raycaster } from "three";
 
 const OBJFile = require("obj-file-parser");
 
@@ -76,11 +77,40 @@ export class SceneRepresentation {
 
   radiate(xRes, yRes) {}
 
-  setRC(rc) {
-    this.rayCaster = rc;
+  /**
+   * returns whether there is an unobstructed path from a to b in the scene.
+   * @param {Vector3} a
+   * @param {Vector3} b
+   */
+  unobstructed(a, b) {
+    const vector = b.clone().sub(a);
+    const direction = vector.div(vector.length); // normalized direction
   }
 
-  raycast() {
+  /**
+   *
+   * @param {Raycaster} rc
+   */
+  setRC = (rc) => {
+    // TODO: adjust near in case of self-intersect on origin
+    // rc.near = 0.0001
+    console.log("rc.near = " + rc.near);
+    this.rayCaster = rc;
+  };
+
+  setScene3 = (scene3) => {
+    this.scene3 = scene3;
+  };
+
+  /**
+   * Returns the coordinates of the first point hit when raycasting from origin to direction in the scene.
+   * @param {Vector3} origin
+   * @param {Vector3} direction
+   */
+  raycast = (origin, direction) => {
     // https://threejs.org/docs/#api/en/core/Raycaster
-  }
+    this.rayCaster.set(origin, direction);
+    // debugger;
+    return this.rayCaster.intersectObject(this.scene3, true)[0];
+  };
 }

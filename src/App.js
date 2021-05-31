@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 import Viewport from "components/UI/Viewport";
@@ -6,9 +6,10 @@ import Controlpanel from "components/UI/ControlPanel";
 
 import { SceneRepresentation } from "model/representations";
 
-import { Raycaster } from "three";
+import { Raycaster, Vector3 } from "three";
 
 import { ObjectRepresentation } from "model/representations";
+import { Button } from "@material-ui/core";
 
 // Redux
 
@@ -45,16 +46,25 @@ const App = () => {
 
   scene.addObject(cornell);
 
-  const a = (x) => {};
+  const printrc = () => {
+    // debugger;
+    console.log(scene.raycast(new Vector3(-2, 0, 0), new Vector3(1, 0, 0)));
+  };
 
   return (
     <Maindiv>
       <Viewdiv>
-        <Viewport scene={scene} displaymode="reflectance" setraycaster={a} />
+        <Viewport
+          scene={scene}
+          displaymode="reflectance"
+          setRaycaster={scene.setRC}
+          setScene3={scene.setScene3}
+        />
       </Viewdiv>
 
       <Controldiv>
         <Controlpanel />
+        <Button onClick={printrc}>hi</Button>
       </Controldiv>
     </Maindiv>
   );

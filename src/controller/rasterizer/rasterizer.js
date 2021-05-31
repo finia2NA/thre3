@@ -34,7 +34,7 @@ function rasterize(corners, xRes, yRes) {
     }
   }
 
-  debugger;
+  // debugger;
   return locations;
 }
 

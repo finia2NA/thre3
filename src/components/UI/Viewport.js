@@ -25,13 +25,16 @@ const CameraControls = () => {
 };
 
 const Viewport = (props) => {
-  const objects = props.scene.objects;
-
   return (
     <Canvas
-      onCreated={({ gl, raycaster }) => {
+      onCreated={({ gl, raycaster, scene }) => {
         gl.setClearColor("darkgrey");
-        props.setraycaster(raycaster);
+        props.setRaycaster(raycaster);
+        props.setScene3(scene);
+      }}
+      onChange={({ raycaster, scene }) => {
+        props.setRaycaster(raycaster);
+        props.setScene3(scene);
       }}
     >
       {/* Canvas Config */}
@@ -39,7 +42,6 @@ const Viewport = (props) => {
       <ambientLight intensity={0.5} />
 
       {/* Objects */}
-
       {props.scene.objects.map((o, i) => (
         <Suspense fallback={<LoadingBox />} key={i}>
           <Element3D obj={o} displaymode={props.displaymode} key={i} />
