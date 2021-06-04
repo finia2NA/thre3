@@ -1,6 +1,14 @@
 import { Vector2, Vector3 } from "three";
 import { Vertex, ClosestRes } from "./rasterclasses";
 
+export function multiplyArrayVector3(array, vector) {
+  return new Vector3(
+    array[0] * vector.x,
+    array[1] * vector.y,
+    array[2] * vector.z
+  );
+}
+
 function closestToLineSegment(p, face, startIndex) {
   const start = face[startIndex];
   const end = face[(startIndex + 1) % 3];

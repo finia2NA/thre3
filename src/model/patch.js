@@ -1,5 +1,4 @@
 export default class Patch {
-  owner;
   position3D;
   normal3D;
   positionTX;
@@ -10,7 +9,6 @@ export default class Patch {
   nice;
 
   constructor(
-    owner,
     position3D,
     normal3D,
     positionTX,
@@ -24,7 +22,6 @@ export default class Patch {
       console.error("Given normal3D was not normalized!");
     }
 
-    this.owner = owner;
     this.position3D = position3D;
     this.normal3D = normal3D;
     this.positionTX = positionTX;

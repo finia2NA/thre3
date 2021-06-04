@@ -7,7 +7,9 @@ import {
   discreteToMidpoint,
   getBayecentrics,
   getClosestInside,
+  multiplyArrayVector3,
 } from "controller/rasterizer/helpers";
+import Patch from "model/patch";
 
 const OBJFile = require("obj-file-parser");
 
@@ -49,6 +51,8 @@ function rasterize(corners, xRes, yRes) {
 
 // Takes a parsed obj,
 function generatePatches(objText, xRes, yRes, luminancePath, reflectancePath) {
+  const patches = [];
+
   const parsed = new OBJFile(objText).parse();
   const structure = parsed.models[0];
 
@@ -74,17 +78,44 @@ function generatePatches(objText, xRes, yRes, luminancePath, reflectancePath) {
 
       if (Math.min(...bayecentrics) < 0) {
         const closestRes = getClosestInside(samplePoint, face);
-        // bayecentrics[closestRes.startIndex] = closestRes.bay1
-        // bayecentrics[(closestRes.startIndex+1) % 3] = 1 - closestRes.bay1
-        // bayecentrics[(closestRes.startIndex+2) % 3] = 0
+        bayecentrics[closestRes.startIndex] = closestRes.bay1;
+        bayecentrics[(closestRes.startIndex + 1) % 3] = 1 - closestRes.bay1;
+        bayecentrics[(closestRes.startIndex + 2) % 3] = 0;
 
         // # the sample distance will be used as NICE
-        // sampleDistance = closestRes.distance
+        sampleDistance = closestRes.distance;
 
         // samplePoint = closestRes.pos
       }
+
+      const position = multiplyArrayVector3(
+        bayecentrics,
+        face.map((x) => x.vertexCoord)
+      );
+      const normal = multiplyArrayVector3(
+        bayecentrics,
+        face.map((x) => x.vertexNormal)
+      );
+      const selfIlluminance = 1; // TODO: sample texture
+      const reflectance = 1; // TODO: sample texture
+      const nice = sampleDistance;
+
+      const patch = new Patch(
+        position,
+        normal,
+        texel,
+        selfIlluminance,
+        reflectance,
+        ratio,
+        1,
+        nice
+      ); // TODO: think about where to set the luminance factor
+
+      patches.push(patch);
     }
   }
+
+  // patches.sort()
 }
 
 export default generatePatches;
