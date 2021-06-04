@@ -1,5 +1,19 @@
 import { getOrthNormal } from "./helpers";
 
+export class ClosestRes {
+  startIndex;
+  bay1;
+  distance;
+  pos;
+
+  constructor(startIndex, bay1, distance, pos) {
+    this.startIndex = startIndex;
+    this.bay1 = bay1;
+    this.distance = distance;
+    this.pos = pos;
+  }
+}
+
 export class Boundingbox {
   xMax;
   xMin;

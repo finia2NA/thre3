@@ -1,9 +1,18 @@
 import { Vector2, Vector3 } from "three";
-import { resolveActualValues, conservative, getArea } from "./helpers";
-import { Boundingbox, Implicit } from "./rasterclasses";
+import { Boundingbox, Implicit, ClosestRes } from "./rasterclasses";
+import {
+  resolveActualValues,
+  conservative,
+  getArea,
+  discreteToMidpoint,
+  getBayecentrics,
+  getClosestInside,
+} from "controller/rasterizer/helpers";
+
 const OBJFile = require("obj-file-parser");
 
 function rasterize(corners, xRes, yRes) {
+  // FIXME: not working right, painting too little
   const locations = [];
   const boundingbox = new Boundingbox(corners, xRes, yRes);
 
@@ -51,11 +60,30 @@ function generatePatches(objText, xRes, yRes, luminancePath, reflectancePath) {
     const texelSize = 1 / (xRes * yRes);
     const ratio = vertexArea / (textureArea * texelSize);
 
-    const texels = rasterize(
+    const texelPositions = rasterize(
       face.map((o) => o.txCoord),
       xRes,
       yRes
     );
+
+    for (const texel of texelPositions) {
+      const samplePoint = discreteToMidpoint(texel, xRes, yRes);
+      var sampleDistance = 0;
+
+      var bayecentrics = getBayecentrics(samplePoint, face);
+
+      if (Math.min(...bayecentrics) < 0) {
+        const closestRes = getClosestInside(samplePoint, face);
+        // bayecentrics[closestRes.startIndex] = closestRes.bay1
+        // bayecentrics[(closestRes.startIndex+1) % 3] = 1 - closestRes.bay1
+        // bayecentrics[(closestRes.startIndex+2) % 3] = 0
+
+        // # the sample distance will be used as NICE
+        // sampleDistance = closestRes.distance
+
+        // samplePoint = closestRes.pos
+      }
+    }
   }
 }
 
