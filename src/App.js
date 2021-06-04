@@ -4,11 +4,11 @@ import styled from "styled-components";
 import Viewport from "components/UI/Viewport";
 import Controlpanel from "components/UI/ControlPanel";
 
-import { SceneRepresentation } from "model/representations";
+import SceneRepresentation from "model/scene";
 
 import { Raycaster, Vector3 } from "three";
 
-import { ObjectRepresentation } from "model/representations";
+import ObjectRepresentation from "model/object";
 import { Button } from "@material-ui/core";
 
 // Redux

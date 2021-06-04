@@ -2,64 +2,15 @@ import { request } from "util/network.js";
 import { defaultTexture } from "model/textures";
 import generatePatches from "controller/rasterizer/rasterizer";
 import { Raycaster } from "three";
+import Patch from "./patch";
 
 const OBJFile = require("obj-file-parser");
 
-export class ObjectRepresentation {
-  // TODO:scopes
-  meshPath;
-  luminancePath;
-  reflectancePath;
-  translate;
-  objText;
-  patchRes;
-  patchFlag;
-  patches;
-
-  constructor(meshPath, luminancePath, reflectancePath) {
-    // const text = await request(meshPath);
-    // this.parsedMesh = new OBJFile(text).parse();
-
-    this.meshPath = meshPath;
-    this.luminancePath = luminancePath;
-    this.reflectancePath = reflectancePath;
-    this.translate = [0, 0, 0];
-    this.objText = null;
-    this.patchRes = [16, 16]; //TODO: change
-    this.patchFlag = false;
-    this.patches = null;
-  }
-
-  async loadObjText() {
-    this.objText = await request(this.meshPath);
-  }
-
-  async getPatches(xRes, yRes) {
-    if (this.patchRes === null || null in this.patchRes) {
-      console.error("no resolution for patches given");
-    }
-
-    if (!this.patchFlag) {
-      if (!this.objText) await this.loadObjText();
-
-      this.patches = generatePatches(
-        this.objText,
-        this.patchRes[0],
-        this.patchRes[1],
-        this.luminancePath,
-        this.reflectancePath
-      );
-      this.patchFlag = true;
-    }
-
-    return this.patches; // TODO:translate
-  }
-}
-
-export class SceneRepresentation {
-  // objects;
-  // formFactors;
-  // rayCaster;
+export default class SceneRepresentation {
+  objects;
+  formFactors;
+  rayCaster;
+  txRes;
 
   constructor() {
     this.objects = [];
@@ -75,7 +26,7 @@ export class SceneRepresentation {
     return this.objects;
   }
 
-  radiate(xRes, yRes) {}
+  // radiate(xRes, yRes) {}
 
   /**
    * returns whether there is an unobstructed path from a to b in the scene.
@@ -85,6 +36,22 @@ export class SceneRepresentation {
   unobstructed(a, b) {
     const vector = b.clone().sub(a);
     const direction = vector.div(vector.length); // normalized direction
+  }
+
+  /**
+   *
+   * @param {Patch} a
+   * @param {Patch} b
+   */
+  formFactor(a, b) {
+    // if we're to calculate the factor of a patch to itself
+    // or the path is obstucted
+    // you know what to do :fingerguns:
+    if (a === b || !this.unobstructed(a.position3D, b.position3D)) return 0;
+    else {
+      // else the form factor consists of distance and turn factors
+      return a.distanceFactor(b) * a.turnFactor(b);
+    }
   }
 
   /**
@@ -101,6 +68,10 @@ export class SceneRepresentation {
   setScene3 = (scene3) => {
     this.scene3 = scene3;
   };
+
+  setTextureRes(x, y) {
+    this.txRes = [x, y];
+  }
 
   /**
    * Returns the coordinates of the first point hit when raycasting from origin to direction in the scene.
