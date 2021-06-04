@@ -35,6 +35,8 @@ const Element3D = (props) => {
     case "luminance":
       texturePath = props.obj.luminancePath;
       break;
+    default:
+      console.error("no displaymode provided");
   }
 
   const texture = useLoader(TextureLoader, texturePath);

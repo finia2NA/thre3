@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 
 import Viewport from "components/UI/Viewport";
@@ -6,7 +6,7 @@ import Controlpanel from "components/UI/ControlPanel";
 
 import SceneRepresentation from "model/scene";
 
-import { Raycaster, Vector3 } from "three";
+import { Vector3 } from "three";
 
 import ObjectRepresentation from "model/object";
 import { Button } from "@material-ui/core";

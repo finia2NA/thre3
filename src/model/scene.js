@@ -1,10 +1,7 @@
-import { request } from "util/network.js";
 import { defaultTexture } from "model/textures";
 import generatePatches from "controller/rasterizer/rasterizer";
 import { Raycaster } from "three";
 import Patch from "./patch";
-
-const OBJFile = require("obj-file-parser");
 
 export default class SceneRepresentation {
   objects;

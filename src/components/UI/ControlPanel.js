@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Radiositypanel from "components/UI/Radiosity";
 import Displaypanel from "components/UI/Display";
 import Indicators from "components/UI/Indicators";

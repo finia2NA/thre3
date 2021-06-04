@@ -28,7 +28,7 @@ const Viewport = (props) => {
   return (
     <Canvas
       onCreated={({ gl, raycaster, scene }) => {
-        gl.setClearColor("darkgrey");
+        gl.setClearColor("#222222");
         props.setRaycaster(raycaster);
         props.setScene3(scene);
       }}
