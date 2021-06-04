@@ -7,6 +7,7 @@ class Sym:
     self.dimensions = dimensions
 
     maxIndex = reduce(lambda x, y: x*y, dimensions)
+    print(maxIndex)
     self.array = \
         [[0 for col in range(row, maxIndex)] for row in range(maxIndex)]
 
@@ -19,15 +20,17 @@ class Sym:
     re = 0
 
     for i in range(len(a)-1):
-      re += a[i]*self.dimensions[i+1]
+      re += a[i]
+      re *= self.dimensions[i+1]
 
-    re += a[len(a)-1]
-
+    re = re + a[len(a)-1]
     return re
 
   def __getIndices__(self, a, b):
     s = sorted([a, b])
-    return [self.__getIndex__(s[0]), self.__getIndex__(s[1])]
+    re = [self.__getIndex__(s[0]), self.__getIndex__(s[1])]
+    re[1] = re[1]-re[0]
+    return re
 
   def get(self, a, b):
     indices = self.__getIndices__(a, b)
@@ -39,12 +42,11 @@ class Sym:
 
     self.array[indices[0]][indices[1]] = value
 
-
 if __name__ == "__main__":
-  dim = [5, 16, 16]
 
-  a = [4, 12, 2]
-  b = [0, 3, 15]
+  dim = [5, 16, 16]
+  a = [3, 15, 15]
+  b = [4, 15, 15]
 
   testSym = Sym(dim)
 
