@@ -58,6 +58,34 @@ export const rainbowTexture = (width, height) => {
   return canvas.transferToImageBitmap();
 };
 
+export const patchTexture = (patches, width, height) => {
+  // create canvas
+  var canvas = new OffscreenCanvas(width, height);
+  var context = canvas.getContext("2d");
+
+  // bg of the canvas is no energy = black
+  context.fillStyle = "black";
+  context.fill(0, 0, width, height); //TODO: off-by-ones would lead to overdrawing or to wite line at the edge
+
+  // determine what energy corresponds to white
+  const maxBrightness = Math.max(...patches.map((x) => x.finalWattage));
+
+  for (const patch of patches) {
+    const wattage = patch.finalWattage;
+
+    context.fillStyle =
+      "#" +
+      rgbHex(
+        Math.round(wattage[0] / maxBrightness),
+        Math.round(wattage[1] / maxBrightness),
+        Math.round(wattage[2] / maxBrightness)
+      );
+    context.fillRect(patch.backwriteCoord[0], patch.backwriteCoord[1], 1, 1);
+  }
+
+  return canvas.transferToImageBitmap();
+};
+
 export const defaultTexture = (width = 32, height = 32) => {
   // return checkerboardTexture(2, 2, "black", "#ff00dc");
 
