@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import * as THREE from "three";
 import { useLoader } from "react-three-fiber";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 
 import { TextureLoader } from "three/src/loaders/TextureLoader";
+
+import {
+  defaultTexture,
+  rainbowTexture,
+  checkerboardTexture,
+} from "model/textures";
 
 export const LoadingBox = (props) => {
   return (
@@ -14,20 +20,17 @@ export const LoadingBox = (props) => {
   );
 };
 
-// Takes an ObjTXBundle and displays it.
+// Takes an obj and a displaymode and displays it.
 const Element3D = (props) => {
-  // this is how you'd use one of the canvas textures
-  // const texture = useMemo(() => {
-  //   const re = new THREE.CanvasTexture(defaultTexture()); // TODO: use tx from props instead of just using default
-  //   re.magFilter = THREE.NearestFilter;
-  //   return re;
-  // }, []);
-
-  var texturePath = props.obj.reflectancePath;
+  var texturePath = "defaultTexture.png";
+  var generated = () =>
+    defaultTexture(props.obj.patchRes[0], props.obj.patchRes[1]);
+  var useGenerated = false;
 
   switch (props.displaymode) {
     case "rad":
-      texturePath = props.obj.radiosityPath;
+      generated = props.radiosityTexture;
+      useGenerated = true;
       break;
     case "reflectance":
       texturePath = props.obj.reflectancePath;
@@ -35,13 +38,28 @@ const Element3D = (props) => {
     case "luminance":
       texturePath = props.obj.luminancePath;
       break;
+    case "checkerboard":
+      generated = () =>
+        checkerboardTexture(props.obj.patchRes[0], props.obj.patchRes[1]);
+      useGenerated = true;
+      break;
+    case "rainbow":
+      generated = () =>
+        rainbowTexture(props.obj.patchRes[0], props.obj.patchRes[1]);
+      useGenerated = true;
+      break;
     default:
-      console.error("no displaymode provided");
+      console.error("error while determining displaymode");
   }
 
-  const texture = useLoader(TextureLoader, texturePath);
+  const fileTexture = useLoader(TextureLoader, texturePath);
+  const generatedTexture = useMemo(() => {
+    const re = new THREE.CanvasTexture(generated()); // TODO: use tx from props instead of just using default
+    re.magFilter = THREE.NearestFilter;
+    return re;
+  }, []);
 
-  // console.log(props.obj);
+  const texture = useGenerated ? generatedTexture : fileTexture;
 
   const scene = useLoader(OBJLoader, props.obj.meshPath);
   // scene.children[0].position.set(
