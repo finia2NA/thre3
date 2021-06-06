@@ -63,10 +63,11 @@ export default class SymStore {
    * @returns 1 representational coordinate of every symetrical pair that can be stored in the SymStore
    */
   getRelevantCoordinates() {
-    // TODO: this right now returns only one coordinates, it does of course need to return 2 of those, with the second being the harder one thx to the offset
     const re = [];
     for (var i = 0; i < this.array.length; i++) {
-      re.push(this.decode(i));
+      for (var j = 0; j < this.array[i].length; j++) {
+        re.push([this.decode(i), decode(j + i)]);
+      }
     }
     return re;
   }
