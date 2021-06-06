@@ -41,7 +41,7 @@ const App = () => {
 
   cornell.patchRes = [16, 16];
   console.log("start");
-  cornell.getPatches();
+  cornell.calculatePatches();
   console.log("end");
 
   scene.addObject(cornell);

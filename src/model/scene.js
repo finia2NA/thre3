@@ -2,7 +2,7 @@ import { defaultTexture } from "model/textures";
 import generatePatches from "controller/rasterizer/rasterizer";
 import { Raycaster } from "three";
 import Patch from "./patch";
-
+import SymStore from "model/symStore";
 export default class SceneRepresentation {
   objects;
   formFactors;
@@ -17,6 +17,31 @@ export default class SceneRepresentation {
 
   addObject(o) {
     this.objects.push(o);
+  }
+
+  async calculateFormFactors(xRes, yRes) {
+    this.calculatePatches(xRes, yRes);
+
+    //patches sind DA
+    this.formFactors = new SymStore([this.objects.length, xRes, yRes]);
+
+    // go through every representation of a patch pair
+    for (const coords of this.formFactors.getRelevantCoordinates) {
+      // and fill the formfactor DS with the corresponding FF.
+      this.formFactors.set(
+        coords[0],
+        coords[1],
+        this.formFactor(coords[0], coords[1])
+      );
+    }
+  }
+
+  async calculatePatches(xRes, yRes) {
+    this.txRes = [xRes, yRes];
+
+    for (const o of this.objects) {
+      o.calculatePatches();
+    }
   }
 
   getObjects() {

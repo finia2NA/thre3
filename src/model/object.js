@@ -32,7 +32,11 @@ export default class ObjectRepresentation {
     this.objText = await request(this.meshPath);
   }
 
-  async getPatches(xRes, yRes) {
+  getPatches() {
+    return this.patches;
+  }
+
+  async calculatePatches(xRes, yRes) {
     if (this.patchRes === null || null in this.patchRes) {
       console.error("no resolution for patches given");
     }
