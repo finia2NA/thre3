@@ -66,7 +66,7 @@ export default class SymStore {
     const re = [];
     for (var i = 0; i < this.array.length; i++) {
       for (var j = 0; j < this.array[i].length; j++) {
-        re.push([this.decode(i), decode(j + i)]);
+        re.push([this.decode(i), this.decode(j + i)]);
       }
     }
     return re;

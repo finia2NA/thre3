@@ -40,9 +40,6 @@ const App = () => {
   cornell.loadObjText();
 
   cornell.patchRes = [16, 16];
-  console.log("start");
-  cornell.calculatePatches();
-  console.log("end");
 
   scene.addObject(cornell);
 
@@ -64,7 +61,7 @@ const App = () => {
 
       <Controldiv>
         <Controlpanel />
-        <Button onClick={printrc}>hi</Button>
+        <Button onClick={() => scene.calculatePatches(16, 16)}>hi</Button>
       </Controldiv>
     </Maindiv>
   );

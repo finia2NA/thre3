@@ -15,12 +15,14 @@ export function elementwiseEquals(a, b) {
   return true;
 }
 
-export function multiplyArrayVector3(array, vector) {
-  return new Vector3(
-    array[0] * vector.x,
-    array[1] * vector.y,
-    array[2] * vector.z
-  );
+export function multiplyBayecentric(bay, face) {
+  const f0 = face[0].clone().multiplyScalar(bay[0]);
+  const f1 = face[1].clone().multiplyScalar(bay[1]);
+  const f2 = face[2].clone().multiplyScalar(bay[2]);
+
+  const re = f0.clone().add(f1).add(f2);
+
+  return re;
 }
 
 function closestToLineSegment(p, face, startIndex) {

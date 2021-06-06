@@ -8,7 +8,7 @@ import {
   discreteToMidpoint,
   getBayecentrics,
   getClosestInside,
-  multiplyArrayVector3,
+  multiplyBayecentric,
   elementwiseEquals,
 } from "controller/rasterizer/helpers";
 import Patch from "model/patch";
@@ -90,17 +90,21 @@ function generatePatches(objText, xRes, yRes, luminancePath, reflectancePath) {
         // samplePoint = closestRes.pos
       }
 
-      const position = multiplyArrayVector3(
+      // debugger;
+
+      const position = multiplyBayecentric(
         bayecentrics,
         face.map((x) => x.vertexCoord)
       );
-      const normal = multiplyArrayVector3(
+      const normal = multiplyBayecentric(
         bayecentrics,
         face.map((x) => x.vertexNormal)
       );
       const selfIlluminance = 1; // TODO: sample texture
       const reflectance = 1; // TODO: sample texture
       const nice = sampleDistance;
+
+      console.log(position);
 
       const patch = new Patch(
         position,
