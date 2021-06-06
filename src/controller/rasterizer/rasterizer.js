@@ -1,4 +1,5 @@
 import { Vector2, Vector3 } from "three";
+import removeItems from "remove-array-items";
 import { Boundingbox, Implicit, ClosestRes } from "./rasterclasses";
 import {
   resolveActualValues,
@@ -8,6 +9,7 @@ import {
   getBayecentrics,
   getClosestInside,
   multiplyArrayVector3,
+  elementwiseEquals,
 } from "controller/rasterizer/helpers";
 import Patch from "model/patch";
 
@@ -115,7 +117,27 @@ function generatePatches(objText, xRes, yRes, luminancePath, reflectancePath) {
     }
   }
 
-  // patches.sort()
+  patches.sort((a, b) => (a.positionTX < b.positionTX ? -1 : 1));
+
+  const marks = [];
+
+  for (var i = 0; i < patches.length - 1; i++) {
+    const first = patches[i];
+    const second = patches[i + 1];
+
+    if (elementwiseEquals(first.positionTX, second.positionTX)) {
+      marks.push(first.nice < second.nice ? i + 1 : i);
+    }
+  }
+
+  // console.log(marks)
+
+  for (var i = marks.length - 1; i >= 0; i--) {
+    removeItems(patches, marks[i], 1);
+  }
+
+  console.log(patches);
+  return patches;
 }
 
 export default generatePatches;

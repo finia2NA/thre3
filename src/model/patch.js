@@ -7,6 +7,7 @@ export default class Patch {
   areaRatio;
   luminanceFactor;
   nice;
+  collectedLight = [1.0, 1.0, 1.0]; // TODO: change to 0,0,0
 
   constructor(
     position3D,
@@ -43,5 +44,13 @@ export default class Patch {
 
   distanceFactor(b) {
     return this.position3D.clone().sub(b.position3D).length();
+  }
+
+  illuminate(value) {
+    this.collectedLight += value;
+  }
+
+  resetCollectedLight() {
+    this.collectedLight = [0, 0, 0];
   }
 }

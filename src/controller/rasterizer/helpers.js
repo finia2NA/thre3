@@ -1,6 +1,20 @@
 import { Vector2, Vector3 } from "three";
 import { Vertex, ClosestRes } from "./rasterclasses";
 
+export function elementwiseEquals(a, b) {
+  if (a.length !== b.length) {
+    console.error(
+      "I was asked to compare the elements of arrays of different lengths"
+    );
+  }
+
+  for (var i = 0; i < b.length; i++) {
+    if (a[i] !== b[i]) return false;
+  }
+
+  return true;
+}
+
 export function multiplyArrayVector3(array, vector) {
   return new Vector3(
     array[0] * vector.x,
