@@ -1,4 +1,4 @@
-export default class Sym {
+export default class SymStore {
   dimensions;
   array;
 
@@ -14,7 +14,7 @@ export default class Sym {
     }
   }
 
-  getIndex(a) {
+  encode(a) {
     var re = 0;
 
     for (var i = 0; i < a.length - 1; i++) {
@@ -27,20 +27,46 @@ export default class Sym {
     return re;
   }
 
+  decode(a) {
+    const re = [];
+    var next = a;
+    const factors = [...this.dimensions].slice({ start: 1 }).push(1);
+
+    for (var i = 0; i < this.dimensions.length; i++) {
+      var divisor = factors
+        .slice({ start: i, end: factors.length })
+        .reduce((x, y) => x * y);
+      re.push(Math.round(next / divisor));
+      next = next % divisor;
+    }
+    console.log(next);
+  }
+
   getIndices(a, b) {
     const s = [a, b].sort();
-    const re = [this.getIndex(s[0]), this.getIndex(s[1])];
+    const re = [this.encode(s[0]), this.encode(s[1])];
     re[1] = re[1] - re[0];
     return re;
   }
 
   get(a, b) {
     const indices = this.getIndices(a, b);
-    return self.array[(indices[0], indices[1])];
+    return this.array[(indices[0], indices[1])];
   }
 
   set(a, b, value) {
     const indices = this.getIndices(a, b);
-    self.array[(indices[0], indices[1])] = value;
+    this.array[(indices[0], indices[1])] = value;
+  }
+
+  /**
+   * @returns 1 representational coordinate of every symetrical pair that can be stored in the SymStore
+   */
+  getRelevantCoordinates() {
+    const re = [];
+    for (var i = 0; i < this.array.length; i++) {
+      re.push(this.decode(i));
+    }
+    return re;
   }
 }
