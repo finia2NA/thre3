@@ -26,7 +26,7 @@ export default class SceneRepresentation {
    */
   setRC = (rc) => {
     // TODO: adjust near in case of self-intersect on origin
-    // rc.near = 0.0001
+    rc.near = 0.0005;
     console.log("rc.near = " + rc.near);
     this.rayCaster = rc;
   };
