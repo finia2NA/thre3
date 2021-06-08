@@ -6,11 +6,8 @@ import Controlpanel from "components/UI/ControlPanel";
 
 import SceneRepresentation from "model/scene";
 
-import { Vector3 } from "three";
-
 import ObjectRepresentation from "model/object";
 import { Button } from "@material-ui/core";
-import SymStore from "model/symStore";
 
 // Redux
 
@@ -43,11 +40,6 @@ const App = () => {
   cornell.patchRes = [16, 16];
 
   scene.addObject(cornell);
-
-  const printrc = () => {
-    // debugger;
-    console.log(scene.raycast(new Vector3(-2, 0, 0), new Vector3(1, 0, 0)));
-  };
 
   return (
     <Maindiv>

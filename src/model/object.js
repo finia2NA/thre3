@@ -1,10 +1,7 @@
 import { request } from "util/network.js";
 import generatePatches from "controller/rasterizer/rasterizer";
 
-const OBJFile = require("obj-file-parser");
-
 export default class ObjectRepresentation {
-  // TODO:scopes
   meshPath;
   luminancePath;
   reflectancePath;
@@ -15,9 +12,6 @@ export default class ObjectRepresentation {
   patches;
 
   constructor(meshPath, luminancePath, reflectancePath) {
-    // const text = await request(meshPath);
-    // this.parsedMesh = new OBJFile(text).parse();
-
     this.meshPath = meshPath;
     this.luminancePath = luminancePath;
     this.reflectancePath = reflectancePath;

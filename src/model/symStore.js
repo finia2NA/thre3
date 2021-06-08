@@ -38,7 +38,6 @@ export default class SymStore {
       re.push(Math.floor(next / divisor));
       next = next % divisor;
     }
-    console.log(next);
 
     return re;
   }

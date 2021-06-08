@@ -1,6 +1,5 @@
-import { MaxEquation, Vector2, Vector3 } from "three";
-import removeItems from "remove-array-items";
-import { Boundingbox, Implicit, ClosestRes } from "./rasterclasses";
+import { Vector2 } from "three";
+import { Boundingbox, Implicit } from "./rasterclasses";
 import {
   resolveActualValues,
   conservative,
@@ -9,7 +8,6 @@ import {
   getBayecentrics,
   getClosestInside,
   multiplyBayecentric,
-  elementwiseEquals,
 } from "controller/rasterizer/helpers";
 import Patch from "model/patch";
 

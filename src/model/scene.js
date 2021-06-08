@@ -1,7 +1,3 @@
-import { defaultTexture } from "model/textures";
-import generatePatches from "controller/rasterizer/rasterizer";
-import { Raycaster } from "three";
-import Patch from "./patch";
 import SymStore from "model/symStore";
 export default class SceneRepresentation {
   objects;

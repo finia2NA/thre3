@@ -17,7 +17,6 @@
     "react-scripts": "4.0.3",
     "react-three-fiber": "^5.3.22",
     "redux": "^4.0.5",
-    "remove-array-items": "^3.0.0",
     "rgb-hex": "^3.0.0",
     "styled-components": "^5.2.1",
     "three": "^0.126.1",
