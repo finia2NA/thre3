@@ -62,10 +62,13 @@ export default class SceneRepresentation {
       const patch2 =
         this.objects[coords[1][0]].patches[coords[1][1]][coords[1][2]];
 
+      if (!patch1 || !patch2) {
+        alert("The thing you suspected could happen happened");
+        continue; // if there are no patches in the texture there (which is very possible), we obviously can't calculate a form factor
+      }
+
       const currentformFactor = this.formFactor(patch1, patch2);
       if (currentformFactor > 0) {
-        // console.log("ステキ")
-
         this.formFactors.set(coords[0], coords[1], currentformFactor);
       }
     }
@@ -87,7 +90,6 @@ export default class SceneRepresentation {
       // else the form factor consists of distance and turn factors
       const d = a.distanceFactor(b);
       const t = a.turnFactor(b);
-      // console.log("d: " + d + ", t: " + t + ", ff: " + d * t)
       return d * t;
     }
   }
@@ -98,21 +100,15 @@ export default class SceneRepresentation {
    * @param {Vector3} b
    */
   unobstructed(a, b) {
-    const aTob = new Vector3(b.x - a.x, b.y - a.y, b.z - a.z);
-    const direction = aTob.divideScalar(aTob.length()); // normalized direction. I don't actually know if it _needs_ to be normalized per se, but better safe than sorry for now
-    const distance = a.distanceTo(b);
+    const targetDistance = a.distanceTo(b);
+    const direction = new Vector3(b.x - a.x, b.y - a.y, b.z - a.z).divideScalar(
+      targetDistance
+    );
 
-    const result = this.raycast(aTob, direction);
+    const result = this.raycast(a, direction);
 
-    // if (result)
-    //   // console.log(result.distance, distance)
-
-    debugger;
-
-    if (!result || result.distance >= distance - 0.005) {
-      // TODO: tune. this isnt just a b===result bc there may be some numberical shenanigans. Maybe there's a better way to do this???
-      // console.log("UNOBSTRUCTED!!!!!!!");
-      if (result) console.log(result.distance - distance);
+    // TODO: tune. this isnt just a b===result bc there may be some numberical shenanigans. Maybe there's a better way to do this???
+    if (!result || result.distance >= targetDistance - 0.005) {
       return true;
     } else {
       return false;
@@ -127,7 +123,8 @@ export default class SceneRepresentation {
   raycast = (origin, direction) => {
     // https://threejs.org/docs/#api/en/core/Raycaster
     this.rayCaster.set(origin, direction);
-    const intersects = this.rayCaster.intersectObject(this.scene3, true)[0];
-    return intersects;
+    const intersect = this.rayCaster.intersectObject(this.scene3, true)[0];
+    // console.log(intersect)
+    return intersect;
   };
 }
