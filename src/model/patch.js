@@ -20,7 +20,10 @@ export default class Patch {
     nice
   ) {
     if (Math.abs(normal3D.length() - 1) > 0.005) {
-      console.error("Given normal3D was not normalized!");
+      console.error(
+        "Given normal3D was not normalized! Was: " +
+          Math.abs(normal3D.length() - 1)
+      );
     }
 
     this.position3D = position3D;

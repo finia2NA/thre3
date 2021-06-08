@@ -99,7 +99,7 @@ function generatePatches(objText, xRes, yRes, luminancePath, reflectancePath) {
       const normal = multiplyBayecentric(
         bayecentrics,
         face.map((x) => x.vertexNormal)
-      );
+      ).normalize();
       const selfIlluminance = 1; // TODO: sample texture
       const reflectance = 1; // TODO: sample texture
       const nice = sampleDistance;
