@@ -15,6 +15,37 @@ export default class SceneRepresentation {
     this.objects.push(o);
   }
 
+  getObjects() {
+    return this.objects;
+  }
+
+  /**
+   *
+   * @param {Raycaster} rc
+   */
+  setRC = (rc) => {
+    // TODO: adjust near in case of self-intersect on origin
+    // rc.near = 0.0001
+    console.log("rc.near = " + rc.near);
+    this.rayCaster = rc;
+  };
+
+  setScene3 = (scene3) => {
+    this.scene3 = scene3;
+  };
+
+  setTextureRes(x, y) {
+    this.txRes = [x, y];
+  }
+
+  async calculatePatches(xRes, yRes) {
+    this.txRes = [xRes, yRes];
+
+    for (const o of this.objects) {
+      o.calculatePatches();
+    }
+  }
+
   async calculateFormFactors(xRes, yRes) {
     this.calculatePatches(xRes, yRes);
 
@@ -38,30 +69,6 @@ export default class SceneRepresentation {
     }
   }
 
-  async calculatePatches(xRes, yRes) {
-    this.txRes = [xRes, yRes];
-
-    for (const o of this.objects) {
-      o.calculatePatches();
-    }
-  }
-
-  getObjects() {
-    return this.objects;
-  }
-
-  // radiate(xRes, yRes) {}
-
-  /**
-   * returns whether there is an unobstructed path from a to b in the scene.
-   * @param {Vector3} a
-   * @param {Vector3} b
-   */
-  unobstructed(a, b) {
-    const vector = b.clone().sub(a);
-    const direction = vector.div(vector.length); // normalized direction
-  }
-
   /**
    *
    * @param {Patch} a
@@ -79,22 +86,18 @@ export default class SceneRepresentation {
   }
 
   /**
-   *
-   * @param {Raycaster} rc
+   * returns whether there is an unobstructed path from a to b in the scene.
+   * @param {Vector3} a
+   * @param {Vector3} b
    */
-  setRC = (rc) => {
-    // TODO: adjust near in case of self-intersect on origin
-    // rc.near = 0.0001
-    console.log("rc.near = " + rc.near);
-    this.rayCaster = rc;
-  };
+  unobstructed(a, b) {
+    const vector = b.clone().sub(a);
+    console.log("hi");
+    const direction = vector.divideScalar(vector.length); // normalized direction. I don't actually know if it _needs_ to be normalized per se, but better safe than sorry for now
+    debugger;
+    const result = this.raycast(vector, direction);
 
-  setScene3 = (scene3) => {
-    this.scene3 = scene3;
-  };
-
-  setTextureRes(x, y) {
-    this.txRes = [x, y];
+    return b.distanceTo(result) < 0.005; // TODO: tune. this isnt just a b===result bc there may be some numberical shenanigans. Maybe there's a better way to do this???
   }
 
   /**
@@ -105,7 +108,6 @@ export default class SceneRepresentation {
   raycast = (origin, direction) => {
     // https://threejs.org/docs/#api/en/core/Raycaster
     this.rayCaster.set(origin, direction);
-    // debugger;
     return this.rayCaster.intersectObject(this.scene3, true)[0];
   };
 }
