@@ -30,16 +30,17 @@ export default class SymStore {
   decode(a) {
     const re = [];
     var next = a;
-    const factors = [...this.dimensions].slice({ start: 1 }).push(1);
+    const factors = [...this.dimensions].slice({ start: 1 });
+    factors.push(1);
 
     for (var i = 0; i < this.dimensions.length; i++) {
-      var divisor = factors
-        .slice({ start: i, end: factors.length })
-        .reduce((x, y) => x * y);
-      re.push(Math.round(next / divisor));
+      var divisor = factors.slice(i + 1).reduce((x, y) => x * y);
+      re.push(Math.floor(next / divisor));
       next = next % divisor;
     }
     console.log(next);
+
+    return re;
   }
 
   getIndices(a, b) {

@@ -26,12 +26,18 @@ export default class SceneRepresentation {
     this.formFactors = new SymStore([this.objects.length, xRes, yRes]);
 
     // go through every representation of a patch pair
-    for (const coords of this.formFactors.getRelevantCoordinates) {
+    const relevantCoords = this.formFactors.getRelevantCoordinates();
+    for (const coords of relevantCoords) {
       // and fill the formfactor DS with the corresponding FF.
+      const patch1 =
+        this.objects[coords[0][0]].patches[coords[0][1]][coords[0][2]];
+      const patch2 =
+        this.objects[coords[1][0]].patches[coords[1][1]][coords[1][2]];
+
       this.formFactors.set(
         coords[0],
         coords[1],
-        this.formFactor(coords[0], coords[1])
+        this.formFactor(patch1, patch2)
       );
     }
   }

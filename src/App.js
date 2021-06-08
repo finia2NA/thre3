@@ -10,6 +10,7 @@ import { Vector3 } from "three";
 
 import ObjectRepresentation from "model/object";
 import { Button } from "@material-ui/core";
+import SymStore from "model/symStore";
 
 // Redux
 
@@ -61,7 +62,10 @@ const App = () => {
 
       <Controldiv>
         <Controlpanel />
-        <Button onClick={() => scene.calculatePatches(16, 16)}>hi</Button>
+        <Button onClick={() => scene.calculatePatches(16, 16)}>Patches</Button>
+        <Button onClick={() => scene.calculateFormFactors(16, 16)}>
+          Form Factors
+        </Button>
       </Controldiv>
     </Maindiv>
   );
