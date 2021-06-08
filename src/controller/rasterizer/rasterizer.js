@@ -10,6 +10,7 @@ import {
   multiplyBayecentric,
 } from "controller/rasterizer/helpers";
 import Patch from "model/patch";
+import MyImage from "model/image";
 
 const OBJFile = require("obj-file-parser");
 
@@ -48,7 +49,18 @@ function rasterize(corners, xRes, yRes) {
 }
 
 // Takes a parsed obj,
-function generatePatches(objText, xRes, yRes, luminancePath, reflectancePath) {
+function generatePatches(
+  objText,
+  xRes,
+  yRes,
+  luminancePath,
+  reflectancePath,
+  luminanceFactor
+) {
+  // https://pbs.twimg.com/media/EVTcWRJXsAAMC8K.jpg
+  const reflectanceMap = new MyImage(reflectancePath);
+  const luminanceMap = new MyImage(luminancePath);
+
   const patches = new Array(xRes).fill(new Array(yRes));
 
   const parsed = new OBJFile(objText).parse();
@@ -94,8 +106,12 @@ function generatePatches(objText, xRes, yRes, luminancePath, reflectancePath) {
         bayecentrics,
         face.map((x) => x.vertexNormal)
       ).normalize();
-      const selfIlluminance = 1; // TODO: sample texture
-      const reflectance = 1; // TODO: sample texture
+      const selfIlluminance = luminanceMap
+        .sample(samplePoint.x, samplePoint.y)
+        .multiplyScalar(luminanceFactor);
+      const reflectance = reflectanceMap
+        .sample(samplePoint.x, samplePoint.y)
+        .divideScalar(255.0); // mapped to 0...1
       const nice = sampleDistance;
 
       const patch = new Patch(
@@ -107,9 +123,9 @@ function generatePatches(objText, xRes, yRes, luminancePath, reflectancePath) {
         ratio,
         1,
         nice
-      ); // TODO: think about where to set the luminance factor
+      );
 
-      // TODO: remove this abomination
+      // TODO: find out why things were going above x,yres and fix that, instead of this bandaid which probably masks some deeper error
       if (texel[0] < xRes && texel[1] < yRes) {
         if (
           !patches[texel[0]][texel[1]] ||

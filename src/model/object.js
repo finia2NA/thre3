@@ -4,6 +4,7 @@ import generatePatches from "controller/rasterizer/rasterizer";
 export default class ObjectRepresentation {
   meshPath;
   luminancePath;
+  luminanceFactor = 1; // TODO: make this changeable
   reflectancePath;
   translate;
   objText;
@@ -30,7 +31,7 @@ export default class ObjectRepresentation {
     return this.patches;
   }
 
-  async calculatePatches(xRes, yRes) {
+  async calculatePatches() {
     if (this.patchRes === null || null in this.patchRes) {
       console.error("no resolution for patches given");
     }
@@ -43,7 +44,8 @@ export default class ObjectRepresentation {
         this.patchRes[0],
         this.patchRes[1],
         this.luminancePath,
-        this.reflectancePath
+        this.reflectancePath,
+        this.luminanceFactor
       );
       this.patchFlag = true;
     }

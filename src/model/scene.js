@@ -45,6 +45,8 @@ export default class SceneRepresentation {
     for (const o of this.objects) {
       o.calculatePatches();
     }
+
+    console.log("patches: done");
   }
 
   async calculateFormFactors(xRes, yRes) {
@@ -72,7 +74,8 @@ export default class SceneRepresentation {
         this.formFactors.set(coords[0], coords[1], currentformFactor);
       }
     }
-    debugger;
+    console.log("form factors: done");
+    // debugger;
   }
 
   /**
@@ -107,7 +110,7 @@ export default class SceneRepresentation {
 
     const result = this.raycast(a, direction);
 
-    // TODO: tune. this isnt just a b===result bc there may be some numberical shenanigans. Maybe there's a better way to do this???
+    // TODO: tune. this isnt just a target===result bc there may be some numerical shenanigans. Maybe there's a better way to do this???
     if (!result || result.distance >= targetDistance - 0.005) {
       return true;
     } else {

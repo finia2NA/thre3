@@ -10,7 +10,7 @@ import {
   defaultTexture,
   rainbowTexture,
   checkerboardTexture,
-} from "model/textures";
+} from "components/3D/textures";
 
 export const LoadingBox = (props) => {
   return (
