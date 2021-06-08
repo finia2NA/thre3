@@ -51,12 +51,12 @@ export default class SymStore {
 
   get(a, b) {
     const indices = this.getIndices(a, b);
-    return this.array[(indices[0], indices[1])];
+    return this.array[indices[0]][indices[1]];
   }
 
   set(a, b, value) {
     const indices = this.getIndices(a, b);
-    this.array[(indices[0], indices[1])] = value;
+    this.array[indices[0]][indices[1]] = value;
   }
 
   /**

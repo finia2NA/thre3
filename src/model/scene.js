@@ -62,11 +62,12 @@ export default class SceneRepresentation {
       const patch2 =
         this.objects[coords[1][0]].patches[coords[1][1]][coords[1][2]];
 
-      this.formFactors.set(
-        coords[0],
-        coords[1],
-        this.formFactor(patch1, patch2)
-      );
+      const currentformFactor = this.formFactor(patch1, patch2);
+      if (currentformFactor > 0) {
+        // console.log("ステキ")
+
+        this.formFactors.set(coords[0], coords[1], currentformFactor);
+      }
     }
     debugger;
   }
@@ -106,9 +107,12 @@ export default class SceneRepresentation {
     // if (result)
     //   // console.log(result.distance, distance)
 
+    debugger;
+
     if (!result || result.distance >= distance - 0.005) {
       // TODO: tune. this isnt just a b===result bc there may be some numberical shenanigans. Maybe there's a better way to do this???
-      console.log("UNOBSTRUCTED!!!!!!!");
+      // console.log("UNOBSTRUCTED!!!!!!!");
+      if (result) console.log(result.distance - distance);
       return true;
     } else {
       return false;
