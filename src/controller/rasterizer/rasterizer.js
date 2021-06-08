@@ -1,4 +1,4 @@
-import { Vector2, Vector3 } from "three";
+import { MaxEquation, Vector2, Vector3 } from "three";
 import removeItems from "remove-array-items";
 import { Boundingbox, Implicit, ClosestRes } from "./rasterclasses";
 import {
@@ -53,7 +53,7 @@ function rasterize(corners, xRes, yRes) {
 
 // Takes a parsed obj,
 function generatePatches(objText, xRes, yRes, luminancePath, reflectancePath) {
-  const patches = [];
+  const patches = new Array(xRes).fill(new Array(yRes));
 
   const parsed = new OBJFile(objText).parse();
   const structure = parsed.models[0];
@@ -104,8 +104,6 @@ function generatePatches(objText, xRes, yRes, luminancePath, reflectancePath) {
       const reflectance = 1; // TODO: sample texture
       const nice = sampleDistance;
 
-      console.log(position);
-
       const patch = new Patch(
         position,
         normal,
@@ -117,27 +115,16 @@ function generatePatches(objText, xRes, yRes, luminancePath, reflectancePath) {
         nice
       ); // TODO: think about where to set the luminance factor
 
-      patches.push(patch);
+      if (texel[0] < xRes && texel[1] < yRes) {
+        // TODO: remove this abomination
+        if (
+          !patches[texel[0]][texel[1]] ||
+          patches[texel[0]][texel[1]].nice < patch.nice
+        ) {
+          patches[texel[0]][texel[1]] = patch;
+        }
+      }
     }
-  }
-
-  patches.sort((a, b) => (a.positionTX < b.positionTX ? -1 : 1));
-
-  const marks = [];
-
-  for (var i = 0; i < patches.length - 1; i++) {
-    const first = patches[i];
-    const second = patches[i + 1];
-
-    if (elementwiseEquals(first.positionTX, second.positionTX)) {
-      marks.push(first.nice < second.nice ? i + 1 : i);
-    }
-  }
-
-  // console.log(marks)
-
-  for (var i = marks.length - 1; i >= 0; i--) {
-    removeItems(patches, marks[i], 1);
   }
 
   console.log(patches);
