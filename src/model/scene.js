@@ -80,11 +80,14 @@ export default class SceneRepresentation {
     // if we're to calculate the factor of a patch to itself
     // or the path is obstucted
     // you know what to do :fingerguns:
-    if (a === b || !this.unobstructed(a.position3D, b.position3D)) return 0;
-    else {
+    if (a === b || !this.unobstructed(a.position3D, b.position3D)) {
+      return 0;
+    } else {
       // else the form factor consists of distance and turn factors
-      debugger;
-      return a.distanceFactor(b) * a.turnFactor(b);
+      const d = a.distanceFactor(b);
+      const t = a.turnFactor(b);
+      // console.log("d: " + d + ", t: " + t + ", ff: " + d * t)
+      return d * t;
     }
   }
 
@@ -96,11 +99,20 @@ export default class SceneRepresentation {
   unobstructed(a, b) {
     const aTob = new Vector3(b.x - a.x, b.y - a.y, b.z - a.z);
     const direction = aTob.divideScalar(aTob.length()); // normalized direction. I don't actually know if it _needs_ to be normalized per se, but better safe than sorry for now
+    const distance = a.distanceTo(b);
 
     const result = this.raycast(aTob, direction);
 
-    return true;
-    // return b.distanceTo(result) < 0.005; // TODO: tune. this isnt just a b===result bc there may be some numberical shenanigans. Maybe there's a better way to do this???
+    // if (result)
+    //   // console.log(result.distance, distance)
+
+    if (!result || result.distance >= distance - 0.005) {
+      // TODO: tune. this isnt just a b===result bc there may be some numberical shenanigans. Maybe there's a better way to do this???
+      console.log("UNOBSTRUCTED!!!!!!!");
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -111,6 +123,7 @@ export default class SceneRepresentation {
   raycast = (origin, direction) => {
     // https://threejs.org/docs/#api/en/core/Raycaster
     this.rayCaster.set(origin, direction);
-    return this.rayCaster.intersectObject(this.scene3, true)[0];
+    const intersects = this.rayCaster.intersectObject(this.scene3, true)[0];
+    return intersects;
   };
 }

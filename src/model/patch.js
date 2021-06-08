@@ -42,11 +42,13 @@ export default class Patch {
    * @returns
    */
   turnFactor(b) {
-    return this.normal3D.dot(b.normal3D); // eigentlich hier noch / produkt der vektorlängen, aber ich gehe ja davon aus, dass die beiden vektoren so ~1 lang sind.
+    // eigentlich hier noch / produkt der vektorlängen, aber ich gehe ja davon aus, dass die beiden vektoren so ~1 lang sind.
+    // https://onlinemschool.com/math/library/vector/angl/#:~:text=Definition.&text=The%20cosine%20of%20the%20angle,the%20product%20of%20vector%20magnitude.
+    return Math.max(this.normal3D.dot(b.normal3D.clone().negate()), 0);
   }
 
   distanceFactor(b) {
-    return this.position3D.clone().sub(b.position3D).length();
+    return 1 / this.position3D.clone().sub(b.position3D).length() ** 2;
   }
 
   illuminate(value) {
