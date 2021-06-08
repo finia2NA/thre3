@@ -30,7 +30,6 @@ function rasterize(corners, xRes, yRes) {
     for (var y = boundingbox.yMin; y <= boundingbox.yMax; y++) {
       const midpoint = new Vector2((x + 0.5) / xRes, (y + 0.5) / yRes);
 
-      // debugger;
       var eqCanary = true;
 
       for (const eq of equations) {
@@ -45,7 +44,6 @@ function rasterize(corners, xRes, yRes) {
     }
   }
 
-  // debugger;
   return locations;
 }
 
@@ -88,8 +86,6 @@ function generatePatches(objText, xRes, yRes, luminancePath, reflectancePath) {
         // samplePoint = closestRes.pos
       }
 
-      // debugger;
-
       const position = multiplyBayecentric(
         bayecentrics,
         face.map((x) => x.vertexCoord)
@@ -113,8 +109,8 @@ function generatePatches(objText, xRes, yRes, luminancePath, reflectancePath) {
         nice
       ); // TODO: think about where to set the luminance factor
 
+      // TODO: remove this abomination
       if (texel[0] < xRes && texel[1] < yRes) {
-        // TODO: remove this abomination
         if (
           !patches[texel[0]][texel[1]] ||
           patches[texel[0]][texel[1]].nice < patch.nice
@@ -125,7 +121,6 @@ function generatePatches(objText, xRes, yRes, luminancePath, reflectancePath) {
     }
   }
 
-  console.log(patches);
   return patches;
 }
 

@@ -137,7 +137,6 @@ function getCandidate(texel_midpoint, normal, xRes, yRes) {
 
   for (const i of [-0.5, 0.5]) {
     for (const j of [-0.5, 0.5]) {
-      // debugger;
       positions.push(
         texel_midpoint.clone().add(new Vector2(i * xIncrement, j * yIncrement))
       );

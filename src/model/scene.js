@@ -1,4 +1,5 @@
 import SymStore from "model/symStore";
+import { Vector3 } from "three";
 export default class SceneRepresentation {
   objects;
   formFactors;
@@ -67,6 +68,7 @@ export default class SceneRepresentation {
         this.formFactor(patch1, patch2)
       );
     }
+    debugger;
   }
 
   /**
@@ -81,6 +83,7 @@ export default class SceneRepresentation {
     if (a === b || !this.unobstructed(a.position3D, b.position3D)) return 0;
     else {
       // else the form factor consists of distance and turn factors
+      debugger;
       return a.distanceFactor(b) * a.turnFactor(b);
     }
   }
@@ -91,13 +94,13 @@ export default class SceneRepresentation {
    * @param {Vector3} b
    */
   unobstructed(a, b) {
-    const vector = b.clone().sub(a);
-    console.log("hi");
-    const direction = vector.divideScalar(vector.length); // normalized direction. I don't actually know if it _needs_ to be normalized per se, but better safe than sorry for now
-    debugger;
-    const result = this.raycast(vector, direction);
+    const aTob = new Vector3(b.x - a.x, b.y - a.y, b.z - a.z);
+    const direction = aTob.divideScalar(aTob.length()); // normalized direction. I don't actually know if it _needs_ to be normalized per se, but better safe than sorry for now
 
-    return b.distanceTo(result) < 0.005; // TODO: tune. this isnt just a b===result bc there may be some numberical shenanigans. Maybe there's a better way to do this???
+    const result = this.raycast(aTob, direction);
+
+    return true;
+    // return b.distanceTo(result) < 0.005; // TODO: tune. this isnt just a b===result bc there may be some numberical shenanigans. Maybe there's a better way to do this???
   }
 
   /**
