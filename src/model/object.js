@@ -1,11 +1,14 @@
 import { request } from "util/network.js";
 import generatePatches from "controller/rasterizer/rasterizer";
+import MyImage from "./image";
 
 export default class ObjectRepresentation {
   meshPath;
   luminancePath;
   luminanceFactor = 1; // TODO: make this changeable
+  luminanceMap;
   reflectancePath;
+  reflectanceMap;
   translate;
   objText;
   patchRes;
@@ -18,9 +21,12 @@ export default class ObjectRepresentation {
     this.reflectancePath = reflectancePath;
     this.translate = [0, 0, 0];
     this.objText = null;
-    this.patchRes = [16, 16]; //TODO: change
+    this.patchRes = [16, 16]; //T ODO: change
     this.patchFlag = false;
     this.patches = null;
+
+    this.reflectanceMap = new MyImage(this.reflectancePath);
+    this.luminanceMap = new MyImage(this.luminancePath);
   }
 
   async loadObjText() {
@@ -29,6 +35,19 @@ export default class ObjectRepresentation {
 
   getPatches() {
     return this.patches;
+  }
+
+  getMaxEnergyPatch() {
+    const max1D = (arr) =>
+      arr.reduce((pre, nu) =>
+        pre.unshotRadiosity > nu.unshotRadiosity ? pre : nu
+      );
+
+    return max1D(this.patches.map((row) => max1D(row)));
+  }
+
+  mapsLoaded() {
+    return this.reflectanceMap.loaded && this.luminanceMap.loaded;
   }
 
   async calculatePatches() {
@@ -43,8 +62,8 @@ export default class ObjectRepresentation {
         this.objText,
         this.patchRes[0],
         this.patchRes[1],
-        this.luminancePath,
-        this.reflectancePath,
+        this.luminanceMap,
+        this.reflectanceMap,
         this.luminanceFactor
       );
       this.patchFlag = true;

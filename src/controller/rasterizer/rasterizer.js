@@ -53,14 +53,10 @@ function generatePatches(
   objText,
   xRes,
   yRes,
-  luminancePath,
-  reflectancePath,
+  luminanceMap,
+  reflectanceMap,
   luminanceFactor
 ) {
-  // https://pbs.twimg.com/media/EVTcWRJXsAAMC8K.jpg
-  const reflectanceMap = new MyImage(reflectancePath);
-  const luminanceMap = new MyImage(luminancePath);
-
   const patches = new Array(xRes).fill(new Array(yRes));
 
   const parsed = new OBJFile(objText).parse();

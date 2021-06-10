@@ -70,20 +70,22 @@ export const patchTexture = (patches, width, height) => {
   // determine what energy corresponds to white
   const maxBrightness = Math.max(...patches.map((x) => x.finalWattage));
 
-  for (const patch of patches) {
-    const wattage = patch.finalWattage;
+  for (var i = 0; i < patches.length; i++) {
+    for (var j = 0; j < patches[i].length; j++) {
+      const patch = patches[i][j];
+      const wattage = patch.finalWattage;
 
-    context.fillStyle =
-      "#" +
-      rgbHex(
-        Math.round(wattage[0] / maxBrightness),
-        Math.round(wattage[1] / maxBrightness),
-        Math.round(wattage[2] / maxBrightness)
-      );
-    context.fillRect(patch.backwriteCoord[0], patch.backwriteCoord[1], 1, 1);
+      context.fillStyle =
+        "#" +
+        rgbHex(
+          Math.round(wattage[0] / maxBrightness),
+          Math.round(wattage[1] / maxBrightness),
+          Math.round(wattage[2] / maxBrightness)
+        );
+      context.fillRect(patch.backwriteCoord[0], patch.backwriteCoord[1], 1, 1);
+      return canvas.transferToImageBitmap();
+    }
   }
-
-  return canvas.transferToImageBitmap();
 };
 
 export const defaultTexture = (width = 32, height = 32) => {

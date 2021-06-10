@@ -1,5 +1,9 @@
 import SymStore from "model/symStore";
 import { Vector3 } from "three";
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 export default class SceneRepresentation {
   objects;
   formFactors;
@@ -39,8 +43,17 @@ export default class SceneRepresentation {
     this.txRes = [x, y];
   }
 
+  mapsLoaded() {
+    return this.objects.reduce((x, y) => x && y);
+  }
+
   async calculatePatches(xRes, yRes) {
     this.txRes = [xRes, yRes];
+
+    while (!this.mapsLoaded()) {
+      // TODO: improve
+      await sleep(100);
+    }
 
     for (const o of this.objects) {
       o.calculatePatches();
@@ -97,6 +110,10 @@ export default class SceneRepresentation {
     }
   }
 
+  radiate() {
+    //TODO: add FF and patches check
+  }
+
   /**
    * returns whether there is an unobstructed path from a to b in the scene.
    * @param {Vector3} a
@@ -123,11 +140,11 @@ export default class SceneRepresentation {
    * @param {Vector3} origin
    * @param {Vector3} direction
    */
-  raycast = (origin, direction) => {
+  raycast(origin, direction) {
     // https://threejs.org/docs/#api/en/core/Raycaster
     this.rayCaster.set(origin, direction);
     const intersect = this.rayCaster.intersectObject(this.scene3, true)[0];
     // console.log(intersect)
     return intersect;
-  };
+  }
 }

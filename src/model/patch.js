@@ -2,12 +2,16 @@ export default class Patch {
   position3D;
   normal3D;
   positionTX;
+
   selfIlluminance;
   reflectance;
-  areaRatio;
   luminanceFactor;
+
+  areaRatio;
   nice;
+
   collectedLight = [1.0, 1.0, 1.0]; // TODO: change to 0,0,0
+  unshotRadiosity = [0.0, 0.0, 0.0];
 
   constructor(
     position3D,
@@ -53,6 +57,7 @@ export default class Patch {
 
   illuminate(value) {
     this.collectedLight += value;
+    this.unshotRadiosity += value;
   }
 
   resetCollectedLight() {

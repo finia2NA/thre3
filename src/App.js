@@ -54,10 +54,9 @@ const App = () => {
 
       <Controldiv>
         <Controlpanel />
-        <Button onClick={() => scene.calculatePatches(16, 16)}>Patches</Button>
-        <Button onClick={() => scene.calculateFormFactors(16, 16)}>
-          Form Factors
-        </Button>
+        <Button onClick={() => scene.calculatePatches(16, 16)}>ロ</Button>
+        <Button onClick={() => scene.calculateFormFactors(16, 16)}>FF</Button>
+        <Button onClick={() => scene.radiate()}>下</Button>
       </Controldiv>
     </Maindiv>
   );
