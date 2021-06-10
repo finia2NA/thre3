@@ -32,16 +32,15 @@ class MyImage {
   }
 
   sample(u, v) {
-    return new Vector3(0, 0, 0);
-    // FIXME:!!!
-    // const [x, y] = this.getXY(u, v);
+    debugger;
+    const [x, y] = this.getXY(u, v);
 
-    // const red = this.data[(this.res[0] * y + x) * 4];
-    // const green = this.data[(this.res[0] * y + x) * 4 + 1];
-    // const blue = this.data[(this.res[0] * y + x) * 4 + 2];
-    // // const alpha = this.data[((this.res[0] * y) + x) * 4 + 3];
+    const red = this.data[(this.res[0] * y + x) * 4];
+    const green = this.data[(this.res[0] * y + x) * 4 + 1];
+    const blue = this.data[(this.res[0] * y + x) * 4 + 2];
+    // const alpha = this.data[((this.res[0] * y) + x) * 4 + 3];
 
-    // return new Vector3(red, blue, green);
+    return new Vector3(red, blue, green);
   }
 }
 

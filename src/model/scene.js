@@ -119,24 +119,29 @@ export default class SceneRepresentation {
 
     var counter = 0;
 
-    var currentShooter;
+    while (true) {
+      const objectsMaxPatch = this.objects.map((o) => o.getMaxUnshotPatch());
 
-    do {
-      const maxPatches = this.objects.map((o) => o.getMaxUnshotPatch());
-
-      currentShooter = maxPatches[0];
+      const currentShooter = objectsMaxPatch[0];
       var shooterObjectIndex = 0;
-      for (var p = 1; p < maxPatches.length; p++) {
+      for (var p = 1; p < objectsMaxPatch.length; p++) {
         if (
-          maxPatches[p].unshotRadiosity.length() >
+          objectsMaxPatch[p].unshotRadiosity.length() >
           currentShooter.unshotRadiosity.length()
         ) {
-          currentShooter = maxPatches[p];
+          currentShooter = objectsMaxPatch[p];
           shooterObjectIndex = p;
         }
       }
 
       const energy = currentShooter.unshotRadiosity;
+
+      debugger;
+
+      if (energy < threshold) {
+        break;
+      }
+
       currentShooter.unshotRadiosity = new Vector3(0, 0, 0);
 
       for (var i = 0; i < this.objects.length; i++) {
@@ -157,7 +162,7 @@ export default class SceneRepresentation {
         }
       }
       counter++;
-    } while (currentShooter.unshotRadiosity > threshold);
+    }
 
     console.log(counter);
   }
