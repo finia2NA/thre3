@@ -1,3 +1,5 @@
+import { Vector3 } from "three";
+
 export default class Patch {
   position3D;
   normal3D;
@@ -9,7 +11,7 @@ export default class Patch {
   areaRatio;
   nice;
 
-  unshotRadiosity = [0.0, 0.0, 0.0];
+  unshotRadiosity = new Vector3(0, 0, 0);
 
   constructor(
     position3D,
@@ -32,8 +34,12 @@ export default class Patch {
     this.normal3D = normal3D;
     this.positionTX = positionTX;
 
-    this.displayEnergy = baseIlluminance * luminanceFactor * areaFactor;
-    this.unshotRadiosity = baseIlluminance * luminanceFactor * areaFactor;
+    this.displayEnergy = baseIlluminance.multiplyScalar(
+      luminanceFactor * areaFactor
+    );
+    this.unshotRadiosity = baseIlluminance.multiplyScalar(
+      luminanceFactor * areaFactor
+    );
 
     this.reflectance = reflectance;
 
@@ -57,9 +63,19 @@ export default class Patch {
     return 1 / this.position3D.clone().sub(b.position3D).length() ** 2;
   }
 
-  illuminate(value) {
-    this.displayEnergy += value * this.areaRatio * this.reflectance;
-    this.unshotRadiosity += value * this.areaRatio * this.reflectance;
+  /**
+   *
+   * @param {Vector3} energy
+   */
+  illuminate(energy) {
+    const addVector = energy
+      .clone()
+      .multiply(this.reflectance)
+      .multiplyScalar(this.areaRatio);
+
+    this.displayEnergy.add(addVector);
+
+    this.unshotRadiosity.add(addVector);
   }
 
   resetCollectedLight() {

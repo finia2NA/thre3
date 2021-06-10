@@ -44,16 +44,7 @@ export default class ObjectRepresentation {
   getMaxUnshotPatch() {
     const max1D = (arr) =>
       arr.reduce((pre, nu) =>
-        pre.unshotRadiosity > nu.unshotRadiosity ? pre : nu
-      );
-
-    return max1D(this.patches.map((row) => max1D(row)));
-  }
-
-  getMaxDisplayEnergy() {
-    const max1D = (arr) =>
-      arr.reduce((pre, nu) =>
-        pre.displayEnergy > nu.displayEnergy ? pre : nu
+        pre.unshotRadiosity.length() > nu.unshotRadiosity.length() ? pre : nu
       );
 
     return max1D(this.patches.map((row) => max1D(row)));

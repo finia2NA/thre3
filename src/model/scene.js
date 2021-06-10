@@ -88,7 +88,6 @@ export default class SceneRepresentation {
       }
     }
     console.log("form factors: done");
-    // debugger;
   }
 
   /**
@@ -118,7 +117,7 @@ export default class SceneRepresentation {
         ...this.objects.map((o) => o.getMaxUnshotPatch().unshotRadiosity)
       );
 
-    var j = 0;
+    var counter = 0;
 
     var currentShooter;
 
@@ -128,31 +127,39 @@ export default class SceneRepresentation {
       currentShooter = maxPatches[0];
       var shooterObjectIndex = 0;
       for (var p = 1; p < maxPatches.length; p++) {
-        if (maxPatches[p].unshotRadiosity > currentShooter.unshotRadiosity) {
-          currentShooter = maxPatches[i];
-          shooterObjectIndex = i;
+        if (
+          maxPatches[p].unshotRadiosity.length() >
+          currentShooter.unshotRadiosity.length()
+        ) {
+          currentShooter = maxPatches[p];
+          shooterObjectIndex = p;
         }
       }
 
       const energy = currentShooter.unshotRadiosity;
-      currentShooter.unshotRadiosity = 0;
+      currentShooter.unshotRadiosity = new Vector3(0, 0, 0);
 
       for (var i = 0; i < this.objects.length; i++) {
-        for (var j = 0; j < this.object.patches.length; j++) {
-          for (var k = 0; k < this.object.patches[j].length; k++) {
+        for (var j = 0; j < this.objects[i].patches.length; j++) {
+          for (var k = 0; k < this.objects[i].patches[j].length; k++) {
             const a = [
               shooterObjectIndex,
               currentShooter.positionTX[0],
               currentShooter.positionTX[1],
             ];
             const b = [i, j, k];
-            const lightReaching = energy * this.formFactors.get(a, b);
+            const lightReaching = energy
+              .clone()
+              .multiplyScalar(this.formFactors.get(a, b));
 
             this.objects[i].patches[j][k].illuminate(lightReaching);
           }
         }
       }
+      counter++;
     } while (currentShooter.unshotRadiosity > threshold);
+
+    console.log(counter);
   }
 
   /**

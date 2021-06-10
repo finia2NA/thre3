@@ -33,8 +33,7 @@ class MyImage {
 
   sample(u, v) {
     return new Vector3(0, 0, 0);
-
-    // debugger;
+    // FIXME:!!!
     // const [x, y] = this.getXY(u, v);
 
     // const red = this.data[(this.res[0] * y + x) * 4];
