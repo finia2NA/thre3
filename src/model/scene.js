@@ -111,7 +111,48 @@ export default class SceneRepresentation {
   }
 
   radiate() {
-    //TODO: add FF and patches check
+    // get abort threshold as % of max dispaly energy
+    const threshold =
+      0.01 *
+      Math.max(
+        ...this.objects.map((o) => o.getMaxUnshotPatch().unshotRadiosity)
+      );
+
+    var j = 0;
+
+    var currentShooter;
+
+    do {
+      const maxPatches = this.objects.map((o) => o.getMaxUnshotPatch());
+
+      currentShooter = maxPatches[0];
+      var shooterObjectIndex = 0;
+      for (var p = 1; p < maxPatches.length; p++) {
+        if (maxPatches[p].unshotRadiosity > currentShooter.unshotRadiosity) {
+          currentShooter = maxPatches[i];
+          shooterObjectIndex = i;
+        }
+      }
+
+      const energy = currentShooter.unshotRadiosity;
+      currentShooter.unshotRadiosity = 0;
+
+      for (var i = 0; i < this.objects.length; i++) {
+        for (var j = 0; j < this.object.patches.length; j++) {
+          for (var k = 0; k < this.object.patches[j].length; k++) {
+            const a = [
+              shooterObjectIndex,
+              currentShooter.positionTX[0],
+              currentShooter.positionTX[1],
+            ];
+            const b = [i, j, k];
+            const lightReaching = energy * this.formFactors.get(a, b);
+
+            this.objects[i].patches[j][k].illuminate(lightReaching);
+          }
+        }
+      }
+    } while (currentShooter.unshotRadiosity > threshold);
   }
 
   /**

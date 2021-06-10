@@ -10,7 +10,6 @@ import {
   multiplyBayecentric,
 } from "controller/rasterizer/helpers";
 import Patch from "model/patch";
-import MyImage from "model/image";
 
 const OBJFile = require("obj-file-parser");
 
@@ -116,7 +115,8 @@ function generatePatches(
         texel,
         selfIlluminance,
         reflectance,
-        ratio,
+        // ratio, //TODO: fix
+        1,
         1,
         nice
       );

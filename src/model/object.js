@@ -3,14 +3,18 @@ import generatePatches from "controller/rasterizer/rasterizer";
 import MyImage from "./image";
 
 export default class ObjectRepresentation {
+  translate;
+
   meshPath;
+  objText;
+
+  luminanceMap;
   luminancePath;
   luminanceFactor = 1; // TODO: make this changeable
-  luminanceMap;
-  reflectancePath;
+
   reflectanceMap;
-  translate;
-  objText;
+  reflectancePath;
+
   patchRes;
   patchFlag;
   patches;
@@ -37,10 +41,19 @@ export default class ObjectRepresentation {
     return this.patches;
   }
 
-  getMaxEnergyPatch() {
+  getMaxUnshotPatch() {
     const max1D = (arr) =>
       arr.reduce((pre, nu) =>
         pre.unshotRadiosity > nu.unshotRadiosity ? pre : nu
+      );
+
+    return max1D(this.patches.map((row) => max1D(row)));
+  }
+
+  getMaxDisplayEnergy() {
+    const max1D = (arr) =>
+      arr.reduce((pre, nu) =>
+        pre.displayEnergy > nu.displayEnergy ? pre : nu
       );
 
     return max1D(this.patches.map((row) => max1D(row)));
