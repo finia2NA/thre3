@@ -29,8 +29,8 @@ export default class ObjectRepresentation {
     this.patchFlag = false;
     this.patches = null;
 
-    this.reflectanceMap = new MyImage(this.reflectancePath);
-    this.luminanceMap = new MyImage(this.luminancePath);
+    this.reflectanceMap = new MyImage(reflectancePath);
+    this.luminanceMap = new MyImage(luminancePath);
   }
 
   async loadObjText() {

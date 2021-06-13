@@ -109,7 +109,9 @@ export default class SceneRepresentation {
     }
   }
 
-  radiate() {
+  async radiate() {
+    await this.calculateFormFactors(16, 16); //TODO: res
+
     // get abort threshold as % of max dispaly energy
     const threshold =
       0.01 *
@@ -119,10 +121,12 @@ export default class SceneRepresentation {
 
     var counter = 0;
 
-    while (true) {
+    // while (true) {
+    while (counter === 0) {
+      // TODO: remove
       const objectsMaxPatch = this.objects.map((o) => o.getMaxUnshotPatch());
 
-      const currentShooter = objectsMaxPatch[0];
+      var currentShooter = objectsMaxPatch[0];
       var shooterObjectIndex = 0;
       for (var p = 1; p < objectsMaxPatch.length; p++) {
         if (
@@ -136,7 +140,7 @@ export default class SceneRepresentation {
 
       const energy = currentShooter.unshotRadiosity;
 
-      debugger;
+      // console.log(energy)
 
       if (energy < threshold) {
         break;
@@ -153,11 +157,22 @@ export default class SceneRepresentation {
               currentShooter.positionTX[1],
             ];
             const b = [i, j, k];
-            const lightReaching = energy
-              .clone()
-              .multiplyScalar(this.formFactors.get(a, b));
 
-            this.objects[i].patches[j][k].illuminate(lightReaching);
+            const ff = this.formFactors.get(a, b);
+
+            if (ff > 0) {
+              // console.log(this.formFactors.get(a, b))
+
+              const lightReaching = energy
+                .clone()
+                .multiplyScalar(this.formFactors.get(a, b));
+
+              // console.log(lightReaching)
+
+              this.objects[i].patches[j][k].illuminate(lightReaching);
+
+              // console.log(this.objects[i].patches[j][k].unshotRadiosity)
+            }
           }
         }
       }
@@ -197,7 +212,6 @@ export default class SceneRepresentation {
     // https://threejs.org/docs/#api/en/core/Raycaster
     this.rayCaster.set(origin, direction);
     const intersect = this.rayCaster.intersectObject(this.scene3, true)[0];
-    // console.log(intersect)
     return intersect;
   }
 }
