@@ -43,9 +43,15 @@ export default class SymStore {
   }
 
   getIndices(a, b) {
-    const s = [a, b].sort();
-    const re = [this.encode(s[0]), this.encode(s[1])];
+    var re = [this.encode(a), this.encode(b)].sort();
+    re = re[0] < re[1] ? [re[0], re[1]] : [re[1], re[0]]; // sort the array so that the smaller element is in front
+
     re[1] = re[1] - re[0];
+
+    if (Math.min(...re) < 0)
+      console.error(
+        "something went wrong when calculating Sym indices, resulted in" + re
+      );
     return re;
   }
 
