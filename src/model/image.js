@@ -9,6 +9,7 @@ class MyImage {
 
   constructor(path) {
     // TODO: do the res and data and so on parts of the constructor in the onload function https://stackoverflow.com/questions/623172/how-to-get-image-size-height-width-using-javascript .
+
     const img = new Image();
     img.src = path;
 
@@ -20,7 +21,7 @@ class MyImage {
 
       ctx.drawImage(img, 0, 0);
 
-      this.data = ctx.getImageData(0, 0, this.res[0], this.res[1]);
+      this.data = ctx.getImageData(0, 0, this.res[0], this.res[1]).data;
 
       this.loaded = true;
       console.log("img loaded!");
@@ -32,13 +33,11 @@ class MyImage {
   }
 
   sample(u, v) {
-    debugger;
     const [x, y] = this.getXY(u, v);
-
     const red = this.data[(this.res[0] * y + x) * 4];
     const green = this.data[(this.res[0] * y + x) * 4 + 1];
     const blue = this.data[(this.res[0] * y + x) * 4 + 2];
-    // const alpha = this.data[((this.res[0] * y) + x) * 4 + 3];
+    // const alpha = this.data[((this.res[0] * y) + x) * 4 + 3]; // don't really need the alpha huh.. If I did I'd return a Vector4 instead
 
     return new Vector3(red, blue, green);
   }
