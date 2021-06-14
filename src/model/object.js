@@ -15,6 +15,8 @@ export default class ObjectRepresentation {
   reflectanceMap;
   reflectancePath;
 
+  radMap;
+
   patchRes;
   patchFlag;
   patches;

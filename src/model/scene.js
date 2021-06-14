@@ -1,3 +1,4 @@
+import { patchTexture } from "components/3D/textures";
 import SymStore from "model/symStore";
 import { Vector3 } from "three";
 
@@ -116,7 +117,9 @@ export default class SceneRepresentation {
     const threshold =
       0.01 *
       Math.max(
-        ...this.objects.map((o) => o.getMaxUnshotPatch().unshotRadiosity)
+        ...this.objects.map((o) =>
+          o.getMaxUnshotPatch().unshotRadiosity.length()
+        )
       );
 
     var counter = 0;
@@ -142,9 +145,10 @@ export default class SceneRepresentation {
 
       // console.log(energy)
 
-      if (energy < threshold) {
+      if (energy.length() < threshold) {
         break;
       }
+      debugger;
 
       currentShooter.unshotRadiosity = new Vector3(0, 0, 0);
 
@@ -162,6 +166,7 @@ export default class SceneRepresentation {
 
             if (ff > 0) {
               // console.log(this.formFactors.get(a, b))
+              console.log(this.objects[i].patches[j][k].positionTX);
 
               const lightReaching = energy
                 .clone()
@@ -180,6 +185,10 @@ export default class SceneRepresentation {
     }
 
     console.log(counter);
+
+    for (const o of this.objects) {
+      o.radMap = patchTexture(o.patches, o.patchRes[0], o.patchRes[1]);
+    }
   }
 
   /**

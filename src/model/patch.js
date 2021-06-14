@@ -69,7 +69,7 @@ export default class Patch {
    */
   illuminate(energy) {
     console.log(this.reflectance);
-    debugger;
+    // debugger;
     const addVector = energy
       .clone()
       .multiply(this.reflectance) //FIXME: reflectance currently always 0???

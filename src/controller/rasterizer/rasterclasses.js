@@ -24,10 +24,10 @@ export class Boundingbox {
     const xs = corners.map((o) => o.x);
     const ys = corners.map((o) => o.y);
 
-    this.xMax = Math.ceil(Math.max(...xs) * xRes);
-    this.xMin = Math.floor(Math.min(...xs) * xRes);
-    this.yMax = Math.ceil(Math.max(...ys) * yRes);
-    this.yMin = Math.floor(Math.min(...ys) * yRes);
+    this.xMax = Math.ceil(Math.max(...xs) * (xRes - 1));
+    this.xMin = Math.floor(Math.min(...xs) * (xRes - 1));
+    this.yMax = Math.ceil(Math.max(...ys) * (yRes - 1));
+    this.yMin = Math.floor(Math.min(...ys) * (yRes - 1));
   }
 }
 

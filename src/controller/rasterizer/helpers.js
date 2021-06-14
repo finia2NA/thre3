@@ -1,6 +1,20 @@
 import { Vector2, Vector3 } from "three";
 import { Vertex, ClosestRes } from "./rasterclasses";
 
+export function checkCounterClockwise(c) {
+  // https://mathworld.wolfram.com/PolygonArea.html
+
+  // first calculate area of the triangle
+  var a = 0;
+  for (var i = 0; i < 3; i++) {
+    a += c[i].x * c[(i + 1) % 3].y - c[(i + 1) % 3].x * c[i].y;
+  }
+
+  // usually, if said area is positive, the tri was defined counterclockwise, else clockwise.
+  // however, since in our coordsystem, y points downward, the opposite is true.
+  return a < 0;
+}
+
 export function elementwiseEquals(a, b) {
   if (a.length !== b.length) {
     console.error(

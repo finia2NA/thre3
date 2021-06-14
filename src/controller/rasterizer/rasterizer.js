@@ -8,12 +8,18 @@ import {
   getBayecentrics,
   getClosestInside,
   multiplyBayecentric,
+  checkCounterClockwise,
 } from "controller/rasterizer/helpers";
 import Patch from "model/patch";
 
 const OBJFile = require("obj-file-parser");
 
 function rasterize(corners, xRes, yRes) {
+  if (!checkCounterClockwise(corners)) {
+    corners.reverse();
+    console.log("fixed orientation!!");
+  }
+
   // FIXME: not working right, painting too little
   const locations = [];
   const boundingbox = new Boundingbox(corners, xRes, yRes);
@@ -33,17 +39,20 @@ function rasterize(corners, xRes, yRes) {
       var eqCanary = true;
 
       for (const eq of equations) {
-        if (eq.apply(midpoint) > 0) {
-          // TODO: fenceposting :D
+        const eqRes = eq.apply(midpoint);
+        // debugger;
+        if (eqRes >= 0) {
           eqCanary = false;
           break;
         }
       }
 
+      // if (x===15&&y===9)
+      //   debugger;
       if (eqCanary) locations.push([x, y]);
     }
   }
-
+  // TODO: take another look at the edgecase in geogebra
   return locations;
 }
 
