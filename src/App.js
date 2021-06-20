@@ -8,6 +8,8 @@ import SceneRepresentation from "model/scene";
 
 import ObjectRepresentation from "model/object";
 import { Button } from "@material-ui/core";
+import { Vector2 } from "three";
+import { rasterize } from "controller/rasterizer/rasterizer";
 
 // Redux
 
@@ -54,6 +56,14 @@ const App = () => {
 
       <Controldiv>
         <Controlpanel />
+        <Button
+          onClick={() => {
+            debugger;
+          }}
+        >
+          ちょっとまってくだstop
+        </Button>{" "}
+        <br />
         <Button onClick={() => scene.calculatePatches(16, 16)}>ロ</Button>
         <Button onClick={() => scene.calculateFormFactors(16, 16)}>FF</Button>
         <Button onClick={() => scene.radiate()}>下</Button>

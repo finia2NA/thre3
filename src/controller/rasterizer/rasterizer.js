@@ -14,13 +14,30 @@ import Patch from "model/patch";
 
 const OBJFile = require("obj-file-parser");
 
-function rasterize(corners, xRes, yRes) {
+/**
+ * Takes a single face in texture space, described by its corner points, and returns a conservative rasterization of that face.
+ * @param {Vector2[]} corners
+ * @param {number} xRes
+ * @param {number} yRes
+ * @returns {number[][]} A list of discrete painted texel coordinates.
+ */
+export function rasterize(corners, xRes, yRes) {
+  // The algorithm is designed to work with faces that are in counterclockwise orientation.
+  // We first check if this is the case, and if not fix that issue.
   if (!checkCounterClockwise(corners)) {
-    corners.reverse();
-    console.log("fixed orientation!!");
+    corners.reverse(); // mutates the array
+    // console.log("fixed orientation!!");
   }
 
-  // FIXME: not working right, painting too little
+  // The algorithm works in the following way:
+  // We assume the faces we're given are defined in a counterclockwise fashion.
+  // We first create a bounding box, a rough area in which we'll later check if the texels are in our shape.
+  // Then, generate *conservative* descriptions for every edge in our given shape.
+  // The rasterization of these will include every texel which is included in our shape in any way.
+  // Then, we create an indirect equation for every conservative edge, which describes if a given point is to the left, right or exactly on that line.
+  // Now, we just have to take the midpoints of the texels in the bounding box, and check if they are left to the left of every conservative edge using the indirect equations.
+  // If this is the case, the texel is part of the shapes conservative rasterization.
+
   const locations = [];
   const boundingbox = new Boundingbox(corners, xRes, yRes);
 
@@ -40,19 +57,20 @@ function rasterize(corners, xRes, yRes) {
 
       for (const eq of equations) {
         const eqRes = eq.apply(midpoint);
-        // debugger;
+
         if (eqRes >= 0) {
+          // tested and proven, has to be >= ! :)
           eqCanary = false;
           break;
         }
       }
 
-      // if (x===15&&y===9)
+      // if (x===10&&y===0)
       //   debugger;
       if (eqCanary) locations.push([x, y]);
     }
   }
-  // TODO: take another look at the edgecase in geogebra
+
   return locations;
 }
 
@@ -65,7 +83,10 @@ function generatePatches(
   reflectanceMap,
   luminanceFactor
 ) {
-  const patches = new Array(xRes).fill(new Array(yRes));
+  const patches = new Array(xRes).fill();
+  for (var i = 0; i < yRes; i++) {
+    patches[i] = new Array(yRes);
+  }
 
   const parsed = new OBJFile(objText).parse();
   const structure = parsed.models[0];
@@ -131,16 +152,23 @@ function generatePatches(
       );
 
       // TODO: find out why things were going above x,yres and fix that, instead of this bandaid which probably masks some deeper error
+      // debugger;
       if (texel[0] < xRes && texel[1] < yRes) {
+        // if there's not yet a patch for this position
+        // or the patch there has a higher nice than this one
         if (
           !patches[texel[0]][texel[1]] ||
-          patches[texel[0]][texel[1]].nice < patch.nice
+          patches[texel[0]][texel[1]].nice > patch.nice
         ) {
+          // write this patch as the representative of that texel.
           patches[texel[0]][texel[1]] = patch;
         }
       }
     }
   }
+
+  debugger;
+
   return patches;
 }
 
