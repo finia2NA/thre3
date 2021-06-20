@@ -10,6 +10,7 @@ import ObjectRepresentation from "model/object";
 import { Button } from "@material-ui/core";
 import { Vector2 } from "three";
 import { rasterize } from "controller/rasterizer/rasterizer";
+import { useState } from "react";
 
 // Redux
 
@@ -31,14 +32,14 @@ const Controldiv = styled.div`
 const App = () => {
   const scene = new SceneRepresentation();
 
+  const [displaymode, setdisplaymode] = useState("reflectance");
+
   const cornell = new ObjectRepresentation(
     "robj/package/obj.obj",
     "robj/package/light.png",
     "robj/package/reflectance.png"
   );
-
   cornell.loadObjText();
-
   cornell.patchRes = [16, 16];
 
   scene.addObject(cornell);
@@ -48,7 +49,7 @@ const App = () => {
       <Viewdiv>
         <Viewport
           scene={scene}
-          displaymode="reflectance"
+          displaymode={displaymode}
           setRaycaster={scene.setRC}
           setScene3={scene.setScene3}
         />
@@ -67,6 +68,7 @@ const App = () => {
         <Button onClick={() => scene.calculatePatches(16, 16)}>ロ</Button>
         <Button onClick={() => scene.calculateFormFactors(16, 16)}>FF</Button>
         <Button onClick={() => scene.radiate()}>下</Button>
+        <Button onClick={() => setdisplaymode("rad")}>RTX ON</Button>
       </Controldiv>
     </Maindiv>
   );

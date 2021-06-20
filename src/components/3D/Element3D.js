@@ -23,13 +23,12 @@ export const LoadingBox = (props) => {
 // Takes an obj and a displaymode and displays it.
 const Element3D = (props) => {
   var texturePath = "defaultTexture.png";
-  var generated = () =>
-    defaultTexture(props.obj.patchRes[0], props.obj.patchRes[1]);
+  var generated = defaultTexture(props.obj.patchRes[0], props.obj.patchRes[1]);
   var useGenerated = false;
 
   switch (props.displaymode) {
     case "rad":
-      generated = props.radiosityTexture;
+      generated = props.obj.radMap;
       useGenerated = true;
       break;
     case "reflectance":
@@ -39,13 +38,14 @@ const Element3D = (props) => {
       texturePath = props.obj.luminancePath;
       break;
     case "checkerboard":
-      generated = () =>
-        checkerboardTexture(props.obj.patchRes[0], props.obj.patchRes[1]);
+      generated = checkerboardTexture(
+        props.obj.patchRes[0],
+        props.obj.patchRes[1]
+      );
       useGenerated = true;
       break;
     case "rainbow":
-      generated = () =>
-        rainbowTexture(props.obj.patchRes[0], props.obj.patchRes[1]);
+      generated = rainbowTexture(props.obj.patchRes[0], props.obj.patchRes[1]);
       useGenerated = true;
       break;
     default:
@@ -54,10 +54,11 @@ const Element3D = (props) => {
 
   const fileTexture = useLoader(TextureLoader, texturePath);
   const generatedTexture = useMemo(() => {
-    const re = new THREE.CanvasTexture(generated()); // TODO: use tx from props instead of just using default
+    if (props.displaymode === "rad") debugger;
+    const re = new THREE.CanvasTexture(generated); // TODO: use tx from props instead of just using default
     re.magFilter = THREE.NearestFilter;
     return re;
-  }, []); // TODO: dependency array with generated?
+  }, [props.displaymode, generated]); // TODO: dependency array with generated?
 
   const texture = useGenerated ? generatedTexture : fileTexture;
 
