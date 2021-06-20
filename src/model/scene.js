@@ -204,7 +204,7 @@ export default class SceneRepresentation {
 
     const result = this.raycast(a, direction);
 
-    // TODO: tune. this isnt just a target===result bc there may be some numerical shenanigans. Maybe there's a better way to do this???
+    // This isnt just a target===result bc there may be some numerical shenanigans.
     if (!result || result.distance >= targetDistance - 0.005) {
       return true;
     } else {
