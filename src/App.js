@@ -61,7 +61,7 @@ const App = () => {
             debugger;
           }}
         >
-          ちょっとまってくだstop
+          ちょっとまって
         </Button>{" "}
         <br />
         <Button onClick={() => scene.calculatePatches(16, 16)}>ロ</Button>

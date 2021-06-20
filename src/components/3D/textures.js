@@ -1,3 +1,5 @@
+import { Vector3 } from "three";
+
 const rgbHex = require("rgb-hex");
 
 /**
@@ -63,17 +65,33 @@ export const patchTexture = (patches, width, height) => {
   var canvas = new OffscreenCanvas(width, height);
   var context = canvas.getContext("2d");
 
+  // Turned off right now, in theory no area that is not calculated should be visible anyway, so it doesnt matter what color the textuer is there.
   // bg of the canvas is no energy = black
-  context.fillStyle = "black";
-  context.fill(0, 0, width, height); //TODO: off-by-ones would lead to overdrawing or to wite line at the edge
+  // context.fillStyle = "black";
+  // // FIXME: needs to be of some weird type.
+  // // TODO: off-by-ones would lead to overdrawing or to wite line at the edge
+  // context.fill(0, 0, width, height);
 
-  // determine what energy corresponds to white
-  const maxBrightness = Math.max(...patches.map((x) => x.finalWattage));
+  // determine the max energy in a single color channel.
+  const maxComponents = new Vector3(0, 0, 0);
+  for (var i = 0; i < patches.length; i++) {
+    for (var j = 0; j < patches[i].length; j++) {
+      if (patches[i][j]) {
+        // "If this vector's x, y or z value is less than the argument's x, y or z value, replace that value with the corresponding max value."
+        maxComponents.max(patches[i][j].displayEnergy);
+      }
+    }
+  }
+  const maxBrightness = Math.max(...maxComponents.toArray());
+
+  debugger;
 
   for (var i = 0; i < patches.length; i++) {
     for (var j = 0; j < patches[i].length; j++) {
       const patch = patches[i][j];
-      const wattage = patch.finalWattage;
+      const wattage = patch.displayEnergy;
+
+      debugger;
 
       context.fillStyle =
         "#" +

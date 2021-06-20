@@ -68,14 +68,10 @@ export default class Patch {
    * @param {Vector3} energy
    */
   illuminate(energy) {
-    console.log(this.reflectance);
-    // debugger;
     const addVector = energy
       .clone()
-      .multiply(this.reflectance) //FIXME: reflectance currently always 0???
-      .multiplyScalar(this.areaRatio);
-
-    // console.log(addVector)
+      .multiply(this.reflectance)
+      .multiplyScalar(this.areaRatio); //TODO: *,/ or nothing with area here?
 
     this.displayEnergy.add(addVector);
     this.unshotRadiosity.add(addVector);

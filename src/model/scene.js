@@ -79,7 +79,7 @@ export default class SceneRepresentation {
         this.objects[coords[1][0]].patches[coords[1][1]][coords[1][2]];
 
       if (!patch1 || !patch2) {
-        alert("The thing you suspected could happen happened");
+        // alert("The thing you suspected could happen happened");
         continue; // if there are no patches in the texture there (which is very possible), we obviously can't calculate a form factor
       }
 
@@ -122,10 +122,11 @@ export default class SceneRepresentation {
         )
       );
 
-    var counter = 0;
+    var i_counter = 0;
+    var p_counter = 0;
 
     // while (true) {
-    while (counter === 0) {
+    while (true) {
       // TODO: remove
       const objectsMaxPatch = this.objects.map((o) => o.getMaxUnshotPatch());
 
@@ -148,7 +149,6 @@ export default class SceneRepresentation {
       if (energy.length() < threshold) {
         break;
       }
-      debugger;
 
       currentShooter.unshotRadiosity = new Vector3(0, 0, 0);
 
@@ -165,26 +165,31 @@ export default class SceneRepresentation {
             const ff = this.formFactors.get(a, b);
 
             if (ff > 0) {
-              // console.log(this.formFactors.get(a, b))
-              console.log(this.objects[i].patches[j][k].positionTX);
+              p_counter++;
 
               const lightReaching = energy
                 .clone()
                 .multiplyScalar(this.formFactors.get(a, b));
 
-              // console.log(lightReaching)
-
               this.objects[i].patches[j][k].illuminate(lightReaching);
-
-              // console.log(this.objects[i].patches[j][k].unshotRadiosity)
             }
           }
         }
       }
-      counter++;
+      i_counter++;
     }
 
-    console.log(counter);
+    console.log(
+      "Made " +
+        i_counter +
+        " iterations before stopping for the threshold of <" +
+        threshold +
+        " energy.\n During this, patches were updated " +
+        p_counter +
+        " times."
+    );
+
+    // debugger;
 
     for (const o of this.objects) {
       o.radMap = patchTexture(o.patches, o.patchRes[0], o.patchRes[1]);
