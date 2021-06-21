@@ -36,7 +36,7 @@ class MyImage {
   }
 
   sample(u, v) {
-    const [x, y] = this.getXY(u, v);
+    var [x, y] = this.getXY(u, 1 - v); //FIXME: document this (texture flipping note)
 
     const red = this.data[(this.res[0] * y + x) * 4];
     const green = this.data[(this.res[0] * y + x) * 4 + 1];
