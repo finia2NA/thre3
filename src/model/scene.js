@@ -1,4 +1,4 @@
-import { patchTexture } from "components/3D/textures";
+import { patchTexture, defaultTexture } from "components/3D/textures";
 import SymStore from "model/symStore";
 import { Vector3 } from "three";
 

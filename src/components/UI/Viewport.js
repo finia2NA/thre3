@@ -20,7 +20,7 @@ const CameraControls = () => {
 
   // Ref to the controls, so that we can update them on every frame using useFrame
   const controls = useRef();
-  useFrame((state) => controls.current.update()); // TODO: this maxes CPU, should probably be changed to only update when mouse moves or something
+  useFrame((state) => controls.current.update()); // TODO: this does something every frame, should probably be changed to only update when mouse moves or something
   return <orbitControls ref={controls} args={[camera, domElement]} />;
 };
 

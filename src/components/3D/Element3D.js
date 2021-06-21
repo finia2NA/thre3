@@ -22,13 +22,14 @@ export const LoadingBox = (props) => {
 
 // Takes an obj and a displaymode and displays it.
 const Element3D = (props) => {
+  console.log("Element3D did something!");
   var texturePath = "defaultTexture.png";
   var generated = defaultTexture(props.obj.patchRes[0], props.obj.patchRes[1]);
   var useGenerated = false;
 
   switch (props.displaymode) {
     case "rad":
-      generated = props.obj.radMap;
+      generated = props.radTexture;
       useGenerated = true;
       break;
     case "reflectance":

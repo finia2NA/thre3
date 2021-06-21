@@ -8,8 +8,6 @@ import SceneRepresentation from "model/scene";
 
 import ObjectRepresentation from "model/object";
 import { Button } from "@material-ui/core";
-import { Vector2 } from "three";
-import { rasterize } from "controller/rasterizer/rasterizer";
 import { useState } from "react";
 
 // Redux
@@ -30,9 +28,9 @@ const Controldiv = styled.div`
 
 // App
 const App = () => {
-  const scene = new SceneRepresentation();
-
   const [displaymode, setdisplaymode] = useState("reflectance");
+
+  const scene = new SceneRepresentation();
 
   const cornell = new ObjectRepresentation(
     "robj/package/obj.obj",
@@ -50,6 +48,7 @@ const App = () => {
         <Viewport
           scene={scene}
           displaymode={displaymode}
+          radTextures={radTextures}
           setRaycaster={scene.setRC}
           setScene3={scene.setScene3}
         />

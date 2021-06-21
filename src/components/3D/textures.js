@@ -82,13 +82,13 @@ export const patchTexture = (patches, width, height) => {
   }
   const maxBrightness = Math.max(...maxComponents.toArray());
 
-  for (var i = 0; i < patches.length; i++) {
-    for (var j = 0; j < patches[i].length; j++) {
-      if (!patches[i][j]) {
+  for (var k = 0; k < patches.length; k++) {
+    for (var l = 0; l < patches[i].length; l++) {
+      if (!patches[k][l]) {
         // if there's no patch here there's nothing to do, eh? ^^
         continue;
       }
-      const patch = patches[i][j];
+      const patch = patches[k][l];
       const wattage = patch.displayEnergy
         .clone()
         .multiplyScalar(255 / maxBrightness);
