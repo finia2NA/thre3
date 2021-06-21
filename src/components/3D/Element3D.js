@@ -55,7 +55,7 @@ const Element3D = (props) => {
 
   const fileTexture = useLoader(TextureLoader, texturePath);
   const generatedTexture = useMemo(() => {
-    if (props.displaymode === "rad") debugger;
+    // if (props.displaymode === "rad") debugger;
     const re = new THREE.CanvasTexture(generated); // TODO: use tx from props instead of just using default
     re.magFilter = THREE.NearestFilter;
     return re;

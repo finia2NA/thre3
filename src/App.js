@@ -29,6 +29,7 @@ const Controldiv = styled.div`
 // App
 const App = () => {
   const [displaymode, setdisplaymode] = useState("reflectance");
+  const [radTextures, setRadTextures] = useState([]);
 
   const scene = new SceneRepresentation();
 
@@ -67,7 +68,14 @@ const App = () => {
         <Button onClick={() => scene.calculatePatches(16, 16)}>ロ</Button>
         <Button onClick={() => scene.calculateFormFactors(16, 16)}>FF</Button>
         <Button onClick={() => scene.radiate()}>下</Button>
-        <Button onClick={() => setdisplaymode("rad")}>RTX ON</Button>
+        <Button
+          onClick={() => {
+            setRadTextures(scene.objects.map((o) => o.radMap));
+            setdisplaymode("rad");
+          }}
+        >
+          Display
+        </Button>
       </Controldiv>
     </Maindiv>
   );

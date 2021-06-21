@@ -83,7 +83,7 @@ export const patchTexture = (patches, width, height) => {
   const maxBrightness = Math.max(...maxComponents.toArray());
 
   for (var k = 0; k < patches.length; k++) {
-    for (var l = 0; l < patches[i].length; l++) {
+    for (var l = 0; l < patches[k].length; l++) {
       if (!patches[k][l]) {
         // if there's no patch here there's nothing to do, eh? ^^
         continue;

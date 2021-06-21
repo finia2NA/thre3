@@ -44,7 +44,12 @@ const Viewport = (props) => {
       {/* Objects */}
       {props.scene.objects.map((o, i) => (
         <Suspense fallback={<LoadingBox />} key={i}>
-          <Element3D obj={o} displaymode={props.displaymode} key={i} />
+          <Element3D
+            obj={o}
+            displaymode={props.displaymode}
+            radTexture={props.radTextures[i]}
+            key={i}
+          />
         </Suspense>
       ))}
     </Canvas>
