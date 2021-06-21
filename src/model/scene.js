@@ -106,6 +106,10 @@ export default class SceneRepresentation {
       // else the form factor consists of distance and turn factors
       const d = a.distanceFactor(b);
       const t = a.turnFactor(b);
+
+      // if (d * t > 1)
+      //   debugger;
+
       return d * t;
     }
   }
@@ -125,8 +129,7 @@ export default class SceneRepresentation {
     var i_counter = 0;
     var p_counter = 0;
 
-    // while (true) {
-    while (true) {
+    while (i_counter === 0) {
       // TODO: remove
       const objectsMaxPatch = this.objects.map((o) => o.getMaxUnshotPatch());
 
@@ -144,7 +147,7 @@ export default class SceneRepresentation {
 
       const energy = currentShooter.unshotRadiosity;
 
-      // console.log(energy)
+      console.log(energy);
 
       if (energy.length() < threshold) {
         break;
@@ -170,6 +173,12 @@ export default class SceneRepresentation {
               const lightReaching = energy
                 .clone()
                 .multiplyScalar(this.formFactors.get(a, b));
+
+              if (lightReaching.length() > energy.length()) {
+                lightReaching.divideScalar(
+                  1.5 * (lightReaching.length() / energy.length())
+                );
+              }
 
               this.objects[i].patches[j][k].illuminate(lightReaching);
             }
