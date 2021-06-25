@@ -27,7 +27,10 @@ const Displaypanel = (props) => {
       >
         Explore
         <br />
-        <Explorepanel setDisplaymode={props.setDisplaymode} />
+        <Explorepanel
+          setDisplaymode={props.setDisplaymode}
+          readyflags={props.readyflags}
+        />
       </div>
     </div>
   );

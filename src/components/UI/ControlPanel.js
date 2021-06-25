@@ -72,7 +72,10 @@ const Controlpanel = (props) => {
       </Collapsing>
 
       <Collapsing name="Display Controls">
-        <Displaypanel setDisplaymode={props.setDisplaymode} />
+        <Displaypanel
+          setDisplaymode={props.setDisplaymode}
+          readyflags={props.readyflags}
+        />
       </Collapsing>
 
       <Collapsing name="Transfer Controls">
@@ -80,7 +83,7 @@ const Controlpanel = (props) => {
       </Collapsing>
 
       <Collapsing name="Indicators" initiallyOpened={true}>
-        <Indicators matrix_ready={false} working={false} />
+        <Indicators readyflags={props.readyflags} />
       </Collapsing>
     </Controldiv>
   );

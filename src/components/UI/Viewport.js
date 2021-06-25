@@ -27,6 +27,7 @@ const CameraControls = () => {
 const Viewport = (props) => {
   return (
     <Canvas
+      gl={{ antialias: true }}
       onCreated={({ gl, raycaster, scene }) => {
         gl.setClearColor("#222222");
         props.setRaycaster(raycaster);
@@ -39,7 +40,6 @@ const Viewport = (props) => {
     >
       {/* Canvas Config */}
       <CameraControls />
-      <ambientLight intensity={0.5} />
 
       {/* Objects */}
       {props.scene.objects.map((o, i) => (

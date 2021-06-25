@@ -60,14 +60,10 @@ const Radiositypanel = (props) => {
         )}
         <ButtonDiv>
           <PreButtonDiv>
-            <Button
-              variant="contained"
-              color="ternary"
-              onClick={props.calcPatches}
-            >
+            <Button variant="contained" onClick={props.calcPatches}>
               ロ
             </Button>
-            <Button variant="contained" color="ternary" onClick={props.calcFF}>
+            <Button variant="contained" onClick={props.calcFF}>
               FF
             </Button>
           </PreButtonDiv>

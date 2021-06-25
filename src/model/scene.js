@@ -9,7 +9,6 @@ export default class SceneRepresentation {
   objects;
   formFactors;
   rayCaster;
-  txRes;
 
   constructor() {
     this.objects = [];
@@ -40,17 +39,13 @@ export default class SceneRepresentation {
     this.scene3 = scene3;
   };
 
-  setTextureRes(x, y) {
-    this.txRes = [x, y];
-  }
+  setTextureRes(x, y) {}
 
   mapsLoaded() {
     return this.objects.reduce((x, y) => x && y);
   }
 
   async calculatePatches(xRes, yRes) {
-    this.txRes = [xRes, yRes];
-
     while (!this.mapsLoaded()) {
       // TODO: improve
       await sleep(100);
@@ -106,9 +101,6 @@ export default class SceneRepresentation {
       // else the form factor consists of distance and turn factors
       const d = a.distanceFactor(b);
       const t = a.turnFactor(b);
-
-      // if (d * t > 1)
-      //   debugger;
 
       return d * t;
     }
@@ -198,8 +190,6 @@ export default class SceneRepresentation {
         " times."
     );
 
-    // debugger;
-
     for (const o of this.objects) {
       o.radMap = patchTexture(o.patches, o.patchRes[0], o.patchRes[1]);
     }
@@ -233,6 +223,7 @@ export default class SceneRepresentation {
    */
   raycast(origin, direction) {
     // https://threejs.org/docs/#api/en/core/Raycaster
+    // debugger;
     this.rayCaster.set(origin, direction);
     const intersect = this.rayCaster.intersectObject(this.scene3, true)[0];
     return intersect;

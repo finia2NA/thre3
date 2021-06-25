@@ -61,16 +61,19 @@ const Explorepanel = (props) => {
         <FormControlLabel
           value={3}
           control={<Radio />}
-          disabled={!props.prog_available}
           label="Rainbow"
           onClick={() => setView(3)}
         />
         <FormControlLabel
           value={4}
           control={<Radio />}
-          disabled={!props.prog_available}
+          disabled={!props.readyflags[2]}
           label="Radiosity"
-          onClick={() => setView(4)}
+          onClick={() => {
+            if (props.readyflags[2]) setView(4);
+            else
+              alert("please calculate radiosity before trying to display it.");
+          }}
         />
       </RadioGroup>
 

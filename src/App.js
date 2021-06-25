@@ -10,8 +10,6 @@ import ObjectRepresentation from "model/object";
 import { Button } from "@material-ui/core";
 import { useState } from "react";
 
-// Redux
-
 // Components
 const Maindiv = styled.div`
   display: flex;
@@ -31,19 +29,30 @@ const App = () => {
   // state
   const [displaymode, setDisplaymode] = useState("reflectance");
   const [radTextures, setRadTextures] = useState([]);
+  const [readyflags, setReadyFlags] = useState([false, false, false]);
 
   // functions
   const calcPatches = () => {
     scene.calculatePatches(16, 16);
+    const newFlags = [...readyflags];
+    newFlags[0] = true;
+    setReadyFlags(newFlags);
   };
   const calcFF = () => {
     scene.calculateFormFactors(16, 16);
+    const newFlags = [...readyflags];
+    newFlags[0] = true;
+    newFlags[1] = true;
+    setReadyFlags(newFlags);
   };
   const calcRad = async () => {
     await scene.radiate();
-    // debugger;
     setRadTextures(scene.objects.map((o) => o.radMap));
-    console.log("rad textures updated");
+    const newFlags = [...readyflags];
+    newFlags[0] = true;
+    newFlags[1] = true;
+    newFlags[2] = true;
+    setReadyFlags(newFlags);
   };
 
   // scene
@@ -76,6 +85,7 @@ const App = () => {
           calcPatches={calcPatches}
           calcFF={calcFF}
           calcRad={calcRad}
+          readyflags={readyflags}
         />
         <Button
           onClick={() => {
