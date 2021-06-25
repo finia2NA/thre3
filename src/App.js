@@ -30,16 +30,17 @@ const App = () => {
   const [displaymode, setDisplaymode] = useState("reflectance");
   const [radTextures, setRadTextures] = useState([]);
   const [readyflags, setReadyFlags] = useState([false, false, false]);
+  const [textureSize, setTextureSize] = useState([16, 16]);
 
   // functions
   const calcPatches = () => {
-    scene.calculatePatches(16, 16);
+    scene.calculatePatches(textureSize[0], textureSize[1]);
     const newFlags = [...readyflags];
     newFlags[0] = true;
     setReadyFlags(newFlags);
   };
   const calcFF = () => {
-    scene.calculateFormFactors(16, 16);
+    scene.calculateFormFactors(textureSize[0], textureSize[1]);
     const newFlags = [...readyflags];
     newFlags[0] = true;
     newFlags[1] = true;
@@ -85,6 +86,7 @@ const App = () => {
           calcPatches={calcPatches}
           calcFF={calcFF}
           calcRad={calcRad}
+          setTextureSize={setTextureSize}
           readyflags={readyflags}
         />
         <Button

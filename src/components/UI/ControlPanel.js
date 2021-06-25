@@ -68,6 +68,7 @@ const Controlpanel = (props) => {
           calcPatches={props.calcPatches}
           calcFF={props.calcFF}
           calcRad={props.calcRad}
+          setTextureSize={props.setTextureSize}
         />
       </Collapsing>
 

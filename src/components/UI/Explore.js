@@ -77,7 +77,7 @@ const Explorepanel = (props) => {
         />
       </RadioGroup>
 
-      {viewMode === 2 && (
+      {/* {viewMode === 5 && (
         <>
           <FormLabel>Diff Type</FormLabel>
           <RadioGroup value={compareMethod}>
@@ -122,7 +122,7 @@ const Explorepanel = (props) => {
       )}
       {
         viewMode === 2 && <Button variant="contained">Compare</Button> // since comparisons need new textures, I don't want the dragging of the slider to instantly trigger the comparison for performance reasons.
-      }
+      } */}
     </div>
   );
 };

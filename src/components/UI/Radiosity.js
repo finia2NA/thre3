@@ -24,6 +24,8 @@ const PreButtonDiv = styled.div`
 const Radiositypanel = (props) => {
   const [method, setMethod] = useState(0);
 
+  const txSliderFunction = (x) => 2 ** x;
+
   return (
     <div style={{ minWidth: "100" }}>
       <FormControl>
@@ -33,8 +35,12 @@ const Radiositypanel = (props) => {
           max={12}
           marks
           step={1}
-          scale={(x) => 2 ** x}
+          scale={txSliderFunction}
           valueLabelDisplay="auto"
+          onChange={(event, val) => {
+            const newRes = txSliderFunction(val);
+            props.setTextureSize([newRes, newRes]);
+          }}
         />
         <FormLabel>Render Method</FormLabel>
         <RadioGroup value={method}>
