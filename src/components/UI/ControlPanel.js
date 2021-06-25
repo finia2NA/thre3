@@ -64,7 +64,11 @@ const Controlpanel = (props) => {
       </Collapsing>
 
       <Collapsing name="Radiosity Controls">
-        <Radiositypanel />
+        <Radiositypanel
+          calcPatches={props.calcPatches}
+          calcFF={props.calcFF}
+          calcRad={props.calcRad}
+        />
       </Collapsing>
 
       <Collapsing name="Display Controls">

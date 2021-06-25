@@ -33,10 +33,10 @@ const App = () => {
   const [radTextures, setRadTextures] = useState([]);
 
   // functions
-  const calcpatches = () => {
+  const calcPatches = () => {
     scene.calculatePatches(16, 16);
   };
-  const calcff = () => {
+  const calcFF = () => {
     scene.calculateFormFactors(16, 16);
   };
   const calcRad = async () => {
@@ -71,7 +71,12 @@ const App = () => {
       </Viewdiv>
 
       <Controldiv>
-        <Controlpanel setDisplaymode={setDisplaymode} />
+        <Controlpanel
+          setDisplaymode={setDisplaymode}
+          calcPatches={calcPatches}
+          calcFF={calcFF}
+          calcRad={calcRad}
+        />
         <Button
           onClick={() => {
             debugger;
@@ -80,26 +85,6 @@ const App = () => {
           ちょっとまって
         </Button>{" "}
         <br />
-        <Button onClick={() => scene.calculatePatches(16, 16)}>ロ</Button>
-        <Button onClick={() => scene.calculateFormFactors(16, 16)}>FF</Button>
-        <Button
-          onClick={async () => {
-            await scene.radiate();
-            // debugger;
-            setRadTextures(scene.objects.map((o) => o.radMap));
-            console.log("rad textures updated");
-          }}
-        >
-          下
-        </Button>
-        <Button
-          onClick={() => {
-            setRadTextures(scene.objects.map((o) => o.radMap));
-            setDisplaymode("rad");
-          }}
-        >
-          Display
-        </Button>
       </Controldiv>
     </Maindiv>
   );
