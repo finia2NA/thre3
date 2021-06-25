@@ -28,19 +28,34 @@ const Controldiv = styled.div`
 
 // App
 const App = () => {
-  const [displaymode, setdisplaymode] = useState("reflectance");
+  // state
+  const [displaymode, setDisplaymode] = useState("reflectance");
   const [radTextures, setRadTextures] = useState([]);
 
-  const scene = new SceneRepresentation();
+  // functions
+  const calcpatches = () => {
+    scene.calculatePatches(16, 16);
+  };
+  const calcff = () => {
+    scene.calculateFormFactors(16, 16);
+  };
+  const calcRad = async () => {
+    await scene.radiate();
+    // debugger;
+    setRadTextures(scene.objects.map((o) => o.radMap));
+    console.log("rad textures updated");
+  };
 
+  // scene
+  const scene = new SceneRepresentation();
   const cornell = new ObjectRepresentation(
     "robj/package/obj.obj",
     "robj/package/light.png",
     "robj/package/reflectance.png"
   );
   cornell.loadObjText();
-  cornell.patchRes = [16, 16];
 
+  cornell.patchRes = [16, 16];
   scene.addObject(cornell);
 
   return (
@@ -56,7 +71,7 @@ const App = () => {
       </Viewdiv>
 
       <Controldiv>
-        <Controlpanel />
+        <Controlpanel setDisplaymode={setDisplaymode} />
         <Button
           onClick={() => {
             debugger;
@@ -67,11 +82,20 @@ const App = () => {
         <br />
         <Button onClick={() => scene.calculatePatches(16, 16)}>ロ</Button>
         <Button onClick={() => scene.calculateFormFactors(16, 16)}>FF</Button>
-        <Button onClick={() => scene.radiate()}>下</Button>
+        <Button
+          onClick={async () => {
+            await scene.radiate();
+            // debugger;
+            setRadTextures(scene.objects.map((o) => o.radMap));
+            console.log("rad textures updated");
+          }}
+        >
+          下
+        </Button>
         <Button
           onClick={() => {
             setRadTextures(scene.objects.map((o) => o.radMap));
-            setdisplaymode("rad");
+            setDisplaymode("rad");
           }}
         >
           Display

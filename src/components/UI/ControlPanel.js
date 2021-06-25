@@ -68,7 +68,7 @@ const Controlpanel = (props) => {
       </Collapsing>
 
       <Collapsing name="Display Controls">
-        <Displaypanel />
+        <Displaypanel setDisplaymode={props.setDisplaymode} />
       </Collapsing>
 
       <Collapsing name="Transfer Controls">

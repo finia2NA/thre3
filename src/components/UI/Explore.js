@@ -10,8 +10,31 @@ import {
 } from "@material-ui/core";
 
 const Explorepanel = (props) => {
-  const [viewMode, setView] = useState(0);
+  const [viewMode, setViewMode] = useState(0);
   const [compareMethod, setMethod] = useState(0);
+
+  const setView = (x) => {
+    setViewMode(x);
+    switch (x) {
+      case 0:
+        props.setDisplaymode("reflectance");
+        break;
+      case 1:
+        props.setDisplaymode("luminance");
+        break;
+      case 2:
+        props.setDisplaymode("checkerboard");
+        break;
+      case 3:
+        props.setDisplaymode("rainbow");
+        break;
+      case 4:
+        props.setDisplaymode("rad");
+        break;
+      default:
+        console.error("invalid view set in Explore Panel");
+    }
+  };
 
   return (
     <div>
@@ -20,34 +43,34 @@ const Explorepanel = (props) => {
         <FormControlLabel
           value={0}
           control={<Radio />}
-          label="View"
+          label="Reflectance"
           onClick={() => setView(0)}
         />
         <FormControlLabel
           value={1}
           control={<Radio />}
-          label="Patches"
+          label="Luminance"
           onClick={() => setView(1)}
-        />
-        <FormControlLabel
-          value={4}
-          control={<Radio />}
-          label="Continuity"
-          onClick={() => setView(4)}
         />
         <FormControlLabel
           value={2}
           control={<Radio />}
-          disabled={!props.prog_available}
-          label="Diff"
+          label="Checkerboard"
           onClick={() => setView(2)}
         />
         <FormControlLabel
           value={3}
           control={<Radio />}
           disabled={!props.prog_available}
-          label="Unshot Radiosity"
+          label="Rainbow"
           onClick={() => setView(3)}
+        />
+        <FormControlLabel
+          value={4}
+          control={<Radio />}
+          disabled={!props.prog_available}
+          label="Radiosity"
+          onClick={() => setView(4)}
         />
       </RadioGroup>
 
