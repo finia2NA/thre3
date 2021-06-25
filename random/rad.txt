@@ -1,0 +1,9 @@
+Die Einheit, die wir haben, ist Watt/m2
+  -> this is accurate, because scaling the object must increase the energy
+
+
+10 determine stop threshold as percentage of selfIlluminance
+30 find biggest unshot
+40 remove all unshot, distribute it to patches via FF
+50 if threshold has not yet been reached, goto 2
+60 debugger (for now)

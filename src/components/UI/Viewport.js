@@ -1,5 +1,6 @@
-import { Tangible3D } from "components/3D/Element3D";
+import Element3D, { LoadingBox } from "components/3D/Element3D";
 import React, { useRef } from "react";
+import { Suspense } from "react";
 import { Canvas, extend, useFrame, useThree } from "react-three-fiber";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
@@ -19,26 +20,37 @@ const CameraControls = () => {
 
   // Ref to the controls, so that we can update them on every frame using useFrame
   const controls = useRef();
-  useFrame((state) => controls.current.update()); // TODO: this maxes CPU, should probably be changed to only update when mouse moves or something
+  useFrame((state) => controls.current.update()); // TODO: this does something every frame, should probably be changed to only update when mouse moves or something
   return <orbitControls ref={controls} args={[camera, domElement]} />;
 };
 
 const Viewport = (props) => {
   return (
     <Canvas
-      onCreated={({ gl, raycaster }) => {
-        gl.setClearColor("darkgrey");
-        props.setraycaster(raycaster);
+      gl={{ antialias: true }}
+      onCreated={({ gl, raycaster, scene }) => {
+        gl.setClearColor("#222222");
+        props.setRaycaster(raycaster);
+        props.setScene3(scene);
+      }}
+      onChange={({ raycaster, scene }) => {
+        props.setRaycaster(raycaster);
+        props.setScene3(scene);
       }}
     >
       {/* Canvas Config */}
       <CameraControls />
-      <ambientLight intensity={0.5} />
 
       {/* Objects */}
-
-      {props.objects.map((o, i) => (
-        <Tangible3D abstract={o} key={i} />
+      {props.scene.objects.map((o, i) => (
+        <Suspense fallback={<LoadingBox />} key={i}>
+          <Element3D
+            obj={o}
+            displaymode={props.displaymode}
+            radTexture={props.radTextures[i]}
+            key={i}
+          />
+        </Suspense>
       ))}
     </Canvas>
   );

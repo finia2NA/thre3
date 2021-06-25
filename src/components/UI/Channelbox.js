@@ -1,10 +1,12 @@
-import { FormControl, FormControlLabel, FormLabel, Radio, TextField } from '@material-ui/core'
-import React from 'react'
+import {
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  TextField,
+} from "@material-ui/core";
+import React from "react";
 
 const Channelbox = (props) => {
-
-
-
   return (
     <div>
       <FormControl>
@@ -25,10 +27,9 @@ const Channelbox = (props) => {
 
         <FormLabel>Specularity</FormLabel>
         <TextField type="number" />
-
       </FormControl>
     </div>
-  )
-}
+  );
+};
 
-export default Channelbox
+export default Channelbox;

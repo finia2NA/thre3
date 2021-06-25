@@ -1,21 +1,14 @@
-import React, { useRef, useState, useMemo, useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
-
-import { createStore } from "redux";
 
 import Viewport from "components/UI/Viewport";
 import Controlpanel from "components/UI/ControlPanel";
-import {
-  CubeAbstract,
-  TeapotAbstract,
-  TestBoxAbstract,
-} from "model/ElementAbtract";
-import { objToPatches } from "controller/Obj";
-import testcube from "assets/testcube.obj";
 
-import { Raycaster } from "three";
+import SceneRepresentation from "model/scene";
 
-// Redux
+import ObjectRepresentation from "model/object";
+import { Button } from "@material-ui/core";
+import { useState } from "react";
 
 // Components
 const Maindiv = styled.div`
@@ -33,26 +26,77 @@ const Controldiv = styled.div`
 
 // App
 const App = () => {
-  // var objects = [new CubeAbstract([0, 0, 0])];
-  var objects = [new TestBoxAbstract([0, 0, 0])];
+  // state
+  const [displaymode, setDisplaymode] = useState("reflectance");
+  const [radTextures, setRadTextures] = useState([]);
+  const [readyflags, setReadyFlags] = useState([false, false, false]);
+  const [textureSize, setTextureSize] = useState([16, 16]);
 
-  // https://threejs.org/docs/#api/en/core/Raycaster
-  var raycaster;
-
-  var setraycaster = (rc) => {
-    raycaster = rc;
+  // functions
+  const calcPatches = () => {
+    scene.calculatePatches(textureSize[0], textureSize[1]);
+    const newFlags = [...readyflags];
+    newFlags[0] = true;
+    setReadyFlags(newFlags);
+  };
+  const calcFF = () => {
+    scene.calculateFormFactors(textureSize[0], textureSize[1]);
+    const newFlags = [...readyflags];
+    newFlags[0] = true;
+    newFlags[1] = true;
+    setReadyFlags(newFlags);
+  };
+  const calcRad = async () => {
+    await scene.radiate();
+    setRadTextures(scene.objects.map((o) => o.radMap));
+    const newFlags = [...readyflags];
+    newFlags[0] = true;
+    newFlags[1] = true;
+    newFlags[2] = true;
+    setReadyFlags(newFlags);
   };
 
-  objToPatches(testcube, 16, 16);
+  // scene
+  const scene = new SceneRepresentation();
+  const cornell = new ObjectRepresentation(
+    "robj/package/obj.obj",
+    "robj/package/light.png",
+    "robj/package/reflectance.png"
+  );
+  cornell.loadObjText();
+
+  cornell.patchRes = [16, 16];
+  scene.addObject(cornell);
 
   return (
     <Maindiv>
       <Viewdiv>
-        <Viewport objects={objects} setraycaster={setraycaster} />
+        <Viewport
+          scene={scene}
+          displaymode={displaymode}
+          radTextures={radTextures}
+          setRaycaster={scene.setRC}
+          setScene3={scene.setScene3}
+        />
       </Viewdiv>
 
       <Controldiv>
-        <Controlpanel />
+        <Controlpanel
+          setDisplaymode={setDisplaymode}
+          calcPatches={calcPatches}
+          calcFF={calcFF}
+          calcRad={calcRad}
+          setTextureSize={setTextureSize}
+          readyflags={readyflags}
+        />
+        <Button
+          onClick={() => {
+            debugger;
+          }}
+        >
+          ちょっとまって
+        </Button>{" "}
+        <br />
       </Controldiv>
     </Maindiv>
   );

@@ -2,7 +2,7 @@ import { Checkbox, FormControlLabel } from "@material-ui/core";
 import React from "react";
 import Explorepanel from "./Explore";
 
-const Displaypanel = () => {
+const Displaypanel = (props) => {
   return (
     <div>
       <div>
@@ -27,7 +27,10 @@ const Displaypanel = () => {
       >
         Explore
         <br />
-        <Explorepanel />
+        <Explorepanel
+          setDisplaymode={props.setDisplaymode}
+          readyflags={props.readyflags}
+        />
       </div>
     </div>
   );

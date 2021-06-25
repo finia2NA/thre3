@@ -1,10 +1,16 @@
-import React, { Suspense, useMemo, useRef, useState } from "react";
+import React, { useMemo } from "react";
 
 import * as THREE from "three";
 import { useLoader } from "react-three-fiber";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 
-import { defaultTexture, checkerboardTexture } from "model/Textures";
+import { TextureLoader } from "three/src/loaders/TextureLoader";
+
+import {
+  defaultTexture,
+  rainbowTexture,
+  checkerboardTexture,
+} from "components/3D/textures";
 
 export const LoadingBox = (props) => {
   return (
@@ -14,103 +20,70 @@ export const LoadingBox = (props) => {
   );
 };
 
-export const TestBox = (props) => {
-  const scene = useLoader(OBJLoader, "robj/package/obj.obj");
-  scene.children[0].position.set(
-    props.position[0],
-    props.position[1],
-    props.position[2]
-  );
-  return (
-    <primitive object={scene.children[0]}>
-      {props.texture && (
-        <meshBasicMaterial
-          attach="material"
-          transparent
-          side={THREE.DoubleSide}
-        >
-          <primitive attach="map" object={props.texture} />
-        </meshBasicMaterial>
-      )}
-    </primitive>
-  );
-};
+// Takes an obj and a displaymode and displays it.
+const Element3D = (props) => {
+  console.log("Element3D did something!");
+  var texturePath = "defaultTexture.png";
+  var generated = defaultTexture(props.obj.patchRes[0], props.obj.patchRes[1]);
+  var useGenerated = false;
 
-export const Cube = (props) => {
-  const scene = useLoader(OBJLoader, "testcube.obj");
-  scene.children[0].position.set(
-    props.position[0],
-    props.position[1],
-    props.position[2]
-  );
-  return (
-    <primitive object={scene.children[0]}>
-      {props.texture && (
-        <meshBasicMaterial
-          attach="material"
-          transparent
-          side={THREE.DoubleSide}
-        >
-          <primitive attach="map" object={props.texture} />
-        </meshBasicMaterial>
-      )}
-    </primitive>
-  );
-};
-
-export const Teapot = (props) => {
-  const scene = useLoader(OBJLoader, "teapot.obj");
-  // scene.children[0].scale.set(0.05, 0.05, 0.05);
-  scene.children[0].position.set(
-    props.position[0],
-    props.position[1],
-    props.position[2]
-  );
-  return (
-    <primitive object={scene.children[0]}>
-      {props.texture && (
-        <meshBasicMaterial
-          attach="material"
-          transparent
-          side={THREE.DoubleSide}
-        >
-          <primitive attach="map" object={props.texture} />
-        </meshBasicMaterial>
-      )}
-    </primitive>
-  );
-};
-
-export const Tangible3D = (props) => {
-  // load texture
-  const texture = useMemo(() => {
-    const re = new THREE.CanvasTexture(defaultTexture()); // TODO: use tx from props instead of just using default
-    re.magFilter = THREE.NearestFilter;
-    return re;
-  }, []);
-  // TODO: maybe move the creation of the material here too
-
-  var re = <LoadingBox />;
-
-  switch (props.abstract.name) {
-    case "TeapotAbstract":
-      console.log("loading a teapot!");
-      re = <Teapot {...props.abstract} texture={texture} />;
+  switch (props.displaymode) {
+    case "rad":
+      generated = props.radTexture;
+      useGenerated = true;
       break;
-
-    case "CubeAbstract":
-      console.log("loading a cube!");
-      re = <Cube {...props.abstract} texture={texture} />;
+    case "reflectance":
+      texturePath = props.obj.reflectancePath;
       break;
-
-    case "TestBoxAbstract":
-      console.log("loading the testbox!!");
-      re = <TestBox {...props.abstract} texture={texture} />;
+    case "luminance":
+      texturePath = props.obj.luminancePath;
       break;
-
+    case "checkerboard":
+      generated = checkerboardTexture(
+        props.obj.patchRes[0],
+        props.obj.patchRes[1]
+      );
+      useGenerated = true;
+      break;
+    case "rainbow":
+      generated = rainbowTexture(props.obj.patchRes[0], props.obj.patchRes[1]);
+      useGenerated = true;
+      break;
     default:
-      break;
+      console.error("error while determining displaymode");
   }
 
-  return <Suspense fallback={<LoadingBox />}>{re}</Suspense>;
+  const fileTexture = useLoader(TextureLoader, texturePath);
+  const generatedTexture = useMemo(() => {
+    const re = new THREE.CanvasTexture(generated); // TODO: use tx from props instead of just using default
+    re.magFilter = THREE.NearestFilter;
+    return re;
+  }, [props.displaymode, generated]); // TODO: dependency array with generated?
+
+  const texture = useGenerated ? generatedTexture : fileTexture;
+
+  const scene = useLoader(OBJLoader, props.obj.meshPath);
+  // scene.children[0].position.set(
+  //   obj.translate[0],
+  //   obj.translate[1],
+  //   obj.translate[2]
+  // );
+
+  const re = (
+    <primitive object={scene.children[0]}>
+      {
+        <meshBasicMaterial
+          attach="material"
+          transparent
+          side={THREE.DoubleSide}
+        >
+          <primitive attach="map" object={texture} />
+        </meshBasicMaterial>
+      }
+    </primitive>
+  );
+
+  return re;
 };
+
+export default Element3D;

@@ -4,6 +4,7 @@ import CheckCircle from "@material-ui/icons/CheckCircle";
 import Close from "@material-ui/icons/Close";
 import { LinearProgress } from "@material-ui/core";
 import styled from "styled-components";
+import { zip } from "util/arrays";
 
 const Indicator = ({ ready }) => {
   return (
@@ -24,34 +25,29 @@ const Div1 = styled.div`
 `;
 
 const Indicators = (props) => {
+  const labeledValues = zip(props.readyflags, [
+    "Patches",
+    "Form Factors",
+    "Radiosity",
+  ]);
+
   return (
     <>
-      <Div1>
-        <Indicator ready={props.patches_ready} />
-        <span>
-          Patch Distribution {!props.patches_ready && <b>not</b>} available
-        </span>
-      </Div1>
+      {labeledValues.map((labeledState, i) => (
+        <Div1 key={i}>
+          <Indicator ready={labeledState[0]} />
+          <span>
+            {labeledState[1]} {!labeledState[0] && <b>not</b>} available
+          </span>
+        </Div1>
+      ))}
 
-      <Div1>
-        <Indicator ready={props.matrix_ready} />
-        <span>
-          Matrix Radiosity {!props.matrix_ready && <b>not</b>} available
-        </span>
-      </Div1>
-
-      <Div1>
-        <Indicator ready={props.prog_ready} />
-        <span>
-          Progressive Radiosity {!props.prog_ready && <b>not</b>} available
-        </span>
-      </Div1>
-      {props.working && (
+      {/* {props.working && (
         <div>
           Calculating Radiosity...
           <LinearProgress />
         </div>
-      )}
+      )} */}
     </>
   );
 };

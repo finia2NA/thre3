@@ -81,7 +81,7 @@ class Scene:
     # Form Factors are essentially a dictionary over <mesh, x,y> that has been optimized for symmetry.
     self.__formFactors = FormFactorStorage()
 
-  def addObjects(self, new_o):
+  def addObject(self, new_o):
     # Adding the object to a szene definitly means the form factors have to be recomputed, but patches might be right.
     new_o.formFlag = False
     self.objects.append(new_o)

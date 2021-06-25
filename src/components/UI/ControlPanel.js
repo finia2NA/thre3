@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Radiositypanel from "components/UI/Radiosity";
 import Displaypanel from "components/UI/Display";
 import Indicators from "components/UI/Indicators";
@@ -64,11 +64,19 @@ const Controlpanel = (props) => {
       </Collapsing>
 
       <Collapsing name="Radiosity Controls">
-        <Radiositypanel />
+        <Radiositypanel
+          calcPatches={props.calcPatches}
+          calcFF={props.calcFF}
+          calcRad={props.calcRad}
+          setTextureSize={props.setTextureSize}
+        />
       </Collapsing>
 
       <Collapsing name="Display Controls">
-        <Displaypanel />
+        <Displaypanel
+          setDisplaymode={props.setDisplaymode}
+          readyflags={props.readyflags}
+        />
       </Collapsing>
 
       <Collapsing name="Transfer Controls">
@@ -76,7 +84,7 @@ const Controlpanel = (props) => {
       </Collapsing>
 
       <Collapsing name="Indicators" initiallyOpened={true}>
-        <Indicators matrix_ready={false} working={false} />
+        <Indicators readyflags={props.readyflags} />
       </Collapsing>
     </Controldiv>
   );
