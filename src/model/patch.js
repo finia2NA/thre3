@@ -68,10 +68,9 @@ export default class Patch {
    * @param {Vector3} energy
    */
   illuminate(energy) {
-    const addVector = energy
-      .clone()
-      .multiply(this.reflectance)
-      .multiplyScalar(this.areaRatio); //TODO: *,/ or nothing with area here?
+    const addVector = energy.clone().multiply(this.reflectance);
+
+    console.log(addVector);
 
     this.displayEnergy.add(addVector);
     this.unshotRadiosity.add(addVector);

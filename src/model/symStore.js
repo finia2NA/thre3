@@ -1,6 +1,7 @@
 export default class SymStore {
   dimensions;
   array;
+  maxValue = 0;
 
   constructor(dimensions) {
     this.dimensions = dimensions;
@@ -60,9 +61,18 @@ export default class SymStore {
     return this.array[indices[0]][indices[1]];
   }
 
+  getScaled(a, b) {
+    const value = this.get(a, b);
+
+    if (this.max < 1) return value;
+    else return value / this.max;
+  }
+
   set(a, b, value) {
     const indices = this.getIndices(a, b);
     this.array[indices[0]][indices[1]] = value;
+
+    if (this.max < value) this.max = value;
   }
 
   /**

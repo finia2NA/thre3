@@ -145,7 +145,7 @@ function generatePatches(
         texel,
         selfIlluminance,
         reflectance,
-        // ratio, //TODO: fix
+        1, // ratio, //TODO: fix
         1,
         1,
         nice

@@ -74,7 +74,6 @@ export default class SceneRepresentation {
         this.objects[coords[1][0]].patches[coords[1][1]][coords[1][2]];
 
       if (!patch1 || !patch2) {
-        // alert("The thing you suspected could happen happened");
         continue; // if there are no patches in the texture there (which is very possible), we obviously can't calculate a form factor
       }
 
@@ -102,7 +101,7 @@ export default class SceneRepresentation {
       const d = a.distanceFactor(b);
       const t = a.turnFactor(b);
 
-      return d * t;
+      return d * t * a.areaFactor * b.areaFactor;
     }
   }
 
