@@ -64,15 +64,15 @@ export default class SymStore {
   getScaled(a, b) {
     const value = this.get(a, b);
 
-    if (this.max < 1) return value;
-    else return value / this.max;
+    if (this.maxValue < 0.99) return value;
+    else return (value / this.maxValue) * 0.99;
   }
 
   set(a, b, value) {
     const indices = this.getIndices(a, b);
     this.array[indices[0]][indices[1]] = value;
 
-    if (this.max < value) this.max = value;
+    if (this.maxValue < value) this.maxValue = value;
   }
 
   /**

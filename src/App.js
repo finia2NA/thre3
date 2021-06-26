@@ -31,6 +31,7 @@ const App = () => {
   const [radTextures, setRadTextures] = useState([]);
   const [readyflags, setReadyFlags] = useState([false, false, false]);
   const [textureSize, setTextureSize] = useState([16, 16]);
+  const [attenuationMethod, setAttenuationMethod] = useState("model3");
 
   // functions
   const calcPatches = () => {
@@ -40,14 +41,18 @@ const App = () => {
     setReadyFlags(newFlags);
   };
   const calcFF = () => {
-    scene.calculateFormFactors(textureSize[0], textureSize[1]);
+    scene.calculateFormFactors(
+      textureSize[0],
+      textureSize[1],
+      attenuationMethod
+    );
     const newFlags = [...readyflags];
     newFlags[0] = true;
     newFlags[1] = true;
     setReadyFlags(newFlags);
   };
   const calcRad = async () => {
-    await scene.radiate();
+    await scene.radiate(textureSize[0], textureSize[1], attenuationMethod);
     setRadTextures(scene.objects.map((o) => o.radMap));
     const newFlags = [...readyflags];
     newFlags[0] = true;

@@ -8,7 +8,7 @@ export default class Patch {
   displayEnergy; // unit:energy/m2
   reflectance;
 
-  areaRatio;
+  areaFactor;
   nice;
 
   unshotRadiosity = new Vector3(0, 0, 0);
@@ -43,7 +43,7 @@ export default class Patch {
 
     this.reflectance = reflectance;
 
-    this.areaRatio = areaFactor;
+    this.areaFactor = areaFactor;
     this.nice = nice;
   }
 
@@ -59,8 +59,24 @@ export default class Patch {
     return Math.max(this.normal3D.dot(b.normal3D.clone().negate()), 0);
   }
 
-  distanceFactor(b) {
-    return 1 / this.position3D.clone().sub(b.position3D).length() ** 2;
+  distanceFactor(b, attenuationMethod) {
+    var re;
+    switch (attenuationMethod) {
+      case "physical":
+        re = 1 / this.position3D.clone().sub(b.position3D).length() ** 2;
+        break;
+      case "linear":
+        re = 1 / this.position3D.clone().sub(b.position3D).length();
+        break;
+      case "model3":
+        re = 1 / this.position3D.clone().sub(b.position3D).length() ** 0.5;
+        break;
+      default:
+        console.error(
+          "invalid or no attenuation method provided for form factor calculation"
+        );
+    }
+    return re;
   }
 
   /**
@@ -70,6 +86,7 @@ export default class Patch {
   illuminate(energy) {
     const addVector = energy.clone().multiply(this.reflectance);
 
+    debugger;
     console.log(addVector);
 
     this.displayEnergy.add(addVector);

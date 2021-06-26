@@ -39,15 +39,12 @@ export default class SceneRepresentation {
     this.scene3 = scene3;
   };
 
-  setTextureRes(x, y) {}
-
   mapsLoaded() {
     return this.objects.reduce((x, y) => x && y);
   }
 
   async calculatePatches(xRes, yRes) {
     while (!this.mapsLoaded()) {
-      // TODO: improve
       await sleep(100);
     }
 
@@ -58,7 +55,7 @@ export default class SceneRepresentation {
     console.log("patches: done");
   }
 
-  async calculateFormFactors(xRes, yRes) {
+  async calculateFormFactors(xRes, yRes, attenuationMethod) {
     this.calculatePatches(xRes, yRes);
 
     //patches sind DA
@@ -77,7 +74,11 @@ export default class SceneRepresentation {
         continue; // if there are no patches in the texture there (which is very possible), we obviously can't calculate a form factor
       }
 
-      const currentformFactor = this.formFactor(patch1, patch2);
+      const currentformFactor = this.formFactor(
+        patch1,
+        patch2,
+        attenuationMethod
+      );
       if (currentformFactor > 0) {
         this.formFactors.set(coords[0], coords[1], currentformFactor);
       }
@@ -90,7 +91,7 @@ export default class SceneRepresentation {
    * @param {Patch} a
    * @param {Patch} b
    */
-  formFactor(a, b) {
+  formFactor(a, b, attenuationMethod) {
     // if we're to calculate the factor of a patch to itself
     // or the path is obstucted
     // you know what to do :fingerguns:
@@ -98,15 +99,15 @@ export default class SceneRepresentation {
       return 0;
     } else {
       // else the form factor consists of distance and turn factors
-      const d = a.distanceFactor(b);
+      const d = a.distanceFactor(b, attenuationMethod);
       const t = a.turnFactor(b);
 
       return d * t * a.areaFactor * b.areaFactor;
     }
   }
 
-  async radiate() {
-    await this.calculateFormFactors(16, 16); //TODO: res
+  async radiate(xRes, yRes, attenuationMethod) {
+    await this.calculateFormFactors(xRes, yRes, attenuationMethod);
 
     // get abort threshold as % of max dispaly energy
     const threshold =
@@ -120,8 +121,8 @@ export default class SceneRepresentation {
     var i_counter = 0;
     var p_counter = 0;
 
-    while (i_counter === 0) {
-      // TODO: remove
+    // while (i_counter === 0) {
+    while (true) {
       const objectsMaxPatch = this.objects.map((o) => o.getMaxUnshotPatch());
 
       var currentShooter = objectsMaxPatch[0];
@@ -137,8 +138,6 @@ export default class SceneRepresentation {
       }
 
       const energy = currentShooter.unshotRadiosity;
-
-      console.log(energy);
 
       if (energy.length() < threshold) {
         break;
@@ -156,14 +155,12 @@ export default class SceneRepresentation {
             ];
             const b = [i, j, k];
 
-            const ff = this.formFactors.get(a, b);
+            const ff = this.formFactors.getScaled(a, b); // TODO: evaluate this
 
             if (ff > 0) {
               p_counter++;
 
-              const lightReaching = energy
-                .clone()
-                .multiplyScalar(this.formFactors.get(a, b));
+              const lightReaching = energy.clone().multiplyScalar(ff);
 
               if (lightReaching.length() > energy.length()) {
                 lightReaching.divideScalar(
@@ -222,7 +219,6 @@ export default class SceneRepresentation {
    */
   raycast(origin, direction) {
     // https://threejs.org/docs/#api/en/core/Raycaster
-    // debugger;
     this.rayCaster.set(origin, direction);
     const intersect = this.rayCaster.intersectObject(this.scene3, true)[0];
     return intersect;
