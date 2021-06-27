@@ -24,6 +24,14 @@ export default class SceneRepresentation {
     return this.objects;
   }
 
+  test = () => {
+    console.time("rays");
+    for (var i = 0; i < 10000; i++) {
+      const re = this.raycast(new Vector3(0, 0, 0), new Vector3(1, 0, 0));
+    }
+    console.timeEnd("rays");
+  };
+
   /**
    *
    * @param {Raycaster} rc

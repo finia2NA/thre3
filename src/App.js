@@ -101,6 +101,7 @@ const App = () => {
         >
           ちょっとまって
         </Button>{" "}
+        <Button onClick={scene.test}>test</Button>
         <br />
       </Controldiv>
     </Maindiv>
