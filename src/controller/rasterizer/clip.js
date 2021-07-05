@@ -2,8 +2,10 @@ import { Vector3 } from "three";
 import {
   cornerpoints,
   discreteToMidpoint,
-  intersects,
+  intersectSegments,
 } from "controller/rasterizer/helpers";
+import { coolmod } from "util/coolmod";
+
 /**
  * Executes the Cohen-Sutherland Algorithm to find a fragment resulting from clipping a face with a texel.
  * @param {Vector2[]} edges the edges defining the face that will be clipped
@@ -11,51 +13,54 @@ import {
  * @param {*} xRes the xRes of the rasterization
  * @param {*} yRes the yRes of the rasterization
  */
-function cs(edges, texel, xRes, yRes) {
-  // Step 1: compute the edges of the texel
-  const clippingCorners = cornerpoints(discreteToMidpoint(texel), xRes, yRes);
+function clipFaceTexel(vertices, texel, xRes, yRes) {
+  // First, we'll need a way to check if a point is in a texel or not.
+  // For this, we use predicates for each side of the texel.
+  const xIncrement = 1 / xRes;
+  const yIncrement = 1 / yRes;
+
+  const mp = discreteToMidpoint(texel, xRes, yRes);
+  const predicates = [
+    (p) => p.x > mp.x - 0.5 * xIncrement,
+    (p) => p.x < mp.x + 0.5 * xIncrement,
+    (p) => p.y > mp.y - 0.5 * yIncrement,
+    (p) => p.y < mp.y + 0.5 * yIncrement,
+  ]; // true => is in, false => not
+
+  // We define the texel edges for intersection later
+  const clippingCorners = cornerpoints(mp);
   const clippingEdges = [0, 1, 2, 3].map((i) => [
     clippingCorners[i],
     clippingCorners[(i + 1) % 3],
   ]);
 
-  // Step 2: since the alg wants the polygon not in edge, but on vertex form, I convert it into that.
-  const subjectPolygon = edges.map((edge) => edge[0]);
+  // make a copy of our input so we don't change it, and we're ready to go!
+  const subjectPolygon = [...vertices];
 
-  // The rest of the method is annotated with the pseudocode from Wikipedia
-  // https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm
-
-  // List resultList = subjectPolygon;
+  // The rest of the alg is from https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm
   const resultList = subjectPolygon;
 
-  // for (Edge clipEdge in clipPolygon) do
-  for (var clipIndex = 0; clipIndex < clippingEdges.length; clipIndex++) {
-    // List workingList = resultList;
+  for (var clipIndex = 0; clipIndex < predicates.length; clipIndex++) {
     const workingList = resultList;
-    // resultList.clear();
     resultList = [];
-    // for (int i = 0; i < workingList.count; i += 1) do
+
     for (var i = 0; i < workingList.length; i++) {
-      // Point current_point = workingList[i];
       const currentPoint = workingList[i];
-      // Point prev_point = workingList[(i − 1) % workingList.count];
-      const prev_point = workingList[(i - 1) % workingList.length];
+      const prevPoint = workingList[coolmod(i - 1, workingList.length)];
 
-      // Point Intersecting_point = ComputeIntersection(prev_point, current_point, clipEdge)
-      const intersecting_point = None; // TODO: insert the intersection alg from helpers here
+      const intersectingPoint = intersectSegments(
+        [prevPoint, currentPoint],
+        clippingEdges[clipIndex]
+      );
 
-      //         if (current_point inside clipEdge) then
-      //             if (prev_point not inside clipEdge) then
-      //                 resultList.add(Intersecting_point);
-      //             end if
-      //             resultList.add(current_point);
-
-      //         else if (prev_point inside clipEdge) then
-      //             resultList.add(Intersecting_point);
-      //         end if
-
-      //     done
+      if (predicates[clipIndex](currentPoint)) {
+        if (!predicates[clipIndex](prevPoint)) {
+          resultList.append(intersectingPoint);
+        }
+        resultList.append(currentPoint);
+      } else if (predicates[clipIndex](prevPoint)) {
+        resultList.append(intersectingPoint);
+      }
     }
-    // done
   }
 }

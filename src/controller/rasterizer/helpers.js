@@ -216,13 +216,13 @@ export function getArea(positions) {
 }
 
 /**
- * returns true if the line from e1s->e1e intersects with e2s->e2e, or null if no such intersection exists.
+ * returns the point of intersection if the line from e1s->e1e intersects with e2s->e2e, or null if no such intersection exists.
  * @param {Vector2[]} e1 The first edge
  * @param {Vector2[]} e2 The second edge
  * @returns the intersection point or *null* if no intersection exists between the segments.
  */
 // from https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
-export function intersects(e1, e2) {
+export function intersectSegments(e1, e2) {
   point = extIntersect(e1.x, e1.y, e2.x, e2.y);
 
   if (!point)
@@ -230,11 +230,15 @@ export function intersects(e1, e2) {
     return null;
   else {
     // in this case, there was an intersection, but we still need to check if that intersection between the *lines* was indeed on the *segments*.
-    // for this, we use the method defined above to check the distance from both segments.
+    // for this, we use the method defined above to find the closest point on one of the lines to that intersection.
+    // if the intersection itself was on the point, the distance between it and the point we got through intersection
+    // should be pretty small, eh?
 
     for (const e of [e1, e2]) {
-      const ls = closestPointLine(point, e)[0];
-      if (ls < 0 || ls > 1) return null;
+      const dist = closestPointLine(point, e)[1];
+      if (dist < 0.0001)
+        // not null bc numerics and stuff
+        return null;
     }
     return point;
   }
