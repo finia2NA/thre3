@@ -75,7 +75,7 @@ export function getClosestInside(p, face) {
       i
     );
 
-    if (!re || re.distance > this.distance) re = candidate;
+    if (!re || re.distance > this.distance) re = candidate; // FIXME: check this, shouldnt it be if not here?
 
     return re;
   }
@@ -143,7 +143,7 @@ export function getOrthNormal(start, end) {
   return re;
 }
 
-function getCandidate(texel_midpoint, normal, xRes, yRes) {
+export function cornerpoints(texel_midpoint, xRes, yRes) {
   const xIncrement = 1 / xRes;
   const yIncrement = 1 / yRes;
 
@@ -156,6 +156,11 @@ function getCandidate(texel_midpoint, normal, xRes, yRes) {
       );
     }
   }
+  return positions;
+}
+
+function getCandidate(texel_midpoint, normal, xRes, yRes) {
+  const positions = cornerpoints(texel_midpoint, xRes, yRes);
 
   // This takes the max of the positions array. I won't blame you if this isn't immediatly obvious.
   const re = positions.reduce((a, b) =>
@@ -187,4 +192,28 @@ export function getArea(positions) {
   // sometimes the resulting cp is a number, sometimes it's a vector whose length is the value we're looking for.
   if (typeof cross == "number") return cross / 2;
   else return cross.length() / 2;
+}
+
+// returns true if the line from e1s->e1e intersects with e2s->e2e
+// from https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
+export function intersects(e1s, e1e, e2s, e2e) {
+  const a = e1s.x;
+  const b = e1s.y;
+  const c = e1e.x;
+  const d = e1e.y;
+
+  const p = e2s.x;
+  const q = e2s.y;
+  const r = e2e.x;
+  const s = e2e.y;
+
+  var det, gamma, lambda;
+  det = (c - a) * (s - q) - (r - p) * (d - b);
+  if (det === 0) {
+    return false;
+  } else {
+    lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det;
+    gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det;
+    return 0 < lambda && lambda < 1 && 0 < gamma && gamma < 1;
+  }
 }

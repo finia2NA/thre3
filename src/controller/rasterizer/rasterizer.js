@@ -65,8 +65,6 @@ export function rasterize(corners, xRes, yRes) {
         }
       }
 
-      // if (x===10&&y===0)
-      //   debugger;
       if (eqCanary) locations.push([x, y]);
     }
   }
