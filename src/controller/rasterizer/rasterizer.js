@@ -7,7 +7,7 @@ import {
   discreteToMidpoint,
   getBayecentrics,
   getClosestInside,
-  multiplyBayecentric,
+  linearCombination,
   checkCounterClockwise,
 } from "controller/rasterizer/helpers";
 import Patch from "model/patch";
@@ -121,11 +121,11 @@ function generatePatches(
         // samplePoint = closestRes.pos
       }
 
-      const position = multiplyBayecentric(
+      const position = linearCombination(
         bayecentrics,
         face.map((x) => x.vertexCoord)
       );
-      const normal = multiplyBayecentric(
+      const normal = linearCombination(
         bayecentrics,
         face.map((x) => x.vertexNormal)
       ).normalize();

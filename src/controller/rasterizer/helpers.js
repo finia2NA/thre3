@@ -1,6 +1,12 @@
 import { Vector2, Vector3 } from "three";
 import { Vertex, ClosestRes } from "./rasterclasses";
+import { intersect as extIntersect } from "mathjs";
 
+/**
+ * checks wether a given face was defined in a counterclockwise fashion (using a coordinate system where the y-axis points down).
+ * @param {*} c
+ * @returns
+ */
 export function checkCounterClockwise(c) {
   // https://mathworld.wolfram.com/PolygonArea.html
 
@@ -15,6 +21,12 @@ export function checkCounterClockwise(c) {
   return a < 0;
 }
 
+/**
+ * checks if all elements of two given arrays are equal
+ * @param {*} a
+ * @param {*} b
+ * @returns
+ */
 export function elementwiseEquals(a, b) {
   if (a.length !== b.length) {
     console.error(
@@ -28,8 +40,13 @@ export function elementwiseEquals(a, b) {
 
   return true;
 }
-
-export function multiplyBayecentric(bay, face) {
+/**
+ * takes rational factors and vectors and returns the linear combination of those.
+ * @param {*} bay
+ * @param {*} face
+ * @returns
+ */
+export function linearCombination(bay, face) {
   const f0 = face[0].clone().multiplyScalar(bay[0]);
   const f1 = face[1].clone().multiplyScalar(bay[1]);
   const f2 = face[2].clone().multiplyScalar(bay[2]);
@@ -39,10 +56,11 @@ export function multiplyBayecentric(bay, face) {
   return re;
 }
 
-function closestToLineSegment(p, face, startIndex) {
-  const start = face[startIndex];
-  const end = face[(startIndex + 1) % 3];
+function closestPointLine(point, line) {
+  start = line[0];
+  end = line[1];
 
+  // First, determine the closes point on the line to p.
   const startToEnd = end.clone().sub(start);
   const startToP = p.clone().sub(start);
   var ls = startToP.dot(startToEnd) / startToEnd.dot(startToEnd);
@@ -61,21 +79,24 @@ function closestToLineSegment(p, face, startIndex) {
       .add(end.clone().multiplyScalar(ls));
   }
 
+  // Then, calculate the distance from p t it.
   const distance = Math.abs(point.clone().sub(p).length());
-  return new ClosestRes(startIndex, ls, distance, point);
+
+  // return bayecentric factor, distance and point
+  return [ls, distance, point];
 }
 
 export function getClosestInside(p, face) {
   var re = undefined;
+  const txCoords = face.map((x) => x.txCoord);
 
   for (var i = 0; i < 3; i++) {
-    const candidate = closestToLineSegment(
-      p,
-      face.map((x) => x.txCoord),
-      i
-    );
+    const line = [txCoords[i], txCoords[(i + 1) % 3]];
 
-    if (!re || re.distance > this.distance) re = candidate; // FIXME: check this, shouldnt it be if not here?
+    const [ls, dist, point] = closestPointLine(p, line);
+    const candidate = new ClosestRes(startIndex, ls, distance, point);
+
+    if (!re || re.distance > this.distance) re = candidate; // FIXME: This method is fucked, here and in the early return, check pls
 
     return re;
   }
@@ -194,26 +215,27 @@ export function getArea(positions) {
   else return cross.length() / 2;
 }
 
-// returns true if the line from e1s->e1e intersects with e2s->e2e
+/**
+ * returns true if the line from e1s->e1e intersects with e2s->e2e, or null if no such intersection exists.
+ * @param {Vector2[]} e1 The first edge
+ * @param {Vector2[]} e2 The second edge
+ * @returns the intersection point or *null* if no intersection exists between the segments.
+ */
 // from https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
-export function intersects(e1s, e1e, e2s, e2e) {
-  const a = e1s.x;
-  const b = e1s.y;
-  const c = e1e.x;
-  const d = e1e.y;
+export function intersects(e1, e2) {
+  point = extIntersect(e1.x, e1.y, e2.x, e2.y);
 
-  const p = e2s.x;
-  const q = e2s.y;
-  const r = e2e.x;
-  const s = e2e.y;
+  if (!point)
+    // in this case, there was no intersection
+    return null;
+  else {
+    // in this case, there was an intersection, but we still need to check if that intersection between the *lines* was indeed on the *segments*.
+    // for this, we use the method defined above to check the distance from both segments.
 
-  var det, gamma, lambda;
-  det = (c - a) * (s - q) - (r - p) * (d - b);
-  if (det === 0) {
-    return false;
-  } else {
-    lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det;
-    gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det;
-    return 0 < lambda && lambda < 1 && 0 < gamma && gamma < 1;
+    for (const e of [e1, e2]) {
+      const ls = closestPointLine(point, e)[0];
+      if (ls < 0 || ls > 1) return null;
+    }
+    return point;
   }
 }
