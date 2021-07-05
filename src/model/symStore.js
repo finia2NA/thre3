@@ -1,10 +1,12 @@
 export default class SymStore {
   dimensions;
   array;
+  mode = "vanilla";
   maxValue = 0;
 
-  constructor(dimensions) {
+  constructor(dimensions, mode) {
     this.dimensions = dimensions;
+    if (mode) this.mode = mode;
 
     const maxIndex = dimensions.reduce((x, y) => x * y);
     this.array = [];
@@ -58,11 +60,20 @@ export default class SymStore {
 
   get(a, b) {
     const indices = this.getIndices(a, b);
-    return this.array[indices[0]][indices[1]];
-  }
+    const value = this.array[indices[0]][indices[1]];
 
-  getScaled(a, b) {
-    const value = this.get(a, b);
+    switch (this.mode) {
+      case "vanilla":
+        return value;
+        break;
+
+      case "scaled":
+        if (this.maxValue < 0.99) return value;
+        else return (value / this.maxValue) * 0.99;
+      default:
+        console.error("invalid value retrieval mode in symStore");
+        break;
+    }
 
     if (this.maxValue < 0.99) return value;
     else return (value / this.maxValue) * 0.99;

@@ -66,8 +66,11 @@ export default class SceneRepresentation {
   async calculateFormFactors(xRes, yRes, attenuationMethod) {
     this.calculatePatches(xRes, yRes);
 
-    //patches sind DA
-    this.formFactors = new SymStore([this.objects.length, xRes, yRes]);
+    // patches sind DA
+    this.formFactors = new SymStore(
+      [this.objects.length, xRes, yRes],
+      "vanilla"
+    );
 
     // go through every representation of a patch pair
     const relevantCoords = this.formFactors.getRelevantCoordinates();
@@ -163,7 +166,7 @@ export default class SceneRepresentation {
             ];
             const b = [i, j, k];
 
-            const ff = this.formFactors.getScaled(a, b); // TODO: evaluate this
+            const ff = this.formFactors.get(a, b); // TODO: evaluate this
 
             if (ff > 0) {
               p_counter++;
