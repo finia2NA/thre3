@@ -144,18 +144,14 @@ function generatePatches(
         reflectance,
         fragmentArea2,
         fragmentArea3,
-        luminanceFactor
+        luminanceFactor,
       );
 
       // save if no patch in texelpos, interpolate otherwise.
-      if (!patches[texel[0]][texel[1]]) patches[texel[0]][texel[1]] = fragment;
+      if (!patches[texel[0]][texel[1]])
+        patches[texel[0]][texel[1]] = fragment
       else
-        patches[texel[0]][texel[1]] = pfInterpolate(
-          patches[texel[0]][texel[1]],
-          fragment,
-          xRes,
-          yRes
-        );
+        patches[texel[0]][texel[1]] = pfInterpolate(patches[texel[0]][texel[1]], fragment, xRes, yRes)
     }
   }
 
