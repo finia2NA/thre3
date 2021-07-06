@@ -13,38 +13,39 @@ export default class Patch {
 
   unshotRadiosity = new Vector3(0, 0, 0);
 
+  // FIXME: update class to new arguments
   constructor(
-    position3D,
-    normal3D,
-    positionTX,
+    position2,
+    position3,
+    normal3,
+    backwriteTX,
     baseIlluminance,
     reflectance,
-    areaFactor,
-    luminanceFactor,
-    nice
+    area2,
+    area3,
+    luminanceFactor
   ) {
-    if (Math.abs(normal3D.length() - 1) > 0.005) {
+    if (Math.abs(normal3.length() - 1) > 0.005) {
       console.error(
         "Given normal3D was not normalized! Was: " +
-          Math.abs(normal3D.length() - 1)
+          Math.abs(normal3.length() - 1)
       );
     }
 
-    this.position3D = position3D;
-    this.normal3D = normal3D;
-    this.positionTX = positionTX;
+    this.position3D = position3;
+    this.normal3D = normal3;
+    this.positionTX = backwriteTX;
 
     this.displayEnergy = baseIlluminance.multiplyScalar(
-      luminanceFactor * areaFactor
+      luminanceFactor * area2
     );
     this.unshotRadiosity = baseIlluminance.multiplyScalar(
-      luminanceFactor * areaFactor
+      luminanceFactor * area2
     );
 
     this.reflectance = reflectance;
 
-    this.areaFactor = areaFactor;
-    this.nice = nice;
+    this.areaFactor = area2;
   }
 
   /**

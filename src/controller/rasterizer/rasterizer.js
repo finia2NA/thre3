@@ -9,6 +9,8 @@ import {
   getClosestInside,
   linearCombination,
   checkCounterClockwise,
+  vectorAverage,
+  pfInterpolate,
 } from "controller/rasterizer/helpers";
 import Patch from "model/patch";
 
@@ -92,10 +94,7 @@ function generatePatches(
   const faces = resolveActualValues(structure);
 
   for (const face of faces) {
-    const vertexArea = getArea(face.map((x) => x.vertexCoord));
-    const textureArea = getArea(face.map((x) => x.txCoord));
     const texelSize = 1 / (xRes * yRes);
-    const ratio = vertexArea / (textureArea * texelSize);
 
     const texelPositions = rasterize(
       face.map((o) => o.txCoord),
@@ -104,68 +103,61 @@ function generatePatches(
     );
 
     for (const texel of texelPositions) {
-      const samplePoint = discreteToMidpoint(texel, xRes, yRes);
-      var sampleDistance = 0;
-
-      var bayecentrics = getBayecentrics(samplePoint, face);
-
-      if (Math.min(...bayecentrics) < 0) {
-        const closestRes = getClosestInside(samplePoint, face);
-        bayecentrics[closestRes.startIndex] = closestRes.bay1;
-        bayecentrics[(closestRes.startIndex + 1) % 3] = 1 - closestRes.bay1;
-        bayecentrics[(closestRes.startIndex + 2) % 3] = 0;
-
-        // # the sample distance will be used as NICE
-        sampleDistance = closestRes.distance;
-
-        // samplePoint = closestRes.pos
-      }
-
-      const position = linearCombination(
-        bayecentrics,
-        face.map((x) => x.vertexCoord)
+      // This gives us the txcoords of the face clipped with the texel.
+      // Note that this may result in quads
+      const clipped = clipFaceTexel(
+        face.map((vertex) => vertex.txCoord),
+        texel
       );
-      const normal = linearCombination(
-        bayecentrics,
-        face.map((x) => x.vertexNormal)
-      ).normalize();
+
+      const fragmentVertices = clipped.map((txPos) =>
+        reconstructVertex(txPos, face)
+      ); // result will be a list of vertices
+
+      const fragmentArea2 = getArea(clipped);
+      const fragmentMidPoint2 = vectorAverage(clipped);
+
+      const fragmentArea3 = getArea(
+        fragmentVertices.map((vert) => vert.vertexCoord)
+      );
+      const fragmentMidPoint3 = vectorAverage(
+        fragmentVertices.map((vert) => vert.vertexCoord)
+      );
+      const fragmentNormal3 = vectorAverage(
+        fragmentVertices.map((vert) => vert.vertexNormal)
+      );
+
       const selfIlluminance = luminanceMap
-        .sample(samplePoint.x, samplePoint.y)
+        .sample(fragmentMidPoint2.x, fragmentMidPoint2.y)
+        // .multiplyScalar(fragmentArea2 / texelSize) // TODO: test: this one?
         .multiplyScalar(luminanceFactor);
       const reflectance = reflectanceMap
-        .sample(samplePoint.x, samplePoint.y)
+        .sample(fragmentMidPoint2.x, fragmentMidPoint2.y)
         .divideScalar(255.0); // mapped to 0...1
-      const nice = sampleDistance;
 
-      const patch = new Patch(
-        position,
-        normal,
+      const fragment = new Patch( // TODO: perhaps a fragment class if needed
+        fragmentMidPoint2,
+        fragmentMidPoint3,
+        fragmentNormal3,
         texel,
         selfIlluminance,
         reflectance,
-        1, // ratio, //TODO: fix
-        1,
-        1,
-        nice
+        fragmentArea2,
+        fragmentArea3,
+        luminanceFactor
       );
 
-      // TODO: find out why things were going above x,yres and fix that, instead of this bandaid which probably masks some deeper error
-      // debugger;
-      if (texel[0] < xRes && texel[1] < yRes) {
-        // if there's not yet a patch for this position
-        // or the patch there has a higher nice than this one
-        if (
-          !patches[texel[0]][texel[1]] ||
-          patches[texel[0]][texel[1]].nice > patch.nice
-        ) {
-          // write this patch as the representative of that texel.
-          patches[texel[0]][texel[1]] = patch;
-        }
-      }
+      // save if no patch in texelpos, interpolate otherwise.
+      if (!patches[texel[0]][texel[1]]) patches[texel[0]][texel[1]] = fragment;
+      else
+        patches[texel[0]][texel[1]] = pfInterpolate(
+          patches[texel[0]][texel[1]],
+          fragment,
+          xRes,
+          yRes
+        );
     }
   }
-
-  // debugger;
 
   return patches;
 }

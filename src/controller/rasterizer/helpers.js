@@ -102,6 +102,13 @@ export function getClosestInside(p, face) {
   }
 }
 
+/**
+ * Takes a discrete Texel position and returns the position of its midpoint in 0-1 tx space.
+ * @param {*} texelPos
+ * @param {*} xRes
+ * @param {*} yRes
+ * @returns
+ */
 export function discreteToMidpoint(texelPos, xRes, yRes) {
   return new Vector2((0.5 + texelPos[0]) / xRes, (0.5 + texelPos[1]) / yRes);
 }
@@ -130,6 +137,11 @@ export function getBayecentrics(p, face) {
   return [u, v, w];
 }
 
+/**
+ * Takes an OBJ structure and resolves usable faces made up from vertices from it.
+ * @param {*} structure
+ * @returns
+ */
 export function resolveActualValues(structure) {
   var re = [];
 
@@ -156,6 +168,12 @@ export function resolveActualValues(structure) {
   return re;
 }
 
+/**
+ * Gets the normal of a line
+ * @param {*} start
+ * @param {*} end
+ * @returns
+ */
 export function getOrthNormal(start, end) {
   const direction = end.clone().sub(start);
   const re = new Vector2(-direction.y, direction.x);
@@ -164,6 +182,13 @@ export function getOrthNormal(start, end) {
   return re;
 }
 
+/**
+ * Given a texel midpoint and the rasterization resolution, compute its cornerpoints
+ * @param {*} texel_midpoint
+ * @param {*} xRes
+ * @param {*} yRes
+ * @returns
+ */
 export function cornerpoints(texel_midpoint, xRes, yRes) {
   const xIncrement = 1 / xRes;
   const yIncrement = 1 / yRes;
@@ -200,6 +225,11 @@ export function conservative(start, end, xRes, yRes) {
   return [re_start, re_end];
 }
 
+/**
+ * get the area of a polygon
+ * @param {*} positions
+ * @returns
+ */
 export function getArea(positions) {
   const a = positions[0];
   const b = positions[1];
@@ -237,9 +267,70 @@ export function intersectSegments(e1, e2) {
     for (const e of [e1, e2]) {
       const dist = closestPointLine(point, e)[1];
       if (dist < 0.0001)
-        // not null bc numerics and stuff
+        // not 0 bc numerics and stuff
         return null;
     }
     return point;
   }
+}
+export function vectorAverage(vectors) {
+  return vectors.reduce((prev, nu) =>
+    prev.clone().addVector(nu.clone().multiplyScaler(1 / vectors.length))
+  );
+}
+export function reconstructVertex(txCoord, face) {
+  const bays = getBayecentrics(txCoord, face);
+  const vertexCoord = linearCombination(
+    bays,
+    face.map((vert) => vert.vertexCoord)
+  );
+  const vertexNormal = linearCombination(
+    bays,
+    face.map((vert) => vert.vertexNormal)
+  );
+
+  return new Vertex(vertexCoord, txCoord, vertexNormal);
+}
+
+/**
+ * creates a patch-fragment interpolation that's the result of adding the fragment to the patch
+ * @param {*} patch
+ * @param {*} fragment
+ * @param {*} xRes
+ * @param {*} yRes
+ * @returns
+ */
+export function pfInterpolate(patch, fragment, xRes, yRes) {
+  fNice =
+    distance(discreteToMidpoint(texel, xRes, yRes), fragment.position2) /
+    (1 + fragment.area2);
+  pNice =
+    distance(discreteToMidpoint(texel, xRes, yRes), patch.position2) /
+    (1 + patch.area2);
+
+  const position2 = fNice < pNice ? fragment.position2 : patch.position2;
+  const position3 = fNice < pNice ? fragment.position3 : patch.position3;
+  const normal3 = fNice < pNice ? fragment.normal3 : patch.normal3;
+
+  const area2 = patch.area2 + fragment.area2;
+  const area3 = patch.area3 + fragment.area3;
+
+  const selfIlluminance = patch.selfIlluminance
+    .clone()
+    .addVector(fragment.selfIlluminance);
+  const reflectance = patch.reflectance
+    .clone()
+    .multiplyScalar(patch.area2 / area2)
+    .addVector(fragment.clone().multiplyScalar(fragment.area2 / area2));
+
+  return new Patch(
+    position2,
+    position3,
+    normal3,
+    patch.texel,
+    selfIlluminance,
+    reflectance,
+    area2,
+    area3
+  );
 }
