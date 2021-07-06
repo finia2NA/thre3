@@ -21,6 +21,10 @@ export function checkCounterClockwise(c) {
   return a < 0;
 }
 
+export function checkNormalized(vector) {
+  return Math.abs(normal3.length() - 1) <= 0.005;
+}
+
 /**
  * checks if all elements of two given arrays are equal
  * @param {*} a
