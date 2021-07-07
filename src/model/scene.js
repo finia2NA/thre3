@@ -1,5 +1,5 @@
 import { patchTexture, defaultTexture } from "components/3D/textures";
-import SymStore from "model/symStore";
+import SymStore from "model/ffStore";
 import { Vector3 } from "three";
 
 function sleep(ms) {
@@ -103,9 +103,7 @@ export default class SceneRepresentation {
    * @param {Patch} b
    */
   formFactor(a, b, attenuationMethod) {
-    // if we're to calculate the factor of a patch to itself
-    // or the path is obstucted
-    // you know what to do :fingerguns:
+    // first, check if the path from patch a to b is unobstructed, set FF to 0 if it's not
     if (a === b || !this.unobstructed(a.position3D, b.position3D)) {
       return 0;
     } else {

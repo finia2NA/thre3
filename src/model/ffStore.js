@@ -1,4 +1,18 @@
-export default class SymStore {
+class FFStore {
+  constructor(dimensions, mode) {
+    console.error("this is an abstract class, pls instantiate a child");
+  }
+
+  get(a, b) {
+    console.error("this is an abstract class, pls instantiate a child");
+  }
+
+  set(a, b, value) {
+    console.error("this is an abstract class, pls instantiate a child");
+  }
+}
+
+export default class SymStore extends FFStore {
   dimensions;
   array;
   mode = "vanilla";
