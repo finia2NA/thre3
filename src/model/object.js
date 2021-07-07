@@ -21,13 +21,13 @@ export default class ObjectRepresentation {
   patchFlag;
   patches;
 
-  constructor(meshPath, luminancePath, reflectancePath) {
+  constructor(meshPath, luminancePath, reflectancePath, xRes = 0, yRes = 0) {
     this.meshPath = meshPath;
     this.luminancePath = luminancePath;
     this.reflectancePath = reflectancePath;
     this.translate = [0, 0, 0];
     this.objText = null;
-    this.patchRes = [16, 16]; //T ODO: change
+    this.patchRes = [xRes, yRes];
     this.patchFlag = false;
     this.patches = null;
 
@@ -46,7 +46,7 @@ export default class ObjectRepresentation {
   getMaxUnshotPatch() {
     const max1D = (arr) =>
       arr.reduce((pre, nu) =>
-        pre.unshotRadiosity.length() > nu.unshotRadiosity.length() ? pre : nu
+        pre.unshotEnergy.length() > nu.unshotEnergy.length() ? pre : nu
       );
 
     return max1D(this.patches.map((row) => max1D(row)));
@@ -57,7 +57,7 @@ export default class ObjectRepresentation {
   }
 
   async calculatePatches() {
-    if (this.patchRes === null || null in this.patchRes) {
+    if (!this.patchRes || Math.min(...this.patchRes) <= 0) {
       console.error("no resolution for patches given");
     }
 

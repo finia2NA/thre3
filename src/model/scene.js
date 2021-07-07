@@ -115,7 +115,7 @@ export default class SceneRepresentation {
     }
   }
 
-  async radiate(xRes, yRes, attenuationMethod) {
+  async computeRadiosity(xRes, yRes, attenuationMethod) {
     await this.calculateFormFactors(xRes, yRes, attenuationMethod);
 
     // get abort threshold as % of max dispaly energy
@@ -130,10 +130,11 @@ export default class SceneRepresentation {
     var i_counter = 0;
     var p_counter = 0;
 
-    // while (i_counter === 0) {
-    while (true) {
-      const objectsMaxPatch = this.objects.map((o) => o.getMaxUnshotPatch());
+    while (i_counter === 0) {
+      // while (true) {
 
+      // get patch with max unshot rad
+      const objectsMaxPatch = this.objects.map((o) => o.getMaxUnshotPatch());
       var currentShooter = objectsMaxPatch[0];
       var shooterObjectIndex = 0;
       for (var p = 1; p < objectsMaxPatch.length; p++) {
@@ -146,7 +147,7 @@ export default class SceneRepresentation {
         }
       }
 
-      const energy = currentShooter.unshotRadiosity;
+      const energy = currentShooter.unshotEnergy;
 
       if (energy.length() < threshold) {
         break;
@@ -154,6 +155,8 @@ export default class SceneRepresentation {
 
       currentShooter.unshotRadiosity = new Vector3(0, 0, 0);
 
+      // FIXME: this is obviously wrong, why would you look at patches which are above this one?
+      // The right way is obviously to look at every patch except self!
       for (var i = 0; i < this.objects.length; i++) {
         for (var j = 0; j < this.objects[i].patches.length; j++) {
           for (var k = 0; k < this.objects[i].patches[j].length; k++) {

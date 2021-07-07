@@ -52,7 +52,11 @@ const App = () => {
     setReadyFlags(newFlags);
   };
   const calcRad = async () => {
-    await scene.radiate(textureSize[0], textureSize[1], attenuationMethod);
+    await scene.computeRadiosity(
+      textureSize[0],
+      textureSize[1],
+      attenuationMethod
+    );
     setRadTextures(scene.objects.map((o) => o.radMap));
     const newFlags = [...readyflags];
     newFlags[0] = true;
@@ -70,7 +74,7 @@ const App = () => {
   );
   cornell.loadObjText();
 
-  cornell.patchRes = [16, 16];
+  cornell.patchRes = textureSize;
   scene.addObject(cornell);
 
   return (
