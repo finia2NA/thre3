@@ -6,8 +6,8 @@ export default class Patch {
   normal3; // The normal of the patch
   backwriteTX; // which texture coordinate the patch needs to be written back to
 
-  energyDensity; // The total energy of this patch, in unit W/m² for each of the 3 channels
-  unshotDensity = new Vector3(0, 0, 0); // The unshot energy of this patch, in unit W/m² for each of the 3 channels
+  totalenergy; // The total energy of this patch, in unit W/m² for each of the 3 channels
+  unshotEnergy = new Vector3(0, 0, 0); // The unshot energy of this patch, in unit W/m² for each of the 3 channels
   reflectance; // The reflectance of the patch for each of the 3 channels
 
   area2; // The area the patch takes up in texel space // TODO: sollte das % of texelarea oder total sein?
@@ -18,7 +18,7 @@ export default class Patch {
     position3,
     normal3,
     backwriteTX,
-    baseIlluminance,
+    energyDensity,
     reflectance,
     area2,
     area3
@@ -34,8 +34,8 @@ export default class Patch {
     this.normal3 = normal3;
     this.backwriteTX = backwriteTX;
 
-    this.energyDensity = baseIlluminance.multiplyScalar(luminanceFactor);
-    this.unshotDensity = baseIlluminance.multiplyScalar(luminanceFactor);
+    this.totalEnergy = energyDensity.multiplyScalar(area3);
+    this.unshotEnergy = energyDensity.multiplyScalar(area3);
 
     this.reflectance = reflectance;
 
@@ -57,7 +57,7 @@ export default class Patch {
 
     // eigentlich hier noch / produkt der vektorlängen,
     // aber ich gehe ja davon aus, dass die beiden normalen ~1 lang sind.
-    // https://onlinemschool.com/math/library/vector/angl/#:~:text=Definition.&text=The%20cosine%20of%20the%20angle,the%20product%20of%20vector%20magnitude.
+    // https://bit.ly/3dOdITA
     const alpha = Math.max(this.normal3.dot(atob), 0);
     const beta = Math.max(b.normal3.dot(atob.clone().negate()), 0);
 
@@ -84,6 +84,10 @@ export default class Patch {
     return re;
   }
 
+  getEnergyDensity() {
+    return this.totalEnergy.clone().divideScalar(this.area3);
+  }
+
   /**
    *
    * @param {Vector3} energy
@@ -91,14 +95,9 @@ export default class Patch {
   illuminate(energy) {
     const addVector = energy.clone().multiply(this.reflectance);
 
-    debugger;
     console.log(addVector);
 
-    this.energyDensity.add(addVector);
-    this.unshotDensity.add(addVector);
-  }
-
-  resetCollectedLight() {
-    this.collectedLight = [0, 0, 0];
+    this.totalenergy.add(addVector);
+    this.unshotEnergy.add(addVector);
   }
 }
