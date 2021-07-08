@@ -2,6 +2,7 @@ import { Vector3 } from "three";
 
 class MyImage {
   // TODO: find a better name (Image already taken)
+
   // "mostly from http://www.html5canvastutorials.com/advanced/html5-canvas-get-image-data-tutorial/";
   data;
   res;
@@ -36,7 +37,7 @@ class MyImage {
   }
 
   sample(u, v) {
-    var [x, y] = this.getXY(u, 1 - v); //FIXME: document this (texture flipping note)
+    var [x, y] = this.getXY(u, 1 - v); //TODO: document this (texture flipping note)
 
     const red = this.data[(this.res[0] * y + x) * 4];
     const green = this.data[(this.res[0] * y + x) * 4 + 1];

@@ -35,17 +35,13 @@ const App = () => {
 
   // functions
   const calcPatches = () => {
-    scene.calculatePatches(textureSize[0], textureSize[1]);
+    scene.computePatches(textureSize[0], textureSize[1]);
     const newFlags = [...readyflags];
     newFlags[0] = true;
     setReadyFlags(newFlags);
   };
   const calcFF = () => {
-    scene.calculateFormFactors(
-      textureSize[0],
-      textureSize[1],
-      attenuationMethod
-    );
+    scene.computeFormFactors(textureSize[0], textureSize[1], attenuationMethod);
     const newFlags = [...readyflags];
     newFlags[0] = true;
     newFlags[1] = true;

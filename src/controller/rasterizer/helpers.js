@@ -90,6 +90,12 @@ function closestPointLine(point, line) {
   return [ls, distance, point];
 }
 
+/**
+ * given a point p and a face, returns a point p' closest to p inside the face.
+ * @param {*} p
+ * @param {*} face
+ * @returns
+ */
 export function getClosestInside(p, face) {
   var re = undefined;
   const txCoords = face.map((x) => x.txCoord);
@@ -98,12 +104,13 @@ export function getClosestInside(p, face) {
     const line = [txCoords[i], txCoords[(i + 1) % 3]];
 
     const [ls, dist, point] = closestPointLine(p, line);
-    const candidate = new ClosestRes(startIndex, ls, distance, point);
+    const candidate = new ClosestRes(startIndex, ls, dist, point);
 
-    if (!re || re.distance > this.distance) re = candidate; // FIXME: This method is fucked, here and in the early return, check pls
-
-    return re;
+    if (re && re.distance < this.distance) {
+      re = candidate;
+    }
   }
+  return re;
 }
 
 /**
@@ -115,6 +122,13 @@ export function getClosestInside(p, face) {
  */
 export function discreteToMidpoint(texelPos, xRes, yRes) {
   return new Vector2((0.5 + texelPos[0]) / xRes, (0.5 + texelPos[1]) / yRes);
+}
+
+export function midpointToDiscrete(pos, xRes, yRes) {
+  const x = Math.floor(pos.x * xRes);
+  const y = Math.floor(pos.y * yRes);
+
+  return [x, y];
 }
 
 export function getBayecentrics(p, face) {

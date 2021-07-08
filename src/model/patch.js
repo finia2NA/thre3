@@ -2,6 +2,7 @@ import { checkNormalized } from "controller/rasterizer/helpers";
 import { Vector3 } from "three";
 
 export default class Patch {
+  position2; // The 2d point which represents the patch
   position3; // The 3d point which represents the patch
   normal3; // The normal of the patch
   backwriteTX; // which texture coordinate the patch needs to be written back to
@@ -10,7 +11,7 @@ export default class Patch {
   unshotEnergy = new Vector3(0, 0, 0); // The unshot energy of this patch, in unit W/m² for each of the 3 channels
   reflectance; // The reflectance of the patch for each of the 3 channels
 
-  area2; // The area the patch takes up in texel space // TODO: sollte das % of texelarea oder total sein?
+  area2; // The area the patch takes up in texel space
   area3; // The area the patch takes up in 3D space
 
   constructor(
@@ -39,7 +40,7 @@ export default class Patch {
 
     this.reflectance = reflectance;
 
-    this.areaFactor = area2;
+    this.area2 = area2;
     this.area3 = area3;
   }
 

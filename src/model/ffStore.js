@@ -61,7 +61,8 @@ export default class SymStore extends FFStore {
 
   getIndices(a, b) {
     var re = [this.encode(a), this.encode(b)].sort();
-    re = re[0] < re[1] ? [re[0], re[1]] : [re[1], re[0]]; // sort the array so that the smaller element is in front
+    // sort the array so that the smaller element is in front
+    re = re[0] < re[1] ? [re[0], re[1]] : [re[1], re[0]];
 
     re[1] = re[1] - re[0];
 

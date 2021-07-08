@@ -51,7 +51,7 @@ export default class SceneRepresentation {
     return this.objects.reduce((x, y) => x && y);
   }
 
-  async calculatePatches(xRes, yRes) {
+  async computePatches(xRes, yRes) {
     while (!this.mapsLoaded()) {
       await sleep(100);
     }
@@ -63,8 +63,8 @@ export default class SceneRepresentation {
     console.log("patches: done");
   }
 
-  async calculateFormFactors(xRes, yRes, attenuationMethod) {
-    this.calculatePatches(xRes, yRes);
+  async computeFormFactors(xRes, yRes, attenuationMethod) {
+    this.computePatches(xRes, yRes);
 
     // patches sind DA
     this.formFactors = new SymStore(
@@ -82,7 +82,9 @@ export default class SceneRepresentation {
         this.objects[coords[1][0]].patches[coords[1][1]][coords[1][2]];
 
       if (!patch1 || !patch2) {
-        continue; // if there are no patches in the texture there (which is very possible), we obviously can't calculate a form factor
+        // if there are no patches in the texture there (which is very possible),
+        // we obviously can't calculate a form factor
+        continue;
       }
 
       const currentformFactor = this.formFactor(
@@ -98,7 +100,7 @@ export default class SceneRepresentation {
   }
 
   /**
-   *
+   * Computes the form factor from patch a to patch b.
    * @param {Patch} a
    * @param {Patch} b
    */
@@ -111,12 +113,14 @@ export default class SceneRepresentation {
       const d = a.distanceFactor(b, attenuationMethod);
       const t = a.turnFactor(b);
 
-      return d * t * a.areaFactor * b.areaFactor;
+      // *a.area2? it's in the integral, but I don't think that means it should be here
+      // as the FF is supposed to be the solid angle of b from a's perspective. a's size doesn't factor into this.
+      return d * t * b.area2;
     }
   }
 
   async computeRadiosity(xRes, yRes, attenuationMethod) {
-    await this.calculateFormFactors(xRes, yRes, attenuationMethod);
+    await this.computeFormFactors(xRes, yRes, attenuationMethod);
 
     // get abort threshold as % of max dispaly energy
     const threshold =
@@ -155,8 +159,6 @@ export default class SceneRepresentation {
 
       currentShooter.unshotRadiosity = new Vector3(0, 0, 0);
 
-      // FIXME: this is obviously wrong, why would you look at patches which are above this one?
-      // The right way is obviously to look at every patch except self!
       for (var i = 0; i < this.objects.length; i++) {
         for (var j = 0; j < this.objects[i].patches.length; j++) {
           for (var k = 0; k < this.objects[i].patches[j].length; k++) {
@@ -225,7 +227,8 @@ export default class SceneRepresentation {
   }
 
   /**
-   * Returns the coordinates of the first point hit when raycasting from origin to direction in the scene.
+   * Returns the coordinates of the first point hit when raycasting from origin to direction
+   * in the scene.
    * @param {Vector3} origin
    * @param {Vector3} direction
    */
