@@ -1,6 +1,7 @@
 import { Vector2, Vector3 } from "three";
 import { Vertex, ClosestRes } from "./rasterclasses";
 import { intersect as extIntersect } from "mathjs";
+import Patch from "model/patch";
 
 /**
  * checks wether a given face was defined in a counterclockwise fashion (using a coordinate system where the y-axis points down).
@@ -22,7 +23,7 @@ export function checkCounterClockwise(c) {
 }
 
 export function checkNormalized(vector) {
-  return Math.abs(normal3.length() - 1) <= 0.005;
+  return Math.abs(vector.length() - 1) <= 0.005;
 }
 
 /**
@@ -60,34 +61,34 @@ export function linearCombination(bay, face) {
   return re;
 }
 
-function closestPointLine(point, line) {
-  start = line[0];
-  end = line[1];
+function closestPointLine(target, line) {
+  const start = line[0];
+  const end = line[1];
 
   // First, determine the closes point on the line to p.
   const startToEnd = end.clone().sub(start);
-  const startToP = p.clone().sub(start);
-  var ls = startToP.dot(startToEnd) / startToEnd.dot(startToEnd);
+  const startToTarget = target.clone().sub(start);
+  var ls = startToTarget.dot(startToEnd) / startToEnd.dot(startToEnd);
 
-  var point = undefined;
+  var re = undefined;
   if (ls <= 0) {
-    point = start;
+    re = start;
     ls = 0;
   } else if (ls >= 1) {
-    point = end;
+    re = end;
     ls = 1;
   } else {
-    point = start
+    re = start
       .clone()
       .multiplyScalar(1 - ls)
       .add(end.clone().multiplyScalar(ls));
   }
 
-  // Then, calculate the distance from p t it.
-  const distance = Math.abs(point.clone().sub(p).length());
+  // Then, calculate the distance from target to re.
+  const distance = Math.abs(re.clone().sub(target).length());
 
   // return bayecentric factor, distance and point
-  return [ls, distance, point];
+  return [ls, distance, re];
 }
 
 /**
@@ -104,7 +105,7 @@ export function getClosestInside(p, face) {
     const line = [txCoords[i], txCoords[(i + 1) % 3]];
 
     const [ls, dist, point] = closestPointLine(p, line);
-    const candidate = new ClosestRes(startIndex, ls, dist, point);
+    const candidate = new ClosestRes(i, ls, dist, point);
 
     if (re && re.distance < this.distance) {
       re = candidate;
@@ -120,7 +121,7 @@ export function getClosestInside(p, face) {
  * @param {*} yRes
  * @returns
  */
-export function discreteToMidpoint(texelPos, xRes, yRes) {
+export function texelMidpoint(texelPos, xRes, yRes) {
   return new Vector2((0.5 + texelPos[0]) / xRes, (0.5 + texelPos[1]) / yRes);
 }
 
@@ -271,7 +272,7 @@ export function getArea(positions) {
  */
 // from https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
 export function intersectSegments(e1, e2) {
-  point = extIntersect(e1.x, e1.y, e2.x, e2.y);
+  const point = extIntersect(e1.x, e1.y, e2.x, e2.y);
 
   if (!point)
     // in this case, there was no intersection
@@ -310,6 +311,10 @@ export function reconstructVertex(txCoord, face) {
   return new Vertex(vertexCoord, txCoord, vertexNormal);
 }
 
+function pointDistance(a, b) {
+  return Math.abs(a.clone().sub(b).length);
+}
+
 /**
  * creates a patch-fragment interpolation that's the result of adding the fragment to the patch
  * @param {*} patch
@@ -319,11 +324,17 @@ export function reconstructVertex(txCoord, face) {
  * @returns
  */
 export function pfInterpolate(patch, fragment, xRes, yRes) {
-  fNice =
-    distance(discreteToMidpoint(texel, xRes, yRes), fragment.position2) /
+  const fNice =
+    pointDistance(
+      texelMidpoint(fragment.backwriteTX, xRes, yRes),
+      fragment.position2
+    ) /
     (1 + fragment.area2);
-  pNice =
-    distance(discreteToMidpoint(texel, xRes, yRes), patch.position2) /
+  const pNice =
+    pointDistance(
+      texelMidpoint(fragment.backwriteTX, xRes, yRes),
+      patch.position2
+    ) /
     (1 + patch.area2);
 
   const position2 = fNice < pNice ? fragment.position2 : patch.position2;

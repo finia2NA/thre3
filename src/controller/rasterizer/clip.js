@@ -1,7 +1,7 @@
 import { Vector3 } from "three";
 import {
   cornerpoints,
-  discreteToMidpoint,
+  texelMidpoint,
   intersectSegments,
 } from "controller/rasterizer/helpers";
 import { coolmod } from "util/coolmod";
@@ -13,13 +13,13 @@ import { coolmod } from "util/coolmod";
  * @param {*} xRes the xRes of the rasterization
  * @param {*} yRes the yRes of the rasterization
  */
-function clipFaceTexel(vertices, texel, xRes, yRes) {
+export function clipFaceTexel(vertices, texel, xRes, yRes) {
   // First, we'll need a way to check if a point is in a texel or not.
   // For this, we use predicates for each side of the texel.
   const xIncrement = 1 / xRes;
   const yIncrement = 1 / yRes;
 
-  const mp = discreteToMidpoint(texel, xRes, yRes);
+  const mp = texelMidpoint(texel, xRes, yRes);
   const predicates = [
     (p) => p.x > mp.x - 0.5 * xIncrement,
     (p) => p.x < mp.x + 0.5 * xIncrement,

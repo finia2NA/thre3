@@ -7,8 +7,10 @@ import {
   checkCounterClockwise,
   vectorAverage,
   pfInterpolate,
+  reconstructVertex,
 } from "controller/rasterizer/helpers";
 import Patch from "model/patch";
+import { clipFaceTexel } from "./clip";
 
 const OBJFile = require("obj-file-parser");
 
