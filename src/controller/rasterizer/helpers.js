@@ -272,7 +272,12 @@ export function getArea(positions) {
  */
 // from https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
 export function intersectSegments(e1, e2) {
-  const point = extIntersect(e1.x, e1.y, e2.x, e2.y);
+  const point = extIntersect(
+    [e1[0].x, e1[0].y],
+    [e1[1].x, e1[1].y],
+    [e2[0].x, e2[0].y],
+    [e2[1].x, e2[1].y]
+  );
 
   if (!point)
     // in this case, there was no intersection

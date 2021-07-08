@@ -28,7 +28,7 @@ export function clipFaceTexel(vertices, texel, xRes, yRes) {
   ]; // true => is in, false => not
 
   // We define the texel edges for intersection later
-  const clippingCorners = cornerpoints(mp);
+  const clippingCorners = cornerpoints(mp, xRes, yRes);
   const clippingEdges = [0, 1, 2, 3].map((i) => [
     clippingCorners[i],
     clippingCorners[(i + 1) % 3],
@@ -38,7 +38,7 @@ export function clipFaceTexel(vertices, texel, xRes, yRes) {
   const subjectPolygon = [...vertices];
 
   // The rest of the alg is from https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm
-  const resultList = subjectPolygon;
+  var resultList = subjectPolygon;
 
   for (var clipIndex = 0; clipIndex < predicates.length; clipIndex++) {
     const workingList = resultList;

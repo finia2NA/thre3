@@ -1,7 +1,5 @@
 class FFStore {
-  constructor(dimensions, mode) {
-    console.error("this is an abstract class, pls instantiate a child");
-  }
+  constructor() {}
 
   get(a, b) {
     console.error("this is an abstract class, pls instantiate a child");
@@ -19,6 +17,7 @@ export default class SymStore extends FFStore {
   maxValue = 0;
 
   constructor(dimensions, mode) {
+    super();
     this.dimensions = dimensions;
     if (mode) this.mode = mode;
 

@@ -105,7 +105,9 @@ function generatePatches(
       // Note that this may result in quads
       const clipped = clipFaceTexel(
         face.map((vertex) => vertex.txCoord),
-        texel
+        texel,
+        xRes,
+        yRes
       );
 
       const fragmentVertices = clipped.map((txPos) =>
