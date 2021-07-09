@@ -2,10 +2,26 @@ import { Vector3 } from "three";
 import {
   cornerpoints,
   discreteToMidpoint,
-  intersectSegments,
+  intersectLines,
   pointToDiscrete,
 } from "controller/rasterizer/helpers";
 import { coolmod } from "util/coolmod";
+
+function isInTexel(point, texel, xRes, yRes) {
+  const acc = 0.0001;
+
+  const xInterval = 1 / xRes;
+  const yInterval = 1 / yRes;
+
+  // debugger;
+
+  if (point.x < texel[0] * xInterval - acc) return false;
+  if (point.x > (texel[0] + 1) * xInterval + acc) return false;
+  if (point.y < texel[1] * yInterval - acc) return false;
+  if (point.y > (texel[1] + 1) * yInterval + acc) return false;
+
+  return true;
+}
 
 /**
  * Executes the Cohen-Sutherland Algorithm to find a fragment resulting from clipping a face with a texel.
@@ -16,7 +32,8 @@ import { coolmod } from "util/coolmod";
  */
 export function clipFaceTexel(vertices, texel, xRes, yRes) {
   // We define the texel edges for intersection later
-  const clippingCorners = cornerpoints(discreteToMidpoint(texel), xRes, yRes);
+  const mp = discreteToMidpoint(texel, xRes, yRes);
+  const clippingCorners = cornerpoints(mp, xRes, yRes);
   const clippingEdges = [0, 1, 2, 3].map((i) => [
     clippingCorners[i],
     clippingCorners[(i + 1) % 3],
@@ -39,7 +56,8 @@ export function clipFaceTexel(vertices, texel, xRes, yRes) {
 
       if (!currentPoint || !prevPoint) debugger;
 
-      const intersectingPoint = intersectSegments(
+      // debugger;
+      const intersectingPoint = intersectLines(
         [prevPoint, currentPoint],
         clippingEdges[clipIndex]
       );
@@ -49,10 +67,19 @@ export function clipFaceTexel(vertices, texel, xRes, yRes) {
       if (intersectingPoint) resultList.push(intersectingPoint);
 
       // in case the current point is in the texel, it has to be added to the result array secondly.
-      if (pointToDiscrete(currentPoint) === texel)
+      if (isInTexel(currentPoint, texel, xRes, yRes))
         resultList.push(currentPoint);
     }
   }
-  // debugger;
+
+  for (var i = resultList.length - 1; i > 0; i--) {
+    if (
+      resultList[i].x === resultList[i - 1].x &&
+      resultList[i].y === resultList[i - 1].y
+    ) {
+      resultList.splice(i, 1);
+    }
+  }
+
   return resultList;
 }

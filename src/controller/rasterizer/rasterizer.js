@@ -111,6 +111,8 @@ function generatePatches(
         yRes
       );
 
+      debugger;
+
       const fragmentVertices = clipped.map((txPos) =>
         reconstructVertex(txPos, face)
       ); // result will be a list of vertices
@@ -148,6 +150,7 @@ function generatePatches(
         luminanceFactor
       );
 
+      debugger;
       // save if no patch in texelpos, interpolate otherwise.
       if (!patches[texel[0]][texel[1]]) patches[texel[0]][texel[1]] = fragment;
       else
@@ -159,7 +162,7 @@ function generatePatches(
         );
     }
   }
-
+  debugger;
   return patches;
 }
 

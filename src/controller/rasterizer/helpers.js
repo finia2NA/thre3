@@ -118,13 +118,15 @@ export function getClosestInside(p, face) {
 
 /**
  * Takes a discrete Texel position and returns the position of its midpoint in 0-1 tx space.
- * @param {*} texelPos
+ * @param {*} texel
  * @param {*} xRes
  * @param {*} yRes
  * @returns
  */
-export function discreteToMidpoint(texelPos, xRes, yRes) {
-  return new Vector2((0.5 + texelPos[0]) / xRes, (0.5 + texelPos[1]) / yRes);
+export function discreteToMidpoint(texel, xRes, yRes) {
+  const x = (0.5 + texel[0]) / xRes;
+  const y = (0.5 + texel[1]) / yRes;
+  return new Vector2(x, y);
 }
 
 export function pointToDiscrete(pos, xRes, yRes) {
@@ -216,12 +218,17 @@ export function cornerpoints(texel_midpoint, xRes, yRes) {
 
   const positions = [];
 
-  for (const i of [-0.5, 0.5]) {
-    for (const j of [-0.5, 0.5]) {
-      positions.push(
-        texel_midpoint.clone().add(new Vector2(i * xIncrement, j * yIncrement))
-      );
-    }
+  for (const i of [
+    [-0.5, -0.5],
+    [-0.5, 0.5],
+    [0.5, 0.5],
+    [0.5, -0.5],
+  ]) {
+    positions.push(
+      texel_midpoint
+        .clone()
+        .add(new Vector2(i[0] * xIncrement, i[1] * yIncrement))
+    );
   }
   return positions;
 }
@@ -266,14 +273,7 @@ export function getArea(positions) {
   else return cross.length() / 2;
 }
 
-/**
- * returns the point of intersection if the line from e1s->e1e intersects with e2s->e2e, or null if no such intersection exists.
- * @param {Vector2[]} e1 The first edge
- * @param {Vector2[]} e2 The second edge
- * @returns the intersection point or *null* if no intersection exists between the segments.
- */
-// from https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
-export function intersectSegments(e1, e2) {
+export function intersectLines(e1, e2) {
   console.log(e1, e2);
 
   const intersectResult = extIntersect(
@@ -283,26 +283,38 @@ export function intersectSegments(e1, e2) {
     [e2[1].x, e2[1].y]
   );
 
-  if (!intersectResult)
+  if (!intersectResult) {
     // in this case, there was no intersection
     return null;
-  else {
-    // in this case, there was an intersection, but we still need to check if that intersection between the *lines* was indeed on the *segments*.
-    // for this, we use the method defined above to find the closest point on one of the lines to that intersection.
-    // if the intersection itself was on the point, the distance between it and the point we got through intersection
-    // should be pretty small, eh?
-
-    const point = new Vector2(intersectResult[0], intersectResult[1]);
-
-    for (const e of [e1, e2]) {
-      const dist = closestPointLine(point, e)[1];
-      if (dist < 0.0001)
-        // not 0 bc numerics and stuff
-        return null;
-    }
-    return point;
+  } else {
+    return new Vector2(intersectResult[0], intersectResult[1]);
   }
 }
+
+/**
+ * returns the point of intersection if the line from e1s->e1e intersects with e2s->e2e, or null if no such intersection exists.
+ * @param {Vector2[]} e1 The first edge
+ * @param {Vector2[]} e2 The second edge
+ * @returns the intersection point or *null* if no intersection exists between the segments.
+ */
+// from https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
+export function intersectSegments(e1, e2) {
+  const intersect = intersectLines(e1, e2);
+  if (!intersect) return intersect;
+
+  // in this case, there was an intersection, but we still need to check if that intersection between the *lines* was indeed on the *segments*.
+  // for this, we use the method defined above to find the closest point on one of the lines to that intersection.
+  // if the intersection itself was on the point, the distance between it and the point we got through intersection
+  // should be pretty small, eh?
+  for (const e of [e1, e2]) {
+    const dist = closestPointLine(intersect, e)[1];
+    if (dist < 0.0001)
+      // not 0 bc numerics and stuff
+      return null;
+  }
+  return intersect;
+}
+
 export function vectorAverage(vectors) {
   return vectors.reduce((prev, nu) =>
     prev.clone().add(nu.clone().multiplyScalar(1 / vectors.length))
