@@ -24,7 +24,7 @@ const normal = linearCombination(
   bayecentrics,
   face.map((x) => x.vertexNormal)
 ).normalize();
-const selfIlluminance = luminanceMap
+const totalEnergy = luminanceMap
   .sample(samplePoint.x, samplePoint.y)
   .multiplyScalar(luminanceFactor);
 const reflectance = reflectanceMap
@@ -36,7 +36,7 @@ const patch = new Patch(
   position,
   normal,
   texel,
-  selfIlluminance,
+  totalEnergy,
   reflectance,
   1, // ratio, //TODO: fix
   1,

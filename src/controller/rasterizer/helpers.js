@@ -123,11 +123,11 @@ export function getClosestInside(p, face) {
  * @param {*} yRes
  * @returns
  */
-export function texelMidpoint(texelPos, xRes, yRes) {
+export function discreteToMidpoint(texelPos, xRes, yRes) {
   return new Vector2((0.5 + texelPos[0]) / xRes, (0.5 + texelPos[1]) / yRes);
 }
 
-export function midpointToDiscrete(pos, xRes, yRes) {
+export function pointToDiscrete(pos, xRes, yRes) {
   const x = Math.floor(pos.x * xRes);
   const y = Math.floor(pos.y * yRes);
 
@@ -274,6 +274,8 @@ export function getArea(positions) {
  */
 // from https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
 export function intersectSegments(e1, e2) {
+  console.log(e1, e2);
+
   const intersectResult = extIntersect(
     [e1[0].x, e1[0].y],
     [e1[1].x, e1[1].y],
@@ -303,7 +305,7 @@ export function intersectSegments(e1, e2) {
 }
 export function vectorAverage(vectors) {
   return vectors.reduce((prev, nu) =>
-    prev.clone().addVector(nu.clone().multiplyScaler(1 / vectors.length))
+    prev.clone().add(nu.clone().multiplyScalar(1 / vectors.length))
   );
 }
 export function reconstructVertex(txCoord, face) {
@@ -335,13 +337,13 @@ function pointDistance(a, b) {
 export function pfInterpolate(patch, fragment, xRes, yRes) {
   const fNice =
     pointDistance(
-      texelMidpoint(fragment.backwriteTX, xRes, yRes),
+      discreteToMidpoint(fragment.backwriteTX, xRes, yRes),
       fragment.position2
     ) /
     (1 + fragment.area2);
   const pNice =
     pointDistance(
-      texelMidpoint(fragment.backwriteTX, xRes, yRes),
+      discreteToMidpoint(fragment.backwriteTX, xRes, yRes),
       patch.position2
     ) /
     (1 + patch.area2);
@@ -353,20 +355,18 @@ export function pfInterpolate(patch, fragment, xRes, yRes) {
   const area2 = patch.area2 + fragment.area2;
   const area3 = patch.area3 + fragment.area3;
 
-  const selfIlluminance = patch.selfIlluminance
-    .clone()
-    .addVector(fragment.selfIlluminance);
+  const totalEnergy = patch.totalEnergy.clone().add(fragment.totalEnergy);
   const reflectance = patch.reflectance
     .clone()
     .multiplyScalar(patch.area2 / area2)
-    .addVector(fragment.clone().multiplyScalar(fragment.area2 / area2));
+    .add(fragment.reflectance.clone().multiplyScalar(fragment.area2 / area2));
 
   return new Patch(
     position2,
     position3,
     normal3,
     patch.texel,
-    selfIlluminance,
+    totalEnergy,
     reflectance,
     area2,
     area3

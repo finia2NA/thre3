@@ -103,7 +103,7 @@ function generatePatches(
     for (const texel of texelPositions) {
       // This gives us the txcoords of the face clipped with the texel.
       // Note that this may result in quads
-      debugger;
+      // debugger;
       const clipped = clipFaceTexel(
         face.map((vertex) => vertex.txCoord),
         texel,
@@ -128,7 +128,7 @@ function generatePatches(
         fragmentVertices.map((vert) => vert.vertexNormal)
       );
 
-      const selfIlluminance = luminanceMap
+      const totalEnergy = luminanceMap
         .sample(fragmentMidPoint2.x, fragmentMidPoint2.y)
         // .multiplyScalar(fragmentArea2 / texelSize) // TODO: test: this one?
         .multiplyScalar(luminanceFactor);
@@ -141,7 +141,7 @@ function generatePatches(
         fragmentMidPoint3,
         fragmentNormal3,
         texel,
-        selfIlluminance,
+        totalEnergy,
         reflectance,
         fragmentArea2,
         fragmentArea3,
