@@ -62,6 +62,8 @@ export function linearCombination(bay, face) {
 }
 
 function closestPointLine(target, line) {
+  if (!target.clone) debugger;
+
   const start = line[0];
   const end = line[1];
 
@@ -272,14 +274,14 @@ export function getArea(positions) {
  */
 // from https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
 export function intersectSegments(e1, e2) {
-  const point = extIntersect(
+  const intersectResult = extIntersect(
     [e1[0].x, e1[0].y],
     [e1[1].x, e1[1].y],
     [e2[0].x, e2[0].y],
     [e2[1].x, e2[1].y]
   );
 
-  if (!point)
+  if (!intersectResult)
     // in this case, there was no intersection
     return null;
   else {
@@ -287,6 +289,8 @@ export function intersectSegments(e1, e2) {
     // for this, we use the method defined above to find the closest point on one of the lines to that intersection.
     // if the intersection itself was on the point, the distance between it and the point we got through intersection
     // should be pretty small, eh?
+
+    const point = new Vector2(intersectResult[0], intersectResult[1]);
 
     for (const e of [e1, e2]) {
       const dist = closestPointLine(point, e)[1];

@@ -53,14 +53,21 @@ export function clipFaceTexel(vertices, texel, xRes, yRes) {
         clippingEdges[clipIndex]
       );
 
+      //FIXME: this
+      // debugger;
       if (predicates[clipIndex](currentPoint)) {
         if (!predicates[clipIndex](prevPoint)) {
-          resultList.append(intersectingPoint);
+          if (!intersectingPoint)
+            console.error("intersection detected, but no point computed");
+          resultList.push(intersectingPoint);
         }
-        resultList.append(currentPoint);
+        resultList.push(currentPoint);
       } else if (predicates[clipIndex](prevPoint)) {
-        resultList.append(intersectingPoint);
+        resultList.push(intersectingPoint);
       }
     }
+    debugger;
   }
+
+  return resultList;
 }

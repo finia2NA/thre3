@@ -103,6 +103,7 @@ function generatePatches(
     for (const texel of texelPositions) {
       // This gives us the txcoords of the face clipped with the texel.
       // Note that this may result in quads
+      debugger;
       const clipped = clipFaceTexel(
         face.map((vertex) => vertex.txCoord),
         texel,
