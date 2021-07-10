@@ -3,6 +3,8 @@ import { Vertex, ClosestRes } from "./rasterclasses";
 import { intersect as extIntersect } from "mathjs";
 import Patch from "model/patch";
 
+// TODO: refactor this file by splitting, finding duplicates and unused functions and commenting
+
 /**
  * checks wether a given face was defined in a counterclockwise fashion (using a coordinate system where the y-axis points down).
  * @param {*} c
@@ -254,11 +256,11 @@ export function conservative(start, end, xRes, yRes) {
 }
 
 /**
- * get the area of a polygon
+ * get the area of a tri
  * @param {*} positions
  * @returns
  */
-export function getArea(positions) {
+export function getArea3(positions) {
   const a = positions[0];
   const b = positions[1];
   const c = positions[2];
@@ -273,9 +275,22 @@ export function getArea(positions) {
   else return cross.length() / 2;
 }
 
-export function intersectLines(e1, e2) {
-  console.log(e1, e2);
+export function getAreaConvex(positions) {
+  if (positions.length < 2) return null;
+  else {
+    const tris = positions
+      .slice(2, positions.length)
+      .map((vertex) => [positions[0], positions[1], vertex]);
 
+    var sum = 0;
+
+    for (const tri of tris) sum += getArea3(tri);
+
+    return sum;
+  }
+}
+
+export function intersectLines(e1, e2) {
   const intersectResult = extIntersect(
     [e1[0].x, e1[0].y],
     [e1[1].x, e1[1].y],
@@ -383,4 +398,31 @@ export function pfInterpolate(patch, fragment, xRes, yRes) {
     area2,
     area3
   );
+}
+
+/**
+ * Checks if a given list is a 3D shape that is not just a horizontal or vertical line
+ * @param {*} vertices
+ * @returns
+ */
+export function dameCheck(vertices) {
+  if (!vertices || vertices.length < 3) return false;
+
+  const x = vertices[0].x;
+  const y = vertices[0].y;
+
+  var xChanged = false;
+  var yChanged = false;
+
+  for (var i = 1; i < vertices.length; i++) {
+    if (vertices[i].x !== x) xChanged = true;
+    if (vertices[i].y !== y) yChanged = true;
+  }
+
+  if (xChanged && yChanged) return true;
+  else return false;
+}
+
+export function normalizeVector3(v) {
+  return v.clone().divideScalar(v.length());
 }

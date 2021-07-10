@@ -8,6 +8,9 @@ import {
   vectorAverage,
   pfInterpolate,
   reconstructVertex,
+  normalizeVector3,
+  dameCheck,
+  getAreaConvex,
 } from "controller/rasterizer/helpers";
 import Patch from "model/patch";
 import { clipFaceTexel } from "./clip";
@@ -111,23 +114,25 @@ function generatePatches(
         yRes
       );
 
-      debugger;
+      if (!dameCheck(clipped)) continue;
+
+      // debugger;
 
       const fragmentVertices = clipped.map((txPos) =>
         reconstructVertex(txPos, face)
       ); // result will be a list of vertices
 
-      const fragmentArea2 = getArea(clipped);
+      const fragmentArea2 = getAreaConvex(clipped);
       const fragmentMidPoint2 = vectorAverage(clipped);
 
-      const fragmentArea3 = getArea(
+      const fragmentArea3 = getAreaConvex(
         fragmentVertices.map((vert) => vert.vertexCoord)
       );
       const fragmentMidPoint3 = vectorAverage(
         fragmentVertices.map((vert) => vert.vertexCoord)
       );
-      const fragmentNormal3 = vectorAverage(
-        fragmentVertices.map((vert) => vert.vertexNormal)
+      const fragmentNormal3 = normalizeVector3(
+        vectorAverage(fragmentVertices.map((vert) => vert.vertexNormal))
       );
 
       const totalEnergy = luminanceMap
@@ -150,7 +155,7 @@ function generatePatches(
         luminanceFactor
       );
 
-      debugger;
+      // debugger;
       // save if no patch in texelpos, interpolate otherwise.
       if (!patches[texel[0]][texel[1]]) patches[texel[0]][texel[1]] = fragment;
       else
@@ -162,7 +167,7 @@ function generatePatches(
         );
     }
   }
-  debugger;
+  // debugger;
   return patches;
 }
 

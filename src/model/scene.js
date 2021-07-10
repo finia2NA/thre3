@@ -211,6 +211,7 @@ export default class SceneRepresentation {
    * @param {Vector3} b
    */
   unobstructed(a, b) {
+    debugger;
     const targetDistance = a.distanceTo(b);
     const direction = new Vector3(b.x - a.x, b.y - a.y, b.z - a.z).divideScalar(
       targetDistance

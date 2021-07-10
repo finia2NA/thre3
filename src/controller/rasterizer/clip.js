@@ -72,6 +72,7 @@ export function clipFaceTexel(vertices, texel, xRes, yRes) {
     }
   }
 
+  // check for === vertices
   for (var i = resultList.length - 1; i > 0; i--) {
     if (
       resultList[i].x === resultList[i - 1].x &&
@@ -80,6 +81,10 @@ export function clipFaceTexel(vertices, texel, xRes, yRes) {
       resultList.splice(i, 1);
     }
   }
+
+  // finally, check first and last element, which the loop didnt do
+  if (resultList[0] === resultList[resultList - 1])
+    resultList.splice(resultList.length - 1, 1);
 
   return resultList;
 }
