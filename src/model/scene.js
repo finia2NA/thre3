@@ -106,7 +106,7 @@ export default class SceneRepresentation {
    */
   formFactor(a, b, attenuationMethod) {
     // first, check if the path from patch a to b is unobstructed, set FF to 0 if it's not
-    if (a === b || !this.unobstructed(a.position3D, b.position3D)) {
+    if (a === b || !this.unobstructed(a.position3, b.position3)) {
       return 0;
     } else {
       // else the form factor consists of distance and turn factors
@@ -211,7 +211,6 @@ export default class SceneRepresentation {
    * @param {Vector3} b
    */
   unobstructed(a, b) {
-    debugger;
     const targetDistance = a.distanceTo(b);
     const direction = new Vector3(b.x - a.x, b.y - a.y, b.z - a.z).divideScalar(
       targetDistance
