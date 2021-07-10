@@ -11,6 +11,8 @@ import {
   normalizeVector3,
   dameCheck,
   getAreaConvex,
+  convexMidpoint2,
+  convexMidpoint3,
 } from "controller/rasterizer/helpers";
 import Patch from "model/patch";
 import { clipFaceTexel } from "./clip";
@@ -123,16 +125,17 @@ function generatePatches(
       ); // result will be a list of vertices
 
       const fragmentArea2 = getAreaConvex(clipped);
-      const fragmentMidPoint2 = vectorAverage(clipped);
+      const fragmentMidPoint2 = convexMidpoint2(clipped);
 
       const fragmentArea3 = getAreaConvex(
         fragmentVertices.map((vert) => vert.vertexCoord)
       );
-      const fragmentMidPoint3 = vectorAverage(
+      const fragmentMidPoint3 = convexMidpoint3(
         fragmentVertices.map((vert) => vert.vertexCoord)
       );
+
       const fragmentNormal3 = normalizeVector3(
-        vectorAverage(fragmentVertices.map((vert) => vert.vertexNormal))
+        convexMidpoint3(fragmentVertices.map((vert) => vert.vertexNormal)) //TODO: don't know if the midpoint thingy's right for normals
       );
 
       const totalEnergy = luminanceMap
@@ -142,6 +145,8 @@ function generatePatches(
       const reflectance = reflectanceMap
         .sample(fragmentMidPoint2.x, fragmentMidPoint2.y)
         .divideScalar(255.0); // mapped to 0...1
+
+      debugger;
 
       const fragment = new Patch( // TODO: perhaps a fragment class if needed
         fragmentMidPoint2,

@@ -5,7 +5,7 @@ import {
   intersectLines,
   pointToDiscrete,
 } from "controller/rasterizer/helpers";
-import { coolmod } from "util/coolmod";
+import coolmod from "util/coolmod";
 
 function isInTexel(point, texel, xRes, yRes) {
   const acc = 0.0001;

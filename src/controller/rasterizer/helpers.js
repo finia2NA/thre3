@@ -2,6 +2,7 @@ import { Vector2, Vector3 } from "three";
 import { Vertex, ClosestRes } from "./rasterclasses";
 import { intersect as extIntersect } from "mathjs";
 import Patch from "model/patch";
+import coolmod from "util/coolmod";
 
 // TODO: refactor this file by splitting, finding duplicates and unused functions and commenting
 
@@ -328,6 +329,34 @@ export function intersectSegments(e1, e2) {
       return null;
   }
   return intersect;
+}
+
+export function convexMidpoint2(points) {
+  return convexMidpoint(points, new Vector2(0, 0));
+}
+
+export function convexMidpoint3(points) {
+  return convexMidpoint(points, new Vector3(0, 0, 0));
+}
+
+function convexMidpoint(points, initial) {
+  // https://stackoverflow.com/questions/34059116/what-is-the-fastest-way-to-find-the-center-of-an-irregular-convex-polygon
+  const sumCenter = initial;
+
+  var sumWeight = 0;
+  for (var i = 0; i < points.length; i++) {
+    const prev = points[coolmod(i - 1, points.length)];
+    const curr = points[i];
+    const next = points[coolmod(i + 1, points.length)];
+
+    const weight =
+      curr.clone().sub(prev).length() + curr.clone().sub(next).length();
+
+    sumCenter.add(curr.clone().multiplyScalar(weight));
+    sumWeight += weight;
+  }
+  debugger;
+  return sumCenter.divideScalar(sumWeight);
 }
 
 export function vectorAverage(vectors) {
