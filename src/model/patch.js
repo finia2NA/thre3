@@ -29,6 +29,7 @@ export default class Patch {
         "Given normal3D was not normalized! Was: " +
           Math.abs(normal3.length() - 1)
       );
+      debugger;
     }
     this.position2 = position2;
     this.position3 = position3;

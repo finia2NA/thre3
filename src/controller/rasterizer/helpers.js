@@ -358,7 +358,13 @@ function convexMidpoint(points, initial) {
     sumCenter.add(curr.clone().multiplyScalar(weight));
     sumWeight += weight;
   }
-  return sumCenter.divideScalar(sumWeight);
+
+  if (sumWeight === 0) {
+    // needed for the case when calculating a new normal and all 3 input normals are the same
+    return points[0];
+  } else {
+    return sumCenter.divideScalar(sumWeight);
+  }
 }
 
 export function vectorAverage(vectors) {
