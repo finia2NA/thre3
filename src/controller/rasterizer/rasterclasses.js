@@ -1,4 +1,4 @@
-import { getOrthNormal } from "./helpers";
+import { getOrthNormal, pointToDiscrete } from "./helpers";
 
 export class ClosestRes {
   startIndex;
@@ -24,10 +24,10 @@ export class Boundingbox {
     const xs = corners.map((o) => o.x);
     const ys = corners.map((o) => o.y);
 
-    this.xMax = Math.ceil(Math.max(...xs) * (xRes - 1));
-    this.xMin = Math.floor(Math.min(...xs) * (xRes - 1));
-    this.yMax = Math.ceil(Math.max(...ys) * (yRes - 1));
-    this.yMin = Math.floor(Math.min(...ys) * (yRes - 1));
+    this.xMax = Math.floor(xRes * Math.max(...xs));
+    this.xMin = Math.floor(xRes * Math.min(...xs));
+    this.yMax = Math.floor(yRes * Math.max(...ys));
+    this.yMin = Math.floor(yRes * Math.min(...ys));
   }
 }
 

@@ -7,6 +7,8 @@ import {
 } from "controller/rasterizer/helpers";
 import coolmod from "util/coolmod";
 
+const polygonClipping = require("polygon-clipping");
+
 function isInTexel(point, texel, xRes, yRes) {
   const acc = 0.0001;
 
@@ -87,4 +89,15 @@ export function clipFaceTexel(vertices, texel, xRes, yRes) {
     resultList.splice(resultList.length - 1, 1);
 
   return resultList;
+}
+
+export function clip2(shape1, shape2) {
+  const input1 = shape1.map((v) => [v.x, v.y]);
+  input1.push(input1[0]);
+
+  const input2 = shape2.map((v) => [v.x, v.y]);
+  input2.push(input2[0]);
+
+  debugger;
+  const clipped = polygonClipping.intersection(shape1, shape2);
 }

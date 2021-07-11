@@ -1,6 +1,7 @@
 import { request } from "util/network.js";
 import generatePatches from "controller/rasterizer/rasterizer";
 import MyImage from "./image";
+import generateClippedPatches from "controller/rasterizer/clipper";
 
 export default class ObjectRepresentation {
   translate;
@@ -29,7 +30,7 @@ export default class ObjectRepresentation {
     this.objText = null;
     this.patchRes = [xRes, yRes];
     this.patchFlag = false;
-    this.patches = null;
+    this.patches = [];
 
     this.reflectanceMap = new MyImage(reflectancePath);
     this.luminanceMap = new MyImage(luminancePath);
@@ -64,7 +65,7 @@ export default class ObjectRepresentation {
     if (!this.patchFlag) {
       if (!this.objText) await this.loadObjText();
 
-      this.patches = generatePatches(
+      this.patches = generateClippedPatches(
         this.objText,
         this.patchRes[0],
         this.patchRes[1],
@@ -74,6 +75,7 @@ export default class ObjectRepresentation {
       );
       this.patchFlag = true;
     }
+    debugger;
 
     return this.patches; // TODO:translate
   }

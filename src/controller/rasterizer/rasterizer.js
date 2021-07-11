@@ -146,8 +146,6 @@ function generatePatches(
         .sample(fragmentMidPoint2.x, fragmentMidPoint2.y)
         .divideScalar(255.0); // mapped to 0...1
 
-      debugger;
-
       const fragment = new Patch( // TODO: perhaps a fragment class if needed
         fragmentMidPoint2,
         fragmentMidPoint3,

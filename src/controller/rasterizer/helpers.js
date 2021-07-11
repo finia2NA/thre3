@@ -127,8 +127,11 @@ export function getClosestInside(p, face) {
  * @returns
  */
 export function discreteToMidpoint(texel, xRes, yRes) {
-  const x = (0.5 + texel[0]) / xRes;
-  const y = (0.5 + texel[1]) / yRes;
+  const xIncrement = 1 / xRes;
+  const yIncrement = 1 / yRes;
+
+  const x = (0.5 + texel[0]) * xIncrement;
+  const y = (0.5 + texel[1]) * yIncrement;
   return new Vector2(x, y);
 }
 
@@ -136,6 +139,7 @@ export function pointToDiscrete(pos, xRes, yRes) {
   const x = Math.floor(pos.x * xRes);
   const y = Math.floor(pos.y * yRes);
 
+  debugger;
   return [x, y];
 }
 
@@ -215,25 +219,26 @@ export function getOrthNormal(start, end) {
  * @param {*} yRes
  * @returns
  */
-export function cornerpoints(texel_midpoint, xRes, yRes) {
+export function cornerpoints(texel, xRes, yRes) {
   const xIncrement = 1 / xRes;
   const yIncrement = 1 / yRes;
 
+  const texel_midpoint = discreteToMidpoint(texel, xRes, yRes);
+
   const positions = [];
 
-  for (const i of [
+  for (const pair of [
     [-0.5, -0.5],
     [-0.5, 0.5],
     [0.5, 0.5],
     [0.5, -0.5],
   ]) {
     positions.push(
-      texel_midpoint
-        .clone()
-        .add(new Vector2(i[0] * xIncrement, i[1] * yIncrement))
+      (pair[0] * xIncrement + texel_midpoint[0],
+      pair[1] * yIncrement + texel_midpoint[1])
     );
   }
-  return positions;
+  return positions.map((arr) => new Vector2(arr[0], arr[1]));
 }
 
 function getCandidate(texel_midpoint, normal, xRes, yRes) {
@@ -355,7 +360,6 @@ function convexMidpoint(points, initial) {
     sumCenter.add(curr.clone().multiplyScalar(weight));
     sumWeight += weight;
   }
-  debugger;
   return sumCenter.divideScalar(sumWeight);
 }
 
