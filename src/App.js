@@ -29,23 +29,26 @@ const App = () => {
   // state
   const [displaymode, setDisplaymode] = useState("reflectance");
   const [radTextures, setRadTextures] = useState([]);
-  const [readyflags, setReadyFlags] = useState([false, false, false]);
+  // const [readyflags, setReadyFlags] = useState([false, false, false]); // TODO: setting this changed the state which deleted the scene, including patches, FFs. find a way to do this w/o losing the scene.
+  const [readyflags, setReadyFlags] = useState([true, true, true]);
   const [textureSize, setTextureSize] = useState([16, 16]);
   const [attenuationMethod, setAttenuationMethod] = useState("model3");
+
+  console.log("app reset");
 
   // functions
   const calcPatches = () => {
     scene.computePatches(textureSize[0], textureSize[1]);
-    const newFlags = [...readyflags];
-    newFlags[0] = true;
-    setReadyFlags(newFlags);
+    // const newFlags = [...readyflags];
+    // newFlags[0] = true;
+    // setReadyFlags(newFlags);
   };
   const calcFF = () => {
     scene.computeFormFactors(textureSize[0], textureSize[1], attenuationMethod);
-    const newFlags = [...readyflags];
-    newFlags[0] = true;
-    newFlags[1] = true;
-    setReadyFlags(newFlags);
+    // const newFlags = [...readyflags];
+    // newFlags[0] = true;
+    // newFlags[1] = true;
+    // setReadyFlags(newFlags);
   };
   const calcRad = async () => {
     await scene.computeRadiosity(
@@ -54,11 +57,11 @@ const App = () => {
       attenuationMethod
     );
     setRadTextures(scene.objects.map((o) => o.radMap));
-    const newFlags = [...readyflags];
-    newFlags[0] = true;
-    newFlags[1] = true;
-    newFlags[2] = true;
-    setReadyFlags(newFlags);
+    // const newFlags = [...readyflags];
+    // newFlags[0] = true;
+    // newFlags[1] = true;
+    // newFlags[2] = true;
+    // setReadyFlags(newFlags);
   };
 
   // scene
