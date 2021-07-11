@@ -54,11 +54,10 @@ export default function generateClippedPatches(
     for (var x = bb.xMin; x < bb.xMax; x++) {
       for (var y = bb.yMin; y < bb.yMax; y++) {
         const shape1 = face.map((v) => v.txCoord);
-        const shape2 = cornerpoints([x, y], xRes, yRes); // FIXME: THIS SHIT AINT WORKING!!!!!!!!!!!!!!!
-        debugger;
-        const clipped = clip2(shape1, shape2);
 
-        console.log("😎");
+        const cop = cornerpoints([x, y], xRes, yRes);
+        const shape2 = cornerpoints([x, y], xRes, yRes);
+        const clipped = clip2(shape1, shape2);
       }
     }
   }

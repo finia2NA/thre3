@@ -233,10 +233,10 @@ export function cornerpoints(texel, xRes, yRes) {
     [0.5, 0.5],
     [0.5, -0.5],
   ]) {
-    positions.push(
-      (pair[0] * xIncrement + texel_midpoint[0],
-      pair[1] * yIncrement + texel_midpoint[1])
-    );
+    positions.push([
+      pair[0] * xIncrement + texel_midpoint.x,
+      pair[1] * yIncrement + texel_midpoint.y,
+    ]);
   }
   return positions.map((arr) => new Vector2(arr[0], arr[1]));
 }

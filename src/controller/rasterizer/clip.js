@@ -92,12 +92,13 @@ export function clipFaceTexel(vertices, texel, xRes, yRes) {
 }
 
 export function clip2(shape1, shape2) {
-  const input1 = shape1.map((v) => [v.x, v.y]);
+  var input1 = shape1.map((v) => [v.x, v.y]);
   input1.push(input1[0]);
+  input1 = [[input1]];
 
-  const input2 = shape2.map((v) => [v.x, v.y]);
+  var input2 = shape2.map((v) => [v.x, v.y]);
   input2.push(input2[0]);
+  input2 = [[input2]];
 
-  debugger;
-  const clipped = polygonClipping.intersection(shape1, shape2);
+  const clipped = polygonClipping.intersection(input1, input2);
 }
