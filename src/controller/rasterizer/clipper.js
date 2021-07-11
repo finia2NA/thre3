@@ -61,60 +61,59 @@ export default function generateClippedPatches(
         const shape2 = cornerpoints([x, y], xRes, yRes);
         const clipped = clip2(shape1, shape2);
 
-        console.log(clipped);
-
         if (!dameCheck(clipped)) continue;
 
-        console.log("survived damechack");
+        console.log("survived damecheck");
 
-        // const fragmentVertices = clipped.map((txPos) =>
-        //   reconstructVertex(txPos, face)
-        // ); // result will be a list of vertices
+        const fragmentVertices = clipped.map((txPos) =>
+          reconstructVertex(txPos, face)
+        ); // result will be a list of vertices
 
-        // const fragmentArea2 = getAreaConvex(clipped);
-        // const fragmentMidPoint2 = convexMidpoint2(clipped);
+        const fragmentArea2 = getAreaConvex(clipped);
+        const fragmentMidPoint2 = convexMidpoint2(clipped);
 
-        // const fragmentArea3 = getAreaConvex(
-        //   fragmentVertices.map((vert) => vert.vertexCoord)
-        // );
-        // const fragmentMidPoint3 = convexMidpoint3(
-        //   fragmentVertices.map((vert) => vert.vertexCoord)
-        // );
+        const fragmentArea3 = getAreaConvex(
+          fragmentVertices.map((vert) => vert.vertexCoord)
+        );
+        const fragmentMidPoint3 = convexMidpoint3(
+          fragmentVertices.map((vert) => vert.vertexCoord)
+        );
 
-        // const fragmentNormal3 = normalizeVector3(
-        //   convexMidpoint3(fragmentVertices.map((vert) => vert.vertexNormal)) //TODO: don't know if the midpoint thingy's right for normals
-        // );
+        const fragmentNormal3 = normalizeVector3(
+          convexMidpoint3(fragmentVertices.map((vert) => vert.vertexNormal)) //TODO: don't know if the midpoint thingy's right for normals
+        );
 
-        // const totalEnergy = luminanceMap
-        //   .sample(fragmentMidPoint2.x, fragmentMidPoint2.y)
-        //   // .multiplyScalar(fragmentArea2 / texelSize) // TODO: test: this one?
-        //   .multiplyScalar(luminanceFactor);
-        // const reflectance = reflectanceMap
-        //   .sample(fragmentMidPoint2.x, fragmentMidPoint2.y)
-        //   .divideScalar(255.0); // mapped to 0...1
+        const totalEnergy = luminanceMap
+          .sample(fragmentMidPoint2.x, fragmentMidPoint2.y)
+          // .multiplyScalar(fragmentArea2 / texelSize) // TODO: test: this one?
+          .multiplyScalar(luminanceFactor);
+        const reflectance = reflectanceMap
+          .sample(fragmentMidPoint2.x, fragmentMidPoint2.y)
+          .divideScalar(255.0); // mapped to 0...1
 
-        // const fragment = new Patch( // TODO: perhaps a fragment class if needed
-        //   fragmentMidPoint2,
-        //   fragmentMidPoint3,
-        //   fragmentNormal3,
-        //   texel,
-        //   totalEnergy,
-        //   reflectance,
-        //   fragmentArea2,
-        //   fragmentArea3,
-        //   luminanceFactor
-        // );
+        const fragment = new Patch( // TODO: perhaps a fragment class if needed
+          fragmentMidPoint2,
+          fragmentMidPoint3,
+          fragmentNormal3,
+          texel,
+          totalEnergy,
+          reflectance,
+          fragmentArea2,
+          fragmentArea3,
+          luminanceFactor
+        );
 
-        // // debugger;
-        // // save if no patch in texelpos, interpolate otherwise.
-        // if (!patches[texel[0]][texel[1]]) patches[texel[0]][texel[1]] = fragment;
-        // else
-        //   patches[texel[0]][texel[1]] = pfInterpolate(
-        //     patches[texel[0]][texel[1]],
-        //     fragment,
-        //     xRes,
-        //     yRes
-        //   );
+        // debugger;
+        // save if no patch in texelpos, interpolate otherwise.
+        if (!patches[texel[0]][texel[1]])
+          patches[texel[0]][texel[1]] = fragment;
+        else
+          patches[texel[0]][texel[1]] = pfInterpolate(
+            patches[texel[0]][texel[1]],
+            fragment,
+            xRes,
+            yRes
+          );
       }
     }
   }

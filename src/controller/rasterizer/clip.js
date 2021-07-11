@@ -104,6 +104,6 @@ export function clip2(shape1, shape2) {
 
   if (!clipped || clipped.length === 0) return clipped;
 
-  debugger;
-  return clipped[0].map((arr) => new Vector2(arr[0], arr[1]));
+  const re = clipped[0][0].map((arr) => new Vector2(arr[0], arr[1]));
+  return re;
 }

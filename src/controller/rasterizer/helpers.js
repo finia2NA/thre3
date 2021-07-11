@@ -266,11 +266,7 @@ export function conservative(start, end, xRes, yRes) {
  * @param {*} positions
  * @returns
  */
-export function getArea3(positions) {
-  const a = positions[0];
-  const b = positions[1];
-  const c = positions[2];
-
+export function getArea3(a, b, c) {
   const ab = b.clone().sub(a);
   const ac = c.clone().sub(a);
 
@@ -427,7 +423,7 @@ export function pfInterpolate(patch, fragment, xRes, yRes) {
     position2,
     position3,
     normal3,
-    patch.texel,
+    patch.backwriteTX,
     totalEnergy,
     reflectance,
     area2,
