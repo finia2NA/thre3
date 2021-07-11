@@ -284,13 +284,15 @@ export function getArea3(positions) {
 export function getAreaConvex(positions) {
   if (positions.length < 2) return null;
   else {
-    const tris = positions
-      .slice(2, positions.length)
-      .map((vertex) => [positions[0], positions[1], vertex]);
-
     var sum = 0;
 
-    for (const tri of tris) sum += getArea3(tri);
+    const anchor = positions[0];
+    for (var i = 2; i < positions.length; i++) {
+      const prev = positions[i - 1];
+      const curr = positions[i];
+
+      sum += getArea3(anchor, prev, curr);
+    }
 
     return sum;
   }
