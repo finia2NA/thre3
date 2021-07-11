@@ -75,7 +75,6 @@ export default class ObjectRepresentation {
       );
       this.patchFlag = true;
     }
-    debugger;
 
     return this.patches; // TODO:translate
   }

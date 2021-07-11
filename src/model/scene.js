@@ -14,6 +14,7 @@ export default class SceneRepresentation {
     this.objects = [];
     this.formFactors = null;
     this.rayCaster = null;
+    console.log("scene ready");
   }
 
   addObject(o) {

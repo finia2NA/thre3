@@ -118,6 +118,6 @@ export default function generateClippedPatches(
     }
   }
 
-  debugger;
+  // debugger;
   return patches;
 }
