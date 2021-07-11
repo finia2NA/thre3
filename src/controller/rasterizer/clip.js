@@ -1,4 +1,4 @@
-import { Vector3 } from "three";
+import { Vector2 } from "three";
 import {
   cornerpoints,
   discreteToMidpoint,
@@ -101,4 +101,9 @@ export function clip2(shape1, shape2) {
   input2 = [[input2]];
 
   const clipped = polygonClipping.intersection(input1, input2);
+
+  if (!clipped || clipped.length === 0) return clipped;
+
+  debugger;
+  return clipped[0].map((arr) => new Vector2(arr[0], arr[1]));
 }

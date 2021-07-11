@@ -454,8 +454,7 @@ export function dameCheck(vertices) {
     if (vertices[i].y !== y) yChanged = true;
   }
 
-  if (xChanged && yChanged) return true;
-  else return false;
+  return xChanged && yChanged;
 }
 
 export function normalizeVector3(v) {
