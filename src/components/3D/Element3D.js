@@ -69,6 +69,9 @@ const Element3D = (props) => {
   //   obj.translate[2]
   // );
 
+  // this name will be used in raytracing to see which object has been hit.s
+  scene.children[0].name = props.name;
+
   const re = (
     <primitive object={scene.children[0]}>
       {

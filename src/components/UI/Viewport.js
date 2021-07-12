@@ -49,6 +49,7 @@ const Viewport = (props) => {
             displaymode={props.displaymode}
             radTexture={props.radTextures[i]}
             key={i}
+            name={"" + i}
           />
         </Suspense>
       ))}

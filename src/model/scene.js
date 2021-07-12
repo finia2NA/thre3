@@ -1,5 +1,5 @@
 import { patchTexture, defaultTexture } from "components/3D/textures";
-import SymStore from "model/ffStore";
+import SymStore, { BasicStore } from "model/ffStore";
 import { Vector3 } from "three";
 import getHemisphereSamplepoints, {
   rotateSamplepoints,
@@ -114,7 +114,7 @@ export default class SceneRepresentation {
     // patches sind DA
     this.formFactors = new BasicStore(
       [this.objects.length, xRes, yRes],
-      "scaled"
+      attenuationMethod
     );
 
     const samplePoints = getHemisphereSamplepoints(1000);
@@ -129,9 +129,20 @@ export default class SceneRepresentation {
           const currentSamplePoints = rotateSamplepoints(samplePoints, normal);
 
           const rtResults = currentSamplePoints.map((dir) =>
-            raycast(origin, dir)
+            this.raycast(origin, dir)
           );
-          // FIXME: write rest
+
+          for (const res of rtResults) {
+            if (!res) continue;
+
+            const illuminatedObject = parseInt(res.object.name, 10);
+            const texel = pointToDiscrete(res.uv, xRes, yRes);
+
+            const a = [objIndex, x, y];
+            const b = [illuminatedObject, texel[0], texel[1]];
+
+            this.patches.add(a, b, 1 / samples);
+          }
         }
       }
     }
@@ -253,7 +264,7 @@ export default class SceneRepresentation {
     );
 
     const result = this.raycast(a, direction);
-
+    debugger;
     // This isnt just a target===result bc there may be some numerical shenanigans.
     if (!result || result.distance >= targetDistance - 0.005) {
       return true;

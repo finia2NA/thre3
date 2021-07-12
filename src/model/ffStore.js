@@ -43,7 +43,7 @@ class FFStore {
   }
 }
 
-class BasicStore extends FFStore {
+export class BasicStore extends FFStore {
   constructor(dimensions, mode) {
     super(dimensions, mode);
 
@@ -67,6 +67,13 @@ class BasicStore extends FFStore {
     const bIndex = this.encode(b);
 
     return this.array[aIndex][bIndex];
+  }
+
+  add(a, b, value) {
+    const aIndex = this.encode(a);
+    const bIndex = this.encode(b);
+
+    this.array[aIndex][bIndex] += value;
   }
 }
 
