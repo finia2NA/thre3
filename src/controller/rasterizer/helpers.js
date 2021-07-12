@@ -1,10 +1,7 @@
 import { Vector2, Vector3 } from "three";
-import { Vertex, ClosestRes } from "./rasterclasses";
-import { intersect as extIntersect } from "mathjs";
+import { Vertex } from "./rasterclasses";
 import Patch from "model/patch";
 import coolmod from "util/coolmod";
-
-// TODO: refactor this file by splitting, finding duplicates and unused functions and commenting
 
 export function checkNormalized(vector) {
   return Math.abs(vector.length() - 1) <= 0.005;
