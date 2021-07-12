@@ -70,7 +70,7 @@ export default class SceneRepresentation {
     // patches sind DA
     this.formFactors = new SymStore(
       [this.objects.length, xRes, yRes],
-      "vanilla"
+      "scaled"
     );
 
     // go through every representation of a patch pair
@@ -127,9 +127,7 @@ export default class SceneRepresentation {
     const threshold =
       0.01 *
       Math.max(
-        ...this.objects.map((o) =>
-          o.getMaxUnshotPatch().unshotRadiosity.length()
-        )
+        ...this.objects.map((o) => o.getMaxUnshotPatch().unshotEnergy.length())
       );
 
     var i_counter = 0;
@@ -144,8 +142,8 @@ export default class SceneRepresentation {
       var shooterObjectIndex = 0;
       for (var p = 1; p < objectsMaxPatch.length; p++) {
         if (
-          objectsMaxPatch[p].unshotRadiosity.length() >
-          currentShooter.unshotRadiosity.length()
+          objectsMaxPatch[p].unshotEnergy.length() >
+          currentShooter.unshotEnergy.length()
         ) {
           currentShooter = objectsMaxPatch[p];
           shooterObjectIndex = p;
@@ -158,15 +156,15 @@ export default class SceneRepresentation {
         break;
       }
 
-      currentShooter.unshotRadiosity = new Vector3(0, 0, 0);
+      currentShooter.unshotEnergy = new Vector3(0, 0, 0);
 
       for (var i = 0; i < this.objects.length; i++) {
         for (var j = 0; j < this.objects[i].patches.length; j++) {
           for (var k = 0; k < this.objects[i].patches[j].length; k++) {
             const a = [
               shooterObjectIndex,
-              currentShooter.positionTX[0],
-              currentShooter.positionTX[1],
+              currentShooter.backwriteTX[0],
+              currentShooter.backwriteTX[1],
             ];
             const b = [i, j, k];
 

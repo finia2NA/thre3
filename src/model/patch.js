@@ -7,7 +7,7 @@ export default class Patch {
   normal3; // The normal of the patch
   backwriteTX; // which texture coordinate the patch needs to be written back to
 
-  totalenergy; // The total energy of this patch, in unit W/m² for each of the 3 channels
+  totalEnergy; // The total energy of this patch, in unit W/m² for each of the 3 channels
   unshotEnergy = new Vector3(0, 0, 0); // The unshot energy of this patch, in unit W/m² for each of the 3 channels
   reflectance; // The reflectance of the patch for each of the 3 channels
 
@@ -99,7 +99,7 @@ export default class Patch {
 
     console.log(addVector);
 
-    this.totalenergy.add(addVector);
+    this.totalEnergy.add(addVector);
     this.unshotEnergy.add(addVector);
   }
 }

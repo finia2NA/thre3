@@ -101,7 +101,7 @@ export const patchTexture = (patches, width, height) => {
           Math.round(wattage.z)
         );
 
-      context.fillRect(patch.positionTX[0], patch.positionTX[1], 1, 1);
+      context.fillRect(patch.backwriteTX[0], patch.backwriteTX[1], 1, 1);
     }
   }
 
