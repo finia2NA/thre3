@@ -1,5 +1,4 @@
 import { request } from "util/network.js";
-import generatePatches from "controller/rasterizer/rasterizer";
 import MyImage from "./image";
 import generateClippedPatches from "controller/rasterizer/clipper";
 

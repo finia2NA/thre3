@@ -4,10 +4,6 @@ import { Vector2 } from "three";
 import {
   resolveActualValues,
   cornerpoints,
-  conservative,
-  getArea,
-  checkCounterClockwise,
-  vectorAverage,
   pfInterpolate,
   reconstructVertex,
   normalizeVector3,

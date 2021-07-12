@@ -37,7 +37,8 @@ class MyImage {
   }
 
   sample(u, v) {
-    const [x, y] = this.getXY(u, 1 - v); //TODO: document this (texture flipping note)
+    // const [x, y] = this.getXY(u, 1 - v); //TODO: document this (texture flipping note)
+    const [x, y] = this.getXY(u, v);
 
     const red = this.data[(this.res[0] * y + x) * 4];
     const green = this.data[(this.res[0] * y + x) * 4 + 1];

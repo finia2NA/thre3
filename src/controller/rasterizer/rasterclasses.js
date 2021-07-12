@@ -1,18 +1,4 @@
-import { getOrthNormal, pointToDiscrete } from "./helpers";
-
-export class ClosestRes {
-  startIndex;
-  bay1;
-  distance;
-  pos;
-
-  constructor(startIndex, bay1, distance, pos) {
-    this.startIndex = startIndex;
-    this.bay1 = bay1;
-    this.distance = distance;
-    this.pos = pos;
-  }
-}
+import {} from "./helpers";
 
 export class Boundingbox {
   xMax;
@@ -28,23 +14,6 @@ export class Boundingbox {
     this.xMin = Math.floor(xRes * Math.min(...xs));
     this.yMax = Math.floor(yRes * Math.max(...ys));
     this.yMin = Math.floor(yRes * Math.min(...ys));
-  }
-}
-
-export class Implicit {
-  constructor(start, end) {
-    if (start.equals(end))
-      console.error(
-        "Tried to get a HNF where start and end are the same, which doesn't exist"
-      );
-
-    this.normal = getOrthNormal(start, end);
-    this.offset = start.dot(this.normal);
-  }
-
-  apply(point) {
-    const re = this.normal.dot(point) - this.offset;
-    return re;
   }
 }
 

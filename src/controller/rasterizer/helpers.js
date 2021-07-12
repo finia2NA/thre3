@@ -6,48 +6,10 @@ import coolmod from "util/coolmod";
 
 // TODO: refactor this file by splitting, finding duplicates and unused functions and commenting
 
-/**
- * checks wether a given face was defined in a counterclockwise fashion (using a coordinate system where the y-axis points down).
- * @param {*} c
- * @returns
- */
-export function checkCounterClockwise(c) {
-  // https://mathworld.wolfram.com/PolygonArea.html
-
-  // first calculate area of the triangle
-  var a = 0;
-  for (var i = 0; i < 3; i++) {
-    a += c[i].x * c[(i + 1) % 3].y - c[(i + 1) % 3].x * c[i].y;
-  }
-
-  // usually, if said area is positive, the tri was defined counterclockwise, else clockwise.
-  // however, since in our coordsystem, y points downward, the opposite is true.
-  return a < 0;
-}
-
 export function checkNormalized(vector) {
   return Math.abs(vector.length() - 1) <= 0.005;
 }
 
-/**
- * checks if all elements of two given arrays are equal
- * @param {*} a
- * @param {*} b
- * @returns
- */
-export function elementwiseEquals(a, b) {
-  if (a.length !== b.length) {
-    console.error(
-      "I was asked to compare the elements of arrays of different lengths"
-    );
-  }
-
-  for (var i = 0; i < b.length; i++) {
-    if (a[i] !== b[i]) return false;
-  }
-
-  return true;
-}
 /**
  * takes rational factors and vectors and returns the linear combination of those.
  * @param {*} bay
@@ -61,61 +23,6 @@ export function linearCombination(bay, face) {
 
   const re = f0.clone().add(f1).add(f2);
 
-  return re;
-}
-
-function closestPointLine(target, line) {
-  if (!target.clone) debugger;
-
-  const start = line[0];
-  const end = line[1];
-
-  // First, determine the closes point on the line to p.
-  const startToEnd = end.clone().sub(start);
-  const startToTarget = target.clone().sub(start);
-  var ls = startToTarget.dot(startToEnd) / startToEnd.dot(startToEnd);
-
-  var re = undefined;
-  if (ls <= 0) {
-    re = start;
-    ls = 0;
-  } else if (ls >= 1) {
-    re = end;
-    ls = 1;
-  } else {
-    re = start
-      .clone()
-      .multiplyScalar(1 - ls)
-      .add(end.clone().multiplyScalar(ls));
-  }
-
-  // Then, calculate the distance from target to re.
-  const distance = Math.abs(re.clone().sub(target).length());
-
-  // return bayecentric factor, distance and point
-  return [ls, distance, re];
-}
-
-/**
- * given a point p and a face, returns a point p' closest to p inside the face.
- * @param {*} p
- * @param {*} face
- * @returns
- */
-export function getClosestInside(p, face) {
-  var re = undefined;
-  const txCoords = face.map((x) => x.txCoord);
-
-  for (var i = 0; i < 3; i++) {
-    const line = [txCoords[i], txCoords[(i + 1) % 3]];
-
-    const [ls, dist, point] = closestPointLine(p, line);
-    const candidate = new ClosestRes(i, ls, dist, point);
-
-    if (re && re.distance < this.distance) {
-      re = candidate;
-    }
-  }
   return re;
 }
 
@@ -199,20 +106,6 @@ export function resolveActualValues(structure) {
 }
 
 /**
- * Gets the normal of a line
- * @param {*} start
- * @param {*} end
- * @returns
- */
-export function getOrthNormal(start, end) {
-  const direction = end.clone().sub(start);
-  const re = new Vector2(-direction.y, direction.x);
-  re.divideScalar(re.length());
-
-  return re;
-}
-
-/**
  * Given a texel midpoint and the rasterization resolution, compute its cornerpoints
  * @param {*} texel_midpoint
  * @param {*} xRes
@@ -239,26 +132,6 @@ export function cornerpoints(texel, xRes, yRes) {
     ]);
   }
   return positions.map((arr) => new Vector2(arr[0], arr[1]));
-}
-
-function getCandidate(texel_midpoint, normal, xRes, yRes) {
-  const positions = cornerpoints(texel_midpoint, xRes, yRes);
-
-  // This takes the max of the positions array. I won't blame you if this isn't immediatly obvious.
-  const re = positions.reduce((a, b) =>
-    normal.dot(a) > normal.dot(b) ? a : b
-  );
-
-  return re;
-}
-
-export function conservative(start, end, xRes, yRes) {
-  const n = getOrthNormal(start, end);
-
-  const re_start = getCandidate(start, n, xRes, yRes);
-  const re_end = getCandidate(end, n, xRes, yRes);
-
-  return [re_start, re_end];
 }
 
 /**
@@ -294,46 +167,6 @@ export function getAreaConvex(positions) {
   }
 }
 
-export function intersectLines(e1, e2) {
-  const intersectResult = extIntersect(
-    [e1[0].x, e1[0].y],
-    [e1[1].x, e1[1].y],
-    [e2[0].x, e2[0].y],
-    [e2[1].x, e2[1].y]
-  );
-
-  if (!intersectResult) {
-    // in this case, there was no intersection
-    return null;
-  } else {
-    return new Vector2(intersectResult[0], intersectResult[1]);
-  }
-}
-
-/**
- * returns the point of intersection if the line from e1s->e1e intersects with e2s->e2e, or null if no such intersection exists.
- * @param {Vector2[]} e1 The first edge
- * @param {Vector2[]} e2 The second edge
- * @returns the intersection point or *null* if no intersection exists between the segments.
- */
-// from https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
-export function intersectSegments(e1, e2) {
-  const intersect = intersectLines(e1, e2);
-  if (!intersect) return intersect;
-
-  // in this case, there was an intersection, but we still need to check if that intersection between the *lines* was indeed on the *segments*.
-  // for this, we use the method defined above to find the closest point on one of the lines to that intersection.
-  // if the intersection itself was on the point, the distance between it and the point we got through intersection
-  // should be pretty small, eh?
-  for (const e of [e1, e2]) {
-    const dist = closestPointLine(intersect, e)[1];
-    if (dist < 0.0001)
-      // not 0 bc numerics and stuff
-      return null;
-  }
-  return intersect;
-}
-
 export function convexMidpoint2(points) {
   return convexMidpoint(points, new Vector2(0, 0));
 }
@@ -367,11 +200,6 @@ function convexMidpoint(points, initial) {
   }
 }
 
-export function vectorAverage(vectors) {
-  return vectors.reduce((prev, nu) =>
-    prev.clone().add(nu.clone().multiplyScalar(1 / vectors.length))
-  );
-}
 export function reconstructVertex(txCoord, face) {
   const bays = getBayecentrics(txCoord, face);
   const vertexCoord = linearCombination(

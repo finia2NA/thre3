@@ -76,7 +76,8 @@ export const patchTexture = (patches, width, height) => {
     for (var j = 0; j < patches[i].length; j++) {
       if (patches[i][j]) {
         // "If this vector's x, y or z value is less than the argument's x, y or z value, replace that value with the corresponding max value."
-        maxComponents.max(patches[i][j].totalEnergy);
+        // maxComponents.max(patches[i][j].totalEnergy); //FIXME: return to total energy
+        maxComponents.max(patches[i][j].reflectance);
       }
     }
   }
@@ -89,7 +90,8 @@ export const patchTexture = (patches, width, height) => {
         continue;
       }
       const patch = patches[k][l];
-      const wattage = patch.totalEnergy
+      // const wattage = patch.totalEnergy //FIXME: return to total energy
+      const wattage = patch.reflectance
         .clone()
         .multiplyScalar(255 / maxBrightness);
 
