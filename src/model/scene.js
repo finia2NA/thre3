@@ -1,6 +1,9 @@
 import { patchTexture, defaultTexture } from "components/3D/textures";
 import SymStore from "model/ffStore";
 import { Vector3 } from "three";
+import getHemisphereSamplepoints, {
+  rotateSamplepoints,
+} from "formFactors/hemiSample";
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -98,6 +101,40 @@ export default class SceneRepresentation {
       }
     }
     console.log("form factors: done");
+  }
+
+  async computeFormFactors2(
+    xRes,
+    yRes,
+    samples = 1000,
+    attenuationMethod = "vanilla"
+  ) {
+    this.computePatches(xRes, yRes);
+
+    // patches sind DA
+    this.formFactors = new BasicStore(
+      [this.objects.length, xRes, yRes],
+      "scaled"
+    );
+
+    const samplePoints = getHemisphereSamplepoints(1000);
+
+    // go through every representation of a patch pair
+    for (var objIndex = 0; objIndex < this.objects.length; objIndex++) {
+      for (var x = 0; x < this.objects[objIndex].patches.length; x++) {
+        for (var y = 0; y < this.objects[objIndex].patches[x].length; y++) {
+          const origin = this.objects[objIndex].patches[x][y].position3;
+          const normal = this.objects[objIndex].patches[x][y].normal3;
+
+          const currentSamplePoints = rotateSamplepoints(samplePoints, normal);
+
+          const rtResults = currentSamplePoints.map((dir) =>
+            raycast(origin, dir)
+          );
+          // FIXME: write rest
+        }
+      }
+    }
   }
 
   /**

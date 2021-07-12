@@ -1,5 +1,10 @@
 class FFStore {
-  constructor() {}
+  constructor(dimensions, mode) {
+    this.dimensions = dimensions;
+    if (mode) this.mode = mode;
+
+    this.array = [];
+  }
 
   get(a, b) {
     console.error("this is an abstract class, pls instantiate a child");
@@ -7,27 +12,6 @@ class FFStore {
 
   set(a, b, value) {
     console.error("this is an abstract class, pls instantiate a child");
-  }
-}
-
-export default class SymStore extends FFStore {
-  dimensions;
-  array;
-  mode = "vanilla";
-  maxValue = 0;
-
-  constructor(dimensions, mode) {
-    super();
-    this.dimensions = dimensions;
-    if (mode) this.mode = mode;
-
-    const maxIndex = dimensions.reduce((x, y) => x * y);
-    this.array = [];
-
-    for (var i = 0; i < maxIndex; i++) {
-      const row = new Array(maxIndex - i).fill(0);
-      this.array.push(row);
-    }
   }
 
   encode(a) {
@@ -56,6 +40,51 @@ export default class SymStore extends FFStore {
     }
 
     return re;
+  }
+}
+
+class BasicStore extends FFStore {
+  constructor(dimensions, mode) {
+    super(dimensions, mode);
+
+    const maxIndex = dimensions.reduce((x, y) => x * y);
+
+    this.array = new Array(maxIndex);
+
+    for (var col = 0; col < maxIndex; col++)
+      this.array.push(new Array(maxIndex));
+  }
+
+  set(a, b, value) {
+    const aIndex = this.encode(a);
+    const bIndex = this.encode(b);
+
+    this.array[aIndex][bIndex] = value;
+  }
+
+  get(a, b) {
+    const aIndex = this.encode(a);
+    const bIndex = this.encode(b);
+
+    return this.array[aIndex][bIndex];
+  }
+}
+
+export default class SymStore extends FFStore {
+  dimensions;
+  array;
+  mode = "vanilla";
+  maxValue = 0;
+
+  constructor(dimensions, mode) {
+    super(dimensions, mode);
+
+    const maxIndex = dimensions.reduce((x, y) => x * y);
+
+    for (var i = 0; i < maxIndex; i++) {
+      const row = new Array(maxIndex - i).fill(0);
+      this.array.push(row);
+    }
   }
 
   getIndices(a, b) {

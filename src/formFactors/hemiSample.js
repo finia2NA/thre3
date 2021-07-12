@@ -1,3 +1,4 @@
+import { getPlaneNormal } from "controller/rasterizer/helpers";
 import { Vector3 } from "three";
 
 export function getSphereSamplepoints(endsample, startSample = 0) {
@@ -31,4 +32,15 @@ export default function getHemisphereSamplepoints(samples) {
   }
 
   return points;
+}
+
+export function rotateSamplepoints(points, midVector) {
+  const defaultOrientation = new Vector3(0, 1, 0);
+
+  const rotationVector = getPlaneNormal(defaultOrientation, midVector);
+  const rotationAngle = defaultOrientation.angleTo(midVector); // TODO: maybe swapt the vectors
+
+  return points.map((point) =>
+    point.clone().applyAxisAngle(rotationVector, rotationAngle)
+  );
 }

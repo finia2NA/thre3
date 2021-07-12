@@ -290,3 +290,11 @@ export function dameCheck(vertices) {
 export function normalizeVector3(v) {
   return v.clone().divideScalar(v.length());
 }
+
+export function getPlaneNormal(a, b) {
+  if ([a, b].map(checkNormalized) !== [true, true])
+    // the most convoluted way to write this
+    console.error("a vector for getPlaneNormal was not normalized");
+
+  return a.clone().cross(b);
+}
