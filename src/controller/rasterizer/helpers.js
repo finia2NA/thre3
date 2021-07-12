@@ -1,8 +1,13 @@
-import { Vector2, Vector3 } from "three";
+import { Vector, Vector2, Vector3 } from "three";
 import { Vertex } from "./rasterclasses";
 import Patch from "model/patch";
 import coolmod from "util/coolmod";
 
+/**
+ * checks if a vector is normalized (to a numerically reasonable degree)
+ * @param {*} vector
+ * @returns
+ */
 export function checkNormalized(vector) {
   return Math.abs(vector.length() - 1) <= 0.005;
 }
@@ -39,6 +44,13 @@ export function discreteToMidpoint(texel, xRes, yRes) {
   return new Vector2(x, y);
 }
 
+/**
+ * given a 2D point in [0...1] and a rasterization resolution, returns which pixel this point falls in
+ * @param {*} pos
+ * @param {*} xRes
+ * @param {*} yRes
+ * @returns
+ */
 export function pointToDiscrete(pos, xRes, yRes) {
   const x = Math.floor(pos.x * xRes);
   const y = Math.floor(pos.y * yRes);
@@ -47,6 +59,13 @@ export function pointToDiscrete(pos, xRes, yRes) {
   return [x, y];
 }
 
+/**
+ * given a point and a face this point is in, computes the bayecentric factors
+ * which linearly combine with the face to give the point.
+ * @param {*} p
+ * @param {*} face
+ * @returns
+ */
 export function getBayecentrics(p, face) {
   const a = face[0].txCoord;
   const b = face[1].txCoord;
@@ -132,11 +151,11 @@ export function cornerpoints(texel, xRes, yRes) {
 }
 
 /**
- * get the area of a tri
+ * get the area of a 2D or 3D tri
  * @param {*} positions
  * @returns
  */
-export function getArea3(a, b, c) {
+export function getTriArea(a, b, c) {
   const ab = b.clone().sub(a);
   const ac = c.clone().sub(a);
 
@@ -147,6 +166,11 @@ export function getArea3(a, b, c) {
   else return cross.length() / 2;
 }
 
+/**
+ * Computes the area of a convex 2D or 3D polygon
+ * @param {[Vector]} positions
+ * @returns
+ */
 export function getAreaConvex(positions) {
   if (positions.length < 2) return null;
   else {
@@ -157,21 +181,36 @@ export function getAreaConvex(positions) {
       const prev = positions[i - 1];
       const curr = positions[i];
 
-      sum += getArea3(anchor, prev, curr);
+      sum += getTriArea(anchor, prev, curr);
     }
 
     return sum;
   }
 }
 
+/**
+ * Finds the midpoint of a convex 3D shape
+ * @param {[Vector2]} points
+ * @returns
+ */
 export function convexMidpoint2(points) {
   return convexMidpoint(points, new Vector2(0, 0));
 }
-
+/**
+ * Finds the midpoint of a convex 3D shape
+ * @param {[Vector3]} points
+ * @returns
+ */
 export function convexMidpoint3(points) {
   return convexMidpoint(points, new Vector3(0, 0, 0));
 }
 
+/**
+ * Finds the midpoint of a convex shape
+ * @param {*} points
+ * @param {*} initial
+ * @returns
+ */
 function convexMidpoint(points, initial) {
   // https://stackoverflow.com/questions/34059116/what-is-the-fastest-way-to-find-the-center-of-an-irregular-convex-polygon
   const sumCenter = initial;
@@ -197,6 +236,12 @@ function convexMidpoint(points, initial) {
   }
 }
 
+/**
+ * Given some texture Coordinates and full vertices, returns vertices at those texture coordinates.
+ * @param {[Vector2]} txCoord
+ * @param {[Vertex]} face
+ * @returns
+ */
 export function reconstructVertex(txCoord, face) {
   const bays = getBayecentrics(txCoord, face);
   const vertexCoord = linearCombination(
@@ -216,7 +261,7 @@ function pointDistance(a, b) {
 }
 
 /**
- * creates a patch-fragment interpolation that's the result of adding the fragment to the patch
+ * Creates a patch-fragment interpolation that's the result of adding the fragment to the patch
  * @param {*} patch
  * @param {*} fragment
  * @param {*} xRes
@@ -288,10 +333,12 @@ export function normalizeVector3(v) {
   return v.clone().divideScalar(v.length());
 }
 
+/**
+ * Given 2 Vectors, returns a vector that is orthogonal to the plane the vectors span.
+ * @param {Vector} a
+ * @param {Vector} b
+ * @returns
+ */
 export function getPlaneNormal(a, b) {
-  if ([a, b].map(checkNormalized) !== [true, true])
-    // the most convoluted way to write this
-    console.error("a vector for getPlaneNormal was not normalized");
-
-  return a.clone().cross(b);
+  return normalizeVector3(a.clone().cross(b));
 }

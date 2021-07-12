@@ -81,13 +81,13 @@ export default function generateClippedPatches(
 
         const totalEnergy = luminanceMap
           .sample(fragmentMidPoint2.x, fragmentMidPoint2.y)
-          // .multiplyScalar(fragmentArea2 / texelSize) // TODO: test: this one?
+          // .multiplyScalar(fragmentArea2 / texelSize) // TODO: which one?
           .multiplyScalar(luminanceFactor);
         const reflectance = reflectanceMap
           .sample(fragmentMidPoint2.x, fragmentMidPoint2.y)
           .divideScalar(255.0); // mapped to 0...1
 
-        const fragment = new Patch( // TODO: perhaps a fragment class if needed
+        const fragment = new Patch(
           fragmentMidPoint2,
           fragmentMidPoint3,
           fragmentNormal3,
@@ -99,7 +99,6 @@ export default function generateClippedPatches(
           luminanceFactor
         );
 
-        // debugger;
         // save if no patch in texelpos, interpolate otherwise.
         if (!patches[texel[0]][texel[1]])
           patches[texel[0]][texel[1]] = fragment;
@@ -114,6 +113,5 @@ export default function generateClippedPatches(
     }
   }
 
-  // debugger;
   return patches;
 }

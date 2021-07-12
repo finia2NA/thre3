@@ -1,6 +1,4 @@
 import { Vector2 } from "three";
-// import { } from "controller/rasterizer/helpers";
-// import coolmod from "util/coolmod";
 
 const polygonClipping = require("polygon-clipping");
 
