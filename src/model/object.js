@@ -21,7 +21,16 @@ export default class ObjectRepresentation {
   patchFlag;
   patches;
 
-  constructor(meshPath, luminancePath, reflectancePath, xRes = 0, yRes = 0) {
+  flipY;
+
+  constructor(
+    meshPath,
+    luminancePath,
+    reflectancePath,
+    xRes,
+    yRes,
+    flipY = false
+  ) {
     this.meshPath = meshPath;
     this.luminancePath = luminancePath;
     this.reflectancePath = reflectancePath;
@@ -30,6 +39,7 @@ export default class ObjectRepresentation {
     this.patchRes = [xRes, yRes];
     this.patchFlag = false;
     this.patches = [];
+    this.flipY = flipY;
 
     this.reflectanceMap = new MyImage(reflectancePath);
     this.luminanceMap = new MyImage(luminancePath);
