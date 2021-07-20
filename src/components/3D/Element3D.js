@@ -62,6 +62,8 @@ const Element3D = (props) => {
 
   const texture = useGenerated ? generatedTexture : fileTexture;
 
+  texture.flipY = props.obj.flipY;
+
   const scene = useLoader(OBJLoader, props.obj.meshPath);
   // scene.children[0].position.set(
   //   obj.translate[0],
@@ -69,7 +71,7 @@ const Element3D = (props) => {
   //   obj.translate[2]
   // );
 
-  // this name will be used in raytracing to see which object has been hit.s
+  // this name will be used in raytracing to see which object has been hit.
   scene.children[0].name = props.name;
 
   const re = (

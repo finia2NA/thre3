@@ -4,6 +4,7 @@ import { Vector3 } from "three";
 import getHemisphereSamplepoints, {
   rotateSamplepoints,
 } from "formFactors/hemiSample";
+import { pointToDiscrete } from "controller/rasterizer/helpers";
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -264,7 +265,6 @@ export default class SceneRepresentation {
     );
 
     const result = this.raycast(a, direction);
-    debugger;
     // This isnt just a target===result bc there may be some numerical shenanigans.
     if (!result || result.distance >= targetDistance - 0.005) {
       return true;

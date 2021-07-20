@@ -53,9 +53,8 @@ export default function generateClippedPatches(
 
         const shape1 = face.map((v) => v.txCoord);
 
-        const cop = cornerpoints([x, y], xRes, yRes);
-        const shape2 = cornerpoints([x, y], xRes, yRes);
-        const clipped = clip2(shape1, shape2);
+        const texelshape = cornerpoints([x, y], xRes, yRes);
+        const clipped = clip2(shape1, texelshape);
 
         if (!dameCheck(clipped)) continue;
 

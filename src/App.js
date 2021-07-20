@@ -64,13 +64,26 @@ const App = () => {
     // setReadyFlags(newFlags);
   };
 
+  const s = true;
+
   // scene
   const scene = new SceneRepresentation();
+
   const cornell = new ObjectRepresentation(
     "robj/package/obj.obj",
     "robj/package/light.png",
-    "robj/package/reflectance.png"
+    "robj/package/reflectance.png",
+    16,
+    16,
+    true
   );
+
+  // const  cornell = new ObjectRepresentation(
+  //     "testobj/package/obj.obj",
+  //     "testobj/package/light.png",
+  //     "testobj/package/reflectance.png"
+  //   );
+
   cornell.loadObjText();
 
   cornell.patchRes = textureSize;
