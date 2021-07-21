@@ -10,7 +10,6 @@ export default class ObjectRepresentation {
 
   luminanceMap;
   luminancePath;
-  luminanceFactor = 1; // TODO: make this changeable
 
   reflectanceMap;
   reflectancePath;
@@ -21,25 +20,25 @@ export default class ObjectRepresentation {
   patchFlag;
   patches;
 
+  /*
+  FLIPY explanation:
+  "OBJ considers (0, 0) to be the top left of a texture, OpenGL considers it to be the bottom left, so unless you've set the texture matrix stack to invert texture coordinates in code not shown, you need to invert them yourself, e.g. textureCoordinatesMesh.add(1.0 - ycoord);""
+  - https://stackoverflow.com/questions/5585368/problems-using-wavefront-objs-texture-coordinates-in-android-opengl-es/5605027#5605027
+ */
+  jsonPath;
+  luminanceFactor = 1;
   flipY;
 
-  constructor(
-    meshPath,
-    luminancePath,
-    reflectancePath,
-    xRes,
-    yRes,
-    flipY = false
-  ) {
+  constructor(meshPath, luminancePath, reflectancePath, jsonPath, xRes, yRes) {
     this.meshPath = meshPath;
     this.luminancePath = luminancePath;
     this.reflectancePath = reflectancePath;
+    this.jsonPath = jsonPath;
     this.translate = [0, 0, 0];
     this.objText = null;
     this.patchRes = [xRes, yRes];
     this.patchFlag = false;
     this.patches = [];
-    this.flipY = flipY;
 
     this.reflectanceMap = new MyImage(reflectancePath);
     this.luminanceMap = new MyImage(luminancePath);
@@ -47,6 +46,11 @@ export default class ObjectRepresentation {
 
   async loadObjText() {
     this.objText = await request(this.meshPath);
+    if (this.jsonPath) {
+      const json = JSON.parse(await request(this.jsonPath));
+      this.flipY = json.flipY;
+      this.luminanceFactor = json.luminanceFactor;
+    }
   }
 
   getPatches() {
@@ -80,7 +84,8 @@ export default class ObjectRepresentation {
         this.patchRes[1],
         this.luminanceMap,
         this.reflectanceMap,
-        this.luminanceFactor
+        this.luminanceFactor,
+        this.flipY
       );
       this.patchFlag = true;
     }

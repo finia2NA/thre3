@@ -26,7 +26,8 @@ export default function generateClippedPatches(
   yRes,
   luminanceMap,
   reflectanceMap,
-  luminanceFactor
+  luminanceFactor,
+  flipY
 ) {
   const patches = new Array(xRes).fill();
   for (var i = 0; i < yRes; i++) {
@@ -79,11 +80,11 @@ export default function generateClippedPatches(
         );
 
         const totalEnergy = luminanceMap
-          .sample(fragmentMidPoint2.x, fragmentMidPoint2.y)
+          .sample(fragmentMidPoint2.x, fragmentMidPoint2.y, flipY)
           // .multiplyScalar(fragmentArea2 / texelSize) // TODO: which one?
           .multiplyScalar(luminanceFactor);
         const reflectance = reflectanceMap
-          .sample(fragmentMidPoint2.x, fragmentMidPoint2.y)
+          .sample(fragmentMidPoint2.x, fragmentMidPoint2.y, flipY)
           .divideScalar(255.0); // mapped to 0...1
 
         const fragment = new Patch(

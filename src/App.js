@@ -73,15 +73,18 @@ const App = () => {
     "robj/package/obj.obj",
     "robj/package/light.png",
     "robj/package/reflectance.png",
+    "robj/package/meta.json",
     16,
-    16,
-    true
+    16
   );
 
   // const  cornell = new ObjectRepresentation(
   //     "testobj/package/obj.obj",
   //     "testobj/package/light.png",
   //     "testobj/package/reflectance.png"
+  //     "testobj/package/meta.json",
+  //      16,
+  //      16
   //   );
 
   cornell.loadObjText();

@@ -1,3 +1,4 @@
 {
-  "light_factor": 10.0
+  "luminanceFactor": 10.0,
+  "flipY": true
 }
