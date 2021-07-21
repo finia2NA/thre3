@@ -50,6 +50,7 @@ const Viewport = (props) => {
             radTexture={props.radTextures[i]}
             key={i}
             name={"" + i}
+            useFilter={props.useFilter}
           />
         </Suspense>
       ))}

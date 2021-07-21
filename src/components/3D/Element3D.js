@@ -56,10 +56,10 @@ const Element3D = (props) => {
 
   const fileTexture = useLoader(TextureLoader, texturePath);
   const generatedTexture = useMemo(() => {
-    const re = new THREE.CanvasTexture(generated); // TODO: use tx from props instead of just using default
-    re.magFilter = THREE.NearestFilter;
+    const re = new THREE.CanvasTexture(generated);
+    re.magFilter = props.useFilter ? THREE.LinearFilter : THREE.NearestFilter;
     return re;
-  }, [props.displaymode, generated]); // TODO: dependency array with generated?
+  }, [props.displaymode, generated, props.useFilter]);
 
   const texture = useGenerated ? generatedTexture : fileTexture;
 

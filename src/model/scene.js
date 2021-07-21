@@ -108,19 +108,11 @@ export default class SceneRepresentation {
     console.log("form factors: done");
   }
 
-  async computeFormFactors2(
-    xRes,
-    yRes,
-    samples = 1000,
-    attenuationMethod = "vanilla"
-  ) {
+  async computeFormFactors2(xRes, yRes, numSamples = 1000) {
     this.computePatches(xRes, yRes);
 
     // patches sind DA
-    this.formFactors = new BasicStore(
-      [this.objects.length, xRes, yRes],
-      attenuationMethod
-    );
+    this.formFactors = new BasicStore([this.objects.length, xRes, yRes]);
 
     const samplePoints = getHemisphereSamplepoints(1000);
 
@@ -128,6 +120,8 @@ export default class SceneRepresentation {
     for (var objIndex = 0; objIndex < this.objects.length; objIndex++) {
       for (var x = 0; x < this.objects[objIndex].patches.length; x++) {
         for (var y = 0; y < this.objects[objIndex].patches[x].length; y++) {
+          if (!this.objects[objIndex].patches[x][y]) continue;
+
           const origin = this.objects[objIndex].patches[x][y].position3;
           const normal = this.objects[objIndex].patches[x][y].normal3;
 
@@ -146,11 +140,13 @@ export default class SceneRepresentation {
             const a = [objIndex, x, y];
             const b = [illuminatedObject, texel[0], texel[1]];
 
-            this.patches.add(a, b, 1 / samples);
+            this.formFactors.add(a, b, 1 / numSamples);
           }
         }
       }
     }
+
+    console.log("form factors done");
   }
 
   /**
@@ -173,8 +169,8 @@ export default class SceneRepresentation {
     }
   }
 
-  async computeRadiosity(xRes, yRes, attenuationMethod) {
-    await this.computeFormFactors(xRes, yRes, attenuationMethod);
+  async computeRadiosity(xRes, yRes, numSamples) {
+    await this.computeFormFactors2(xRes, yRes, numSamples);
 
     // get abort threshold as % of max dispaly energy
     const threshold =
@@ -186,7 +182,7 @@ export default class SceneRepresentation {
     var i_counter = 0;
     var p_counter = 0;
 
-    while (i_counter === 0) {
+    while (i_counter < 1000) {
       // while (true) {
 
       // get patch with max unshot rad
@@ -206,6 +202,7 @@ export default class SceneRepresentation {
       const energy = currentShooter.unshotEnergy;
 
       if (energy.length() < threshold) {
+        console.log("stopped radiating because of threshold");
         break;
       }
 
@@ -234,12 +231,16 @@ export default class SceneRepresentation {
                 );
               }
 
+              // debugger;
+
+              if (!this.objects[i].patches[j][k]) continue;
+
               this.objects[i].patches[j][k].illuminate(lightReaching);
             }
           }
         }
       }
-      i_counter++;
+      console.log(i_counter++);
     }
 
     console.log(

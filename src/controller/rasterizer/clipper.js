@@ -59,7 +59,7 @@ export default function generateClippedPatches(
 
         if (!dameCheck(clipped)) continue;
 
-        console.log("survived damecheck");
+        // console.log("survived damecheck");
 
         const fragmentVertices = clipped.map((txPos) =>
           reconstructVertex(txPos, face)

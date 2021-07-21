@@ -29,14 +29,14 @@ export default class ObjectRepresentation {
   luminanceFactor = 1;
   flipY;
 
-  constructor(meshPath, luminancePath, reflectancePath, jsonPath, xRes, yRes) {
+  constructor(meshPath, luminancePath, reflectancePath, jsonPath) {
     this.meshPath = meshPath;
     this.luminancePath = luminancePath;
     this.reflectancePath = reflectancePath;
     this.jsonPath = jsonPath;
     this.translate = [0, 0, 0];
     this.objText = null;
-    this.patchRes = [xRes, yRes];
+    // this.patchRes = [xRes, yRes];
     this.patchFlag = false;
     this.patches = [];
 

@@ -30,9 +30,10 @@ const App = () => {
   // state
   const [displaymode, setDisplaymode] = useState("reflectance");
   const [radTextures, setRadTextures] = useState([]);
-  const [readyflags, setReadyFlags] = useState([false, false, false]); // TODO: setting this changed the state which deleted the scene, including patches, FFs. find a way to do this w/o losing the scene.
-  const [textureSize, setTextureSize] = useState([16, 16]);
-  const [attenuationMethod, setAttenuationMethod] = useState("model3");
+  const [readyflags, setReadyFlags] = useState([false, false, false]);
+  const [textureSize, setTextureSize] = useState([32, 32]);
+  const [useFilter, setUseFilter] = useState(true);
+  const [numSamples, setNumSamples] = useState(2000);
 
   const [sceneInitialized, setSceneInitialized] = useState(false);
 
@@ -55,11 +56,7 @@ const App = () => {
     setReadyFlags(newFlags);
   };
   const calcFF = () => {
-    scene.current.computeFormFactors(
-      textureSize[0],
-      textureSize[1],
-      attenuationMethod
-    );
+    scene.current.computeFormFactors2(textureSize[0], textureSize[1], 1000);
     const newFlags = [...readyflags];
     newFlags[0] = true;
     newFlags[1] = true;
@@ -69,7 +66,7 @@ const App = () => {
     await scene.current.computeRadiosity(
       textureSize[0],
       textureSize[1],
-      attenuationMethod
+      numSamples
     );
     setRadTextures(scene.current.objects.map((o) => o.radMap));
     const newFlags = [...readyflags];
@@ -89,9 +86,7 @@ const App = () => {
       "robj/package/obj.obj",
       "robj/package/light.png",
       "robj/package/reflectance.png",
-      "robj/package/meta.json",
-      16,
-      16
+      "robj/package/meta.json"
     );
 
     // const  cornell = new ObjectRepresentation(
@@ -121,6 +116,7 @@ const App = () => {
             radTextures={radTextures}
             setRaycaster={scene.current.setRC}
             setScene3={scene.current.setScene3}
+            useFilter={useFilter}
           />
         </Viewdiv>
 
@@ -132,6 +128,8 @@ const App = () => {
             calcRad={calcRad}
             setTextureSize={setTextureSize}
             readyflags={readyflags}
+            setUseFilter={setUseFilter}
+            setNumSamples={setNumSamples}
           />
           <Button
             onClick={() => {

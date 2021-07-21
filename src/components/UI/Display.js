@@ -13,7 +13,14 @@ const Displaypanel = (props) => {
         />
         <FormControlLabel
           label="Use Texel Interpolation"
-          control={<Checkbox />}
+          control={
+            <Checkbox
+              onChange={(event, val) => {
+                console.log(val);
+                props.setUseFilter(val);
+              }}
+            />
+          }
         />
       </div>
 

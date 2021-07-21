@@ -55,7 +55,6 @@ export function pointToDiscrete(pos, xRes, yRes) {
   const x = Math.floor(pos.x * xRes);
   const y = Math.floor(pos.y * yRes);
 
-  debugger;
   return [x, y];
 }
 

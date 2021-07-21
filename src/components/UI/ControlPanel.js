@@ -76,6 +76,7 @@ const Controlpanel = (props) => {
         <Displaypanel
           setDisplaymode={props.setDisplaymode}
           readyflags={props.readyflags}
+          setUseFilter={props.setUseFilter}
         />
       </Collapsing>
 

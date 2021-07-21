@@ -49,10 +49,10 @@ export class BasicStore extends FFStore {
 
     const maxIndex = dimensions.reduce((x, y) => x * y);
 
-    this.array = new Array(maxIndex);
+    this.array = [];
 
     for (var col = 0; col < maxIndex; col++)
-      this.array.push(new Array(maxIndex));
+      this.array.push(new Array(maxIndex).fill(0));
   }
 
   set(a, b, value) {

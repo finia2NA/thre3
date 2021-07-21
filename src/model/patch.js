@@ -96,8 +96,6 @@ export default class Patch {
   illuminate(energy) {
     const addVector = energy.clone().multiply(this.reflectance);
 
-    console.log(addVector);
-
     this.totalEnergy.add(addVector);
     this.unshotEnergy.add(addVector);
   }
