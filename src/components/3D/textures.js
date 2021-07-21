@@ -60,15 +60,21 @@ export const rainbowTexture = (width, height) => {
   return canvas.transferToImageBitmap();
 };
 
-export const patchTexture = (patches, width, height) => {
+export const reflectanceTexture = (patches, width, height, flipY) => {
+  const colors = patches.map((row) => row.map((patch) => patch.reflectance));
+  return gridTexture(colors, width, height, flipY);
+};
+
+export const energyTexture = (patches, width, height, flipY) => {
+  const colors = patches.map((row) => row.map((patch) => patch.totalEnergy));
+  return gridTexture(colors, width, height, flipY);
+};
+
+export const gridTexture = (patches, width, height, flipY) => {
+  // TODO: determine if flipY is nesseccary
   // create canvas
   var canvas = new OffscreenCanvas(width, height);
   var context = canvas.getContext("2d");
-
-  // Turned off right now, in theory no area that is not calculated should be visible anyway, so it doesnt matter what color the texture is in areas that are not covered by patches.
-  // context.fillStyle = "black";
-  // // TODO: off-by-ones would lead to overdrawing or to wite line at the edge
-  // context.fillRect(0, 0, width, height);
 
   // determine the max energy in a single color channel.
   const maxComponents = new Vector3(0, 0, 0);
@@ -76,24 +82,20 @@ export const patchTexture = (patches, width, height) => {
     for (var j = 0; j < patches[i].length; j++) {
       if (patches[i][j]) {
         // "If this vector's x, y or z value is less than the argument's x, y or z value, replace that value with the corresponding max value."
-        // maxComponents.max(patches[i][j].totalEnergy); //FIXME: return to total energy
-        maxComponents.max(patches[i][j].reflectance);
+        maxComponents.max(patches[i][j]);
       }
     }
   }
   const maxBrightness = Math.max(...maxComponents.toArray());
 
-  for (var k = 0; k < patches.length; k++) {
-    for (var l = 0; l < patches[k].length; l++) {
-      if (!patches[k][l]) {
+  for (var x = 0; x < patches.length; x++) {
+    for (var y = 0; y < patches[x].length; y++) {
+      if (!patches[x][y]) {
         // if there's no patch here there's nothing to do, eh? ^^
         continue;
       }
-      const patch = patches[k][l];
-      // const wattage = patch.totalEnergy //FIXME: return to total energy
-      const wattage = patch.reflectance
-        .clone()
-        .multiplyScalar(255 / maxBrightness);
+      const patch = patches[x][y];
+      const wattage = patch.clone().multiplyScalar(255 / maxBrightness);
 
       context.fillStyle =
         "#" +
@@ -103,7 +105,9 @@ export const patchTexture = (patches, width, height) => {
           Math.round(wattage.z)
         );
 
-      context.fillRect(patch.backwriteTX[0], patch.backwriteTX[1], 1, 1);
+      const writex = x;
+      const writey = flipY ? height - y : y;
+      context.fillRect(writex, writey, 1, 1);
     }
   }
 

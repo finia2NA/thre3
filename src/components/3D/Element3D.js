@@ -10,6 +10,7 @@ import {
   defaultTexture,
   rainbowTexture,
   checkerboardTexture,
+  reflectanceTexture,
 } from "components/3D/textures";
 
 export const LoadingBox = (props) => {
@@ -72,7 +73,7 @@ const Element3D = (props) => {
   // );
 
   // this name will be used in raytracing to see which object has been hit.
-  scene.children[0].name = props.name;
+  if (scene.children[0]) scene.children[0].name = props.name;
 
   const re = (
     <primitive object={scene.children[0]}>
