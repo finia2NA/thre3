@@ -30,8 +30,7 @@ const App = () => {
   // state
   const [displaymode, setDisplaymode] = useState("reflectance");
   const [radTextures, setRadTextures] = useState([]);
-  // const [readyflags, setReadyFlags] = useState([false, false, false]); // TODO: setting this changed the state which deleted the scene, including patches, FFs. find a way to do this w/o losing the scene.
-  const [readyflags, setReadyFlags] = useState([true, true, true]);
+  const [readyflags, setReadyFlags] = useState([false, false, false]); // TODO: setting this changed the state which deleted the scene, including patches, FFs. find a way to do this w/o losing the scene.
   const [textureSize, setTextureSize] = useState([16, 16]);
   const [attenuationMethod, setAttenuationMethod] = useState("model3");
 
@@ -42,9 +41,7 @@ const App = () => {
   // functions
   const calcPatches = () => {
     scene.current.computePatches(textureSize[0], textureSize[1]);
-    // const newFlags = [...readyflags];
-    // newFlags[0] = true;
-    // setReadyFlags(newFlags);
+
     scene.current.objects[0].radMap = reflectanceTexture(
       scene.current.objects[0].patches,
       scene.current.objects[0].patchRes[0],
@@ -52,6 +49,10 @@ const App = () => {
       scene.current.objects[0].flipY
     );
     setRadTextures([scene.current.objects[0].radMap]);
+
+    const newFlags = [...readyflags];
+    newFlags[0] = true;
+    setReadyFlags(newFlags);
   };
   const calcFF = () => {
     scene.current.computeFormFactors(
@@ -59,10 +60,10 @@ const App = () => {
       textureSize[1],
       attenuationMethod
     );
-    // const newFlags = [...readyflags];
-    // newFlags[0] = true;
-    // newFlags[1] = true;
-    // setReadyFlags(newFlags);
+    const newFlags = [...readyflags];
+    newFlags[0] = true;
+    newFlags[1] = true;
+    setReadyFlags(newFlags);
   };
   const calcRad = async () => {
     await scene.current.computeRadiosity(
@@ -71,11 +72,11 @@ const App = () => {
       attenuationMethod
     );
     setRadTextures(scene.current.objects.map((o) => o.radMap));
-    // const newFlags = [...readyflags];
-    // newFlags[0] = true;
-    // newFlags[1] = true;
-    // newFlags[2] = true;
-    // setReadyFlags(newFlags);
+    const newFlags = [...readyflags];
+    newFlags[0] = true;
+    newFlags[1] = true;
+    newFlags[2] = true;
+    setReadyFlags(newFlags);
   };
 
   // scene

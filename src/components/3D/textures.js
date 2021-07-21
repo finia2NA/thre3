@@ -70,7 +70,7 @@ export const energyTexture = (patches, width, height, flipY) => {
   return gridTexture(colors, width, height, flipY);
 };
 
-export const gridTexture = (patches, width, height, flipY) => {
+const gridTexture = (patches, width, height, flipY) => {
   // TODO: determine if flipY is nesseccary
   // create canvas
   var canvas = new OffscreenCanvas(width, height);
@@ -106,7 +106,8 @@ export const gridTexture = (patches, width, height, flipY) => {
         );
 
       const writex = x;
-      const writey = flipY ? height - y : y;
+      const writey = y;
+      // const writey = flipY ? height - y : y;
       context.fillRect(writex, writey, 1, 1);
     }
   }

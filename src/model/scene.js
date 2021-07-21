@@ -1,4 +1,8 @@
-import { gridTexture, defaultTexture } from "components/3D/textures";
+import {
+  gridTexture,
+  defaultTexture,
+  energyTexture,
+} from "components/3D/textures";
 import SymStore, { BasicStore } from "model/ffStore";
 import { Vector3 } from "three";
 import getHemisphereSamplepoints, {
@@ -249,7 +253,12 @@ export default class SceneRepresentation {
     );
 
     for (const o of this.objects) {
-      o.radMap = gridTexture(o.patches, o.patchRes[0], o.patchRes[1]);
+      o.radMap = energyTexture(
+        o.patches,
+        o.patchRes[0],
+        o.patchRes[1],
+        o.flipY
+      );
     }
   }
 
