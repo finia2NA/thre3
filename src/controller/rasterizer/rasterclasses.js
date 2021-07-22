@@ -7,13 +7,13 @@ export class Boundingbox {
   yMin;
 
   constructor(corners, xRes, yRes) {
-    const xs = corners.map((o) => o.x);
-    const ys = corners.map((o) => o.y);
+    const xCoordinates = corners.map((o) => o.x);
+    const yCoordinates = corners.map((o) => o.y);
 
-    this.xMax = Math.floor(xRes * Math.max(...xs));
-    this.xMin = Math.floor(xRes * Math.min(...xs));
-    this.yMax = Math.floor(yRes * Math.max(...ys));
-    this.yMin = Math.floor(yRes * Math.min(...ys));
+    this.xMax = Math.ceil(xRes * Math.max(...xCoordinates));
+    this.xMin = Math.floor(xRes * Math.min(...xCoordinates));
+    this.yMax = Math.ceil(yRes * Math.max(...yCoordinates));
+    this.yMin = Math.floor(yRes * Math.min(...yCoordinates));
   }
 }
 

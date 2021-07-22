@@ -70,9 +70,10 @@ const Explorepanel = (props) => {
           disabled={!props.readyflags[2]}
           label="Radiosity"
           onClick={() => {
-            if (props.readyflags[2]) setView(4);
-            else
-              alert("please calculate radiosity before trying to display it.");
+            setView(4);
+            // if (props.readyflags[2]) setView(4);
+            // else
+            //   alert("please calculate radiosity before trying to display it.");
           }}
         />
       </RadioGroup>

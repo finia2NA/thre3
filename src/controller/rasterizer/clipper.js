@@ -42,11 +42,19 @@ export default function generateClippedPatches(
   for (var i = 0; i < faces.length; i++) {
     const face = faces[i];
 
+    // debugger;
+
     const bb = new Boundingbox(
       face.map((v) => v.txCoord),
       xRes,
       yRes
     );
+
+    // // Uncomment this to disable the bounding box and clip with all texels
+    // bb.xMin = 0;
+    // bb.xMax = xRes - 1;
+    // bb.yMin = 0;
+    // bb.yMax = yRes - 1;
 
     const texelSize = 1 / (xRes * yRes);
 
@@ -54,10 +62,10 @@ export default function generateClippedPatches(
       for (var y = bb.yMin; y < bb.yMax; y++) {
         const texel = [x, y];
 
-        const shape1 = face.map((v) => v.txCoord);
+        const faceShape = face.map((v) => v.txCoord);
 
         const texelshape = cornerpoints([x, y], xRes, yRes);
-        const clipped = clip2(shape1, texelshape);
+        const clipped = clip2(faceShape, texelshape);
 
         if (!dameCheck(clipped)) continue;
 
@@ -83,7 +91,7 @@ export default function generateClippedPatches(
 
         const totalEnergy = luminanceMap
           .sample(fragmentMidPoint2.x, fragmentMidPoint2.y, flipY)
-          // .multiplyScalar(fragmentArea2 / texelSize) // FIXME: not having implemented this yet this leads to the darkening of texels which are split
+          .multiplyScalar(fragmentArea2 / texelSize) // FIXME: not having implemented this yet this leads to the darkening of texels which are split
           .multiplyScalar(luminanceFactor);
         const reflectance = reflectanceMap
           .sample(fragmentMidPoint2.x, fragmentMidPoint2.y, flipY)

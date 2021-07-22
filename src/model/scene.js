@@ -10,6 +10,8 @@ import getHemisphereSamplepoints, {
 } from "formFactors/hemiSample";
 import { pointToDiscrete } from "controller/rasterizer/helpers";
 
+const maxIterations = 10000;
+
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -117,7 +119,7 @@ export default class SceneRepresentation {
   async computeRadiosity(xRes, yRes, numSamples) {
     await this.computeFormFactors2(xRes, yRes, numSamples);
 
-    // get abort threshold as % of max dispaly energy
+    // get abort threshold as % of max disply energy
     const threshold =
       0.01 *
       Math.max(
@@ -127,76 +129,81 @@ export default class SceneRepresentation {
     var i_counter = 0;
     var p_counter = 0;
 
-    while (i_counter < 1000) {
-      // while (true) {
+    if (threshold) {
+      while (i_counter < maxIterations) {
+        // while (true) {
 
-      // get patch with max unshot rad
-      const objectsMaxPatch = this.objects.map((o) => o.getMaxUnshotPatch());
-      var currentShooter = objectsMaxPatch[0];
-      var shooterObjectIndex = 0;
-      for (var p = 1; p < objectsMaxPatch.length; p++) {
-        if (
-          objectsMaxPatch[p].unshotEnergy.length() >
-          currentShooter.unshotEnergy.length()
-        ) {
-          currentShooter = objectsMaxPatch[p];
-          shooterObjectIndex = p;
+        // get patch with max unshot rad
+        const objectsMaxPatch = this.objects.map((o) => o.getMaxUnshotPatch());
+        var currentShooter = objectsMaxPatch[0];
+        var shooterObjectIndex = 0;
+        for (var p = 1; p < objectsMaxPatch.length; p++) {
+          if (
+            objectsMaxPatch[p].unshotEnergy.length() >
+            currentShooter.unshotEnergy.length()
+          ) {
+            currentShooter = objectsMaxPatch[p];
+            shooterObjectIndex = p;
+          }
         }
-      }
 
-      const energy = currentShooter.unshotEnergy;
+        const energy = currentShooter.unshotEnergy;
 
-      if (energy.length() < threshold) {
-        console.log("stopped radiating because of threshold");
-        break;
-      }
+        if (energy.length() < threshold) {
+          console.log("stopped radiating because of threshold");
+          break;
+        }
 
-      currentShooter.unshotEnergy = new Vector3(0, 0, 0);
+        currentShooter.unshotEnergy = new Vector3(0, 0, 0);
 
-      for (var i = 0; i < this.objects.length; i++) {
-        for (var j = 0; j < this.objects[i].patches.length; j++) {
-          for (var k = 0; k < this.objects[i].patches[j].length; k++) {
-            const a = [
-              shooterObjectIndex,
-              currentShooter.backwriteTX[0],
-              currentShooter.backwriteTX[1],
-            ];
-            const b = [i, j, k];
+        for (var i = 0; i < this.objects.length; i++) {
+          for (var j = 0; j < this.objects[i].patches.length; j++) {
+            for (var k = 0; k < this.objects[i].patches[j].length; k++) {
+              const a = [
+                shooterObjectIndex,
+                currentShooter.backwriteTX[0],
+                currentShooter.backwriteTX[1],
+              ];
+              const b = [i, j, k];
 
-            const ff = this.formFactors.get(a, b); // TODO: evaluate this
+              const ff = this.formFactors.get(a, b); // TODO: evaluate this
 
-            if (ff > 0) {
-              p_counter++;
+              if (ff > 0) {
+                p_counter++;
 
-              const lightReaching = energy.clone().multiplyScalar(ff);
+                const lightReaching = energy.clone().multiplyScalar(ff);
 
-              if (lightReaching.length() > energy.length()) {
-                lightReaching.divideScalar(
-                  1.5 * (lightReaching.length() / energy.length())
-                );
+                if (lightReaching.length() > energy.length()) {
+                  lightReaching.divideScalar(
+                    1.5 * (lightReaching.length() / energy.length())
+                  );
+                }
+
+                // debugger;
+
+                if (!this.objects[i].patches[j][k]) continue;
+
+                this.objects[i].patches[j][k].illuminate(lightReaching);
               }
-
-              // debugger;
-
-              if (!this.objects[i].patches[j][k]) continue;
-
-              this.objects[i].patches[j][k].illuminate(lightReaching);
             }
           }
         }
+        console.log(i_counter++);
       }
-      console.log(i_counter++);
     }
 
-    console.log(
-      "Made " +
-        i_counter +
-        " iterations before stopping for the threshold of <" +
-        threshold +
-        " energy.\n During this, patches were updated " +
-        p_counter +
-        " times."
-    );
+    if (i_counter < maxIterations) {
+      console.log(
+        "Made " +
+          i_counter +
+          " iterations before stopping for the threshold of <" +
+          threshold +
+          " energy.\n"
+      );
+    } else {
+      console.log("stopped because iterations reached set limit of 10.000.");
+    }
+    console.log("During this, patches were updated " + p_counter + " times.");
 
     for (const o of this.objects) {
       o.radMap = energyTexture(

@@ -2,6 +2,13 @@ import { request } from "util/network.js";
 import MyImage from "./image";
 import generateClippedPatches from "controller/rasterizer/clipper";
 
+function max1D(arr) {
+  if (!arr || arr.length === 0) return null;
+
+  return arr.reduce((pre, nu) =>
+    pre.unshotEnergy.length() > nu.unshotEnergy.length() ? pre : nu
+  );
+}
 export default class ObjectRepresentation {
   translate;
 
@@ -58,11 +65,6 @@ export default class ObjectRepresentation {
   }
 
   getMaxUnshotPatch() {
-    const max1D = (arr) =>
-      arr.reduce((pre, nu) =>
-        pre.unshotEnergy.length() > nu.unshotEnergy.length() ? pre : nu
-      );
-
     return max1D(this.patches.map((row) => max1D(row)));
   }
 

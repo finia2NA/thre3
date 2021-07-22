@@ -35,8 +35,8 @@ const App = () => {
     "notready",
     "notready",
   ]);
-  const [textureSize, setTextureSize] = useState([32, 32]);
-  const [useFilter, setUseFilter] = useState(true);
+  const [textureSize, setTextureSize] = useState([64, 64]);
+  const [useFilter, setUseFilter] = useState(false);
   const [numSamples, setNumSamples] = useState(2000);
 
   const [sceneInitialized, setSceneInitialized] = useState(false);
@@ -97,14 +97,14 @@ const App = () => {
       "robj/package/meta.json"
     );
 
-    // const  cornell = new ObjectRepresentation(
-    //     "testobj/package/obj.obj",
-    //     "testobj/package/light.png",
-    //     "testobj/package/reflectance.png"
-    //     "testobj/package/meta.json",
-    //      16,
-    //      16
-    //   );
+    // const cornell = new ObjectRepresentation(
+    //   "testobj2/package/obj.obj",
+    //   "testobj2/package/light.png",
+    //   "testobj2/package/reflectance.png",
+    //   "testobj2/package/meta.json",
+    //   16,
+    //   16
+    // );
 
     cornell.loadObjText();
 
