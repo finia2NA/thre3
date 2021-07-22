@@ -60,52 +60,17 @@ export default class SceneRepresentation {
     return this.objects.reduce((x, y) => x && y);
   }
 
-  async computePatches(xRes, yRes) {
+  async computePatches() {
     while (!this.mapsLoaded()) {
       await sleep(100);
     }
 
-    for (const o of this.objects) {
-      o.calculatePatches();
+    for (var i = 0; i < this.objects.length; i++) {
+      const o = this.objects[i];
+      o.computePatches();
     }
 
     console.log("patches: done");
-  }
-
-  async computeFormFactors(xRes, yRes, attenuationMethod) {
-    this.computePatches(xRes, yRes);
-
-    // patches sind DA
-    this.formFactors = new SymStore(
-      [this.objects.length, xRes, yRes],
-      "scaled"
-    );
-
-    // go through every representation of a patch pair
-    const relevantCoords = this.formFactors.getRelevantCoordinates();
-    for (const coords of relevantCoords) {
-      // and fill the formfactor DS with the corresponding FF.
-      const patch1 =
-        this.objects[coords[0][0]].patches[coords[0][1]][coords[0][2]];
-      const patch2 =
-        this.objects[coords[1][0]].patches[coords[1][1]][coords[1][2]];
-
-      if (!patch1 || !patch2) {
-        // if there are no patches in the texture there (which is very possible),
-        // we obviously can't calculate a form factor
-        continue;
-      }
-
-      const currentformFactor = this.formFactor(
-        patch1,
-        patch2,
-        attenuationMethod
-      );
-      if (currentformFactor > 0) {
-        this.formFactors.set(coords[0], coords[1], currentformFactor);
-      }
-    }
-    console.log("form factors: done");
   }
 
   async computeFormFactors2(xRes, yRes, numSamples = 1000) {
@@ -147,26 +112,6 @@ export default class SceneRepresentation {
     }
 
     console.log("form factors done");
-  }
-
-  /**
-   * Computes the form factor from patch a to patch b.
-   * @param {Patch} a
-   * @param {Patch} b
-   */
-  formFactor(a, b, attenuationMethod) {
-    // first, check if the path from patch a to b is unobstructed, set FF to 0 if it's not
-    if (a === b || !this.unobstructed(a.position3, b.position3)) {
-      return 0;
-    } else {
-      // else the form factor consists of distance and turn factors
-      const d = a.distanceFactor(b, attenuationMethod);
-      const t = a.turnFactor(b);
-
-      // *a.area2? it's in the integral, but I don't think that means it should be here
-      // as the FF is supposed to be the solid angle of b from a's perspective. a's size doesn't factor into this.
-      return d * t * b.area2;
-    }
   }
 
   async computeRadiosity(xRes, yRes, numSamples) {

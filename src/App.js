@@ -30,7 +30,11 @@ const App = () => {
   // state
   const [displaymode, setDisplaymode] = useState("reflectance");
   const [radTextures, setRadTextures] = useState([]);
-  const [readyflags, setReadyFlags] = useState([false, false, false]);
+  const [progresses, setAllProgresses] = useState([
+    "notready",
+    "notready",
+    "notready",
+  ]);
   const [textureSize, setTextureSize] = useState([32, 32]);
   const [useFilter, setUseFilter] = useState(true);
   const [numSamples, setNumSamples] = useState(2000);
@@ -39,9 +43,15 @@ const App = () => {
 
   console.log("app reset");
 
+  const setProgress = (index, value) => {
+    const newProgresses = [...progresses];
+    newProgresses[index] = value;
+    setAllProgresses(newProgresses);
+  };
+
   // functions
   const calcPatches = () => {
-    scene.current.computePatches(textureSize[0], textureSize[1]);
+    scene.current.computePatches();
 
     scene.current.objects[0].radMap = reflectanceTexture(
       scene.current.objects[0].patches,
@@ -51,29 +61,27 @@ const App = () => {
     );
     setRadTextures([scene.current.objects[0].radMap]);
 
-    const newFlags = [...readyflags];
-    newFlags[0] = true;
-    setReadyFlags(newFlags);
+    setProgress(0, "ready");
   };
+
   const calcFF = () => {
     scene.current.computeFormFactors2(textureSize[0], textureSize[1], 1000);
-    const newFlags = [...readyflags];
-    newFlags[0] = true;
-    newFlags[1] = true;
-    setReadyFlags(newFlags);
+
+    setAllProgresses(["ready", "ready", "notready"]);
   };
+
   const calcRad = async () => {
     await scene.current.computeRadiosity(
       textureSize[0],
       textureSize[1],
       numSamples
     );
-    setRadTextures(scene.current.objects.map((o) => o.radMap));
-    const newFlags = [...readyflags];
-    newFlags[0] = true;
-    newFlags[1] = true;
-    newFlags[2] = true;
-    setReadyFlags(newFlags);
+    setRadTextures(
+      scene.current.objects.map((o) => o.radMap),
+      (value) => setProgress(2, value)
+    );
+
+    setAllProgresses(["ready", "ready", "ready"]);
   };
 
   // scene
@@ -127,7 +135,7 @@ const App = () => {
             calcFF={calcFF}
             calcRad={calcRad}
             setTextureSize={setTextureSize}
-            readyflags={readyflags}
+            progresses={progresses}
             setUseFilter={setUseFilter}
             setNumSamples={setNumSamples}
           />
@@ -138,7 +146,7 @@ const App = () => {
           >
             ちょっとまって
           </Button>{" "}
-          <Button onClick={scene.current.test}>test</Button>
+          <Button onClick={() => setProgress(1, 0.5)}>test</Button>
           <br />
         </Controldiv>
       </Maindiv>

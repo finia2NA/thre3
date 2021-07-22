@@ -1,18 +1,48 @@
 import React from "react";
 import CheckCircle from "@material-ui/icons/CheckCircle";
-// import AddCircleOutline from "@material-ui/icons/AddCircleOutline" // could use this rotated by 45 degrees (if figured out how to do that :thinking:)
 import Close from "@material-ui/icons/Close";
-import { LinearProgress } from "@material-ui/core";
+import { CircularProgress } from "@material-ui/core";
 import styled from "styled-components";
 import { zip } from "util/arrays";
+import Typography from "@material-ui/core/Typography";
+import Box from "@material-ui/core/Box";
 
-const Indicator = ({ ready }) => {
+function CircularProgressWithLabel(props) {
+  // from https://material-ui.com/components/progress/
+  return (
+    <Box position="relative" display="inline-flex">
+      <CircularProgress variant="determinate" {...props} />
+      <Box
+        top={0}
+        left={0}
+        bottom={0}
+        right={0}
+        position="absolute"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Typography
+          variant="caption"
+          component="div"
+          color="textSecondary"
+        >{`${Math.round(props.value)}%`}</Typography>
+      </Box>
+    </Box>
+  );
+}
+
+const Indicator = ({ ready: progress }) => {
   return (
     <>
-      {ready ? (
-        <CheckCircle style={{ color: "green" }} />
-      ) : (
-        <Close style={{ color: "red" }} />
+      {progress === "ready" && <CheckCircle style={{ color: "green" }} />}
+      {progress === "notready" && <Close style={{ color: "red" }} />}
+      {progress > 0 && progress < 1 && (
+        <CircularProgressWithLabel
+          color="primary"
+          variant="determinate"
+          value={progress * 100}
+        />
       )}
     </>
   );
@@ -25,7 +55,7 @@ const Div1 = styled.div`
 `;
 
 const Indicators = (props) => {
-  const labeledValues = zip(props.readyflags, [
+  const labeledValues = zip(props.progresses, [
     "Patches",
     "Form Factors",
     "Radiosity",
@@ -37,7 +67,8 @@ const Indicators = (props) => {
         <Div1 key={i}>
           <Indicator ready={labeledState[0]} />
           <span>
-            {labeledState[1]} {!labeledState[0] && <b>not</b>} available
+            {labeledState[1]} {!(labeledState[0] === "ready") && <b>not</b>}{" "}
+            available
           </span>
         </Div1>
       ))}

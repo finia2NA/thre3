@@ -70,7 +70,7 @@ export default class ObjectRepresentation {
     return this.reflectanceMap.loaded && this.luminanceMap.loaded;
   }
 
-  async calculatePatches() {
+  async computePatches() {
     if (!this.patchRes || Math.min(...this.patchRes) <= 0) {
       console.error("no resolution for patches given");
     }

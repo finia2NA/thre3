@@ -39,7 +39,9 @@ export default function generateClippedPatches(
 
   const faces = resolveActualValues(structure);
 
-  for (const face of faces) {
+  for (var i = 0; i < faces.length; i++) {
+    const face = faces[i];
+
     const bb = new Boundingbox(
       face.map((v) => v.txCoord),
       xRes,
@@ -76,12 +78,12 @@ export default function generateClippedPatches(
         );
 
         const fragmentNormal3 = normalizeVector3(
-          convexMidpoint3(fragmentVertices.map((vert) => vert.vertexNormal)) //TODO: don't know if the midpoint thingy's right for normals
+          convexMidpoint3(fragmentVertices.map((vert) => vert.vertexNormal))
         );
 
         const totalEnergy = luminanceMap
           .sample(fragmentMidPoint2.x, fragmentMidPoint2.y, flipY)
-          // .multiplyScalar(fragmentArea2 / texelSize) // TODO: which one?
+          // .multiplyScalar(fragmentArea2 / texelSize) // FIXME: not having implemented this yet this leads to the darkening of texels which are split
           .multiplyScalar(luminanceFactor);
         const reflectance = reflectanceMap
           .sample(fragmentMidPoint2.x, fragmentMidPoint2.y, flipY)
@@ -112,6 +114,5 @@ export default function generateClippedPatches(
       }
     }
   }
-
   return patches;
 }

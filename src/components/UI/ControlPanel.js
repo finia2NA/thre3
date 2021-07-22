@@ -75,7 +75,7 @@ const Controlpanel = (props) => {
       <Collapsing name="Display Controls">
         <Displaypanel
           setDisplaymode={props.setDisplaymode}
-          readyflags={props.readyflags}
+          readyflags={props.progresses.map((p) => p === "ready")}
           setUseFilter={props.setUseFilter}
         />
       </Collapsing>
@@ -85,7 +85,7 @@ const Controlpanel = (props) => {
       </Collapsing>
 
       <Collapsing name="Indicators" initiallyOpened={true}>
-        <Indicators readyflags={props.readyflags} />
+        <Indicators progresses={props.progresses} />
       </Collapsing>
     </Controldiv>
   );
