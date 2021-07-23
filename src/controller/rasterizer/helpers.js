@@ -268,8 +268,6 @@ function pointDistance(a, b) {
  * @returns
  */
 export function pfInterpolate(patch, fragment, xRes, yRes) {
-  if (patch.unshotEnergy > 0 && fragment.unshotEnergy > 0) debugger;
-
   const fNice =
     pointDistance(
       discreteToMidpoint(fragment.backwriteTX, xRes, yRes),
@@ -290,18 +288,24 @@ export function pfInterpolate(patch, fragment, xRes, yRes) {
   const area2 = patch.area2 + fragment.area2;
   const area3 = patch.area3 + fragment.area3;
 
-  // energy just gets summed
+  // new density is the weighted average of individual densities
   const energyDensity = patch
     .getEnergyDensity()
     .clone()
-    .add(fragment.getEnergyDensity());
+    .multiplyScalar(patch.area3 / area3)
+    .add(
+      fragment
+        .getEnergyDensity()
+        .clone()
+        .multiplyScalar(fragment.area3 / area3)
+    );
   // new reflection is the average of the two reflections (weighted by area2)
   const reflectance = patch.reflectance
     .clone()
     .multiplyScalar(patch.area2 / area2)
     .add(fragment.reflectance.clone().multiplyScalar(fragment.area2 / area2));
 
-  return new Patch(
+  const re = new Patch(
     position2,
     position3,
     normal3,
@@ -311,6 +315,8 @@ export function pfInterpolate(patch, fragment, xRes, yRes) {
     area2,
     area3
   );
+
+  return re;
 }
 
 /**

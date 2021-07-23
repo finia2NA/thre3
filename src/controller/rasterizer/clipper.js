@@ -110,15 +110,16 @@ export default function generateClippedPatches(
         );
 
         // save if no patch in texelpos, interpolate otherwise.
-        if (!patches[texel[0]][texel[1]])
+        if (!patches[texel[0]][texel[1]]) {
           patches[texel[0]][texel[1]] = fragment;
-        else
+        } else {
           patches[texel[0]][texel[1]] = pfInterpolate(
             patches[texel[0]][texel[1]],
             fragment,
             xRes,
             yRes
           );
+        }
       }
     }
   }
