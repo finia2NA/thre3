@@ -65,8 +65,17 @@ export const reflectanceTexture = (patches, width, height, flipY) => {
   return gridTexture(colors, width, height, flipY);
 };
 
-export const energyTexture = (patches, width, height, flipY) => {
-  const colors = patches.map((row) => row.map((patch) => patch.totalEnergy));
+export const unshotDensityTexture = (patches, width, height) => {
+  const colors = patches.map((row) =>
+    row.map((patch) => patch.unshotEnergy.clone().divideScalar(patch.area3))
+  );
+  return gridTexture(colors, width, height);
+};
+
+export const densityTexture = (patches, width, height, flipY) => {
+  const colors = patches.map((row) =>
+    row.map((patch) => patch.getEnergyDensity())
+  );
   return gridTexture(colors, width, height, flipY);
 };
 

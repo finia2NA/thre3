@@ -19,7 +19,7 @@ export default class Patch {
     position3,
     normal3,
     backwriteTX,
-    totalEnergy,
+    energyDensity,
     reflectance,
     area2,
     area3
@@ -35,8 +35,8 @@ export default class Patch {
     this.normal3 = normal3;
     this.backwriteTX = backwriteTX;
 
-    this.totalEnergy = totalEnergy.multiplyScalar(area3);
-    this.unshotEnergy = totalEnergy.multiplyScalar(area3);
+    this.totalEnergy = energyDensity.multiplyScalar(area3);
+    this.unshotEnergy = energyDensity.multiplyScalar(area3);
 
     this.reflectance = reflectance;
 

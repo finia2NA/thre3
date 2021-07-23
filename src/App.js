@@ -9,7 +9,11 @@ import SceneRepresentation from "model/scene";
 import ObjectRepresentation from "model/object";
 import { Button } from "@material-ui/core";
 import { useState, useRef, useLayoutEffect, useEffect } from "react";
-import { gridTexture, reflectanceTexture } from "components/3D/textures";
+import {
+  gridTexture,
+  reflectanceTexture,
+  unshotDensityTexture,
+} from "components/3D/textures";
 
 // Components
 const Maindiv = styled.div`
@@ -37,7 +41,7 @@ const App = () => {
   ]);
   const [textureSize, setTextureSize] = useState([64, 64]);
   const [useFilter, setUseFilter] = useState(false);
-  const [numSamples, setNumSamples] = useState(2000);
+  const [numSamples, setNumSamples] = useState(1000);
 
   const [sceneInitialized, setSceneInitialized] = useState(false);
 
@@ -53,7 +57,8 @@ const App = () => {
   const calcPatches = () => {
     scene.current.computePatches();
 
-    scene.current.objects[0].radMap = reflectanceTexture(
+    // scene.current.objects[0].radMap = reflectanceTexture(
+    scene.current.objects[0].radMap = unshotDensityTexture(
       scene.current.objects[0].patches,
       scene.current.objects[0].patchRes[0],
       scene.current.objects[0].patchRes[1],

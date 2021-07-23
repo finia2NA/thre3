@@ -89,9 +89,9 @@ export default function generateClippedPatches(
           convexMidpoint3(fragmentVertices.map((vert) => vert.vertexNormal))
         );
 
-        const totalEnergy = luminanceMap
+        const energyDensity = luminanceMap
           .sample(fragmentMidPoint2.x, fragmentMidPoint2.y, flipY)
-          .multiplyScalar(fragmentArea2 / texelSize) // FIXME: not having implemented this yet this leads to the darkening of texels which are split
+          // .multiplyScalar(fragmentArea2 / texelSize) // I don't
           .multiplyScalar(luminanceFactor);
         const reflectance = reflectanceMap
           .sample(fragmentMidPoint2.x, fragmentMidPoint2.y, flipY)
@@ -102,7 +102,7 @@ export default function generateClippedPatches(
           fragmentMidPoint3,
           fragmentNormal3,
           texel,
-          totalEnergy,
+          energyDensity,
           reflectance,
           fragmentArea2,
           fragmentArea3,

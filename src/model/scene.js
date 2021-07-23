@@ -1,7 +1,7 @@
 import {
   gridTexture,
   defaultTexture,
-  energyTexture,
+  densityTexture,
 } from "components/3D/textures";
 import SymStore, { BasicStore } from "model/ffStore";
 import { Vector3 } from "three";
@@ -206,7 +206,7 @@ export default class SceneRepresentation {
     console.log("During this, patches were updated " + p_counter + " times.");
 
     for (const o of this.objects) {
-      o.radMap = energyTexture(
+      o.radMap = densityTexture(
         o.patches,
         o.patchRes[0],
         o.patchRes[1],

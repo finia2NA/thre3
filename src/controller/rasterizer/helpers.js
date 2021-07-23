@@ -291,7 +291,10 @@ export function pfInterpolate(patch, fragment, xRes, yRes) {
   const area3 = patch.area3 + fragment.area3;
 
   // energy just gets summed
-  const totalEnergy = patch.totalEnergy.clone().add(fragment.totalEnergy);
+  const energyDensity = patch
+    .getEnergyDensity()
+    .clone()
+    .add(fragment.getEnergyDensity());
   // new reflection is the average of the two reflections (weighted by area2)
   const reflectance = patch.reflectance
     .clone()
@@ -303,7 +306,7 @@ export function pfInterpolate(patch, fragment, xRes, yRes) {
     position3,
     normal3,
     patch.backwriteTX,
-    totalEnergy,
+    energyDensity,
     reflectance,
     area2,
     area3
