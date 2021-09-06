@@ -1,6 +1,7 @@
 import { request } from "util/network.js";
 import MyImage from "./image";
 import generateClippedPatches from "controller/rasterizer/clipper";
+import { Vector3 } from "three";
 
 function max1D(arr) {
   if (!arr || arr.length === 0) return null;
@@ -66,6 +67,12 @@ export default class ObjectRepresentation {
 
   getMaxUnshotPatch() {
     return max1D(this.patches.map((row) => max1D(row)));
+  }
+
+  getSumUnshotEnergies() {
+    return this.patches
+      .reduce((pre, row) => pre.concat(row.map((p) => p.unshotEnergy)), [])
+      .reduce((pre, cur) => pre.add(cur), new Vector3(0, 0, 0));
   }
 
   mapsLoaded() {

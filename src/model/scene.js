@@ -10,7 +10,9 @@ import getHemisphereSamplepoints, {
 } from "formFactors/hemiSample";
 import { pointToDiscrete } from "controller/rasterizer/helpers";
 
-const maxIterations = 10000;
+const maxIterations = 100000;
+const threshP = 0.01;
+const defaultNumSamples = 10000;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -75,7 +77,7 @@ export default class SceneRepresentation {
     console.log("patches: done");
   }
 
-  async computeFormFactors2(xRes, yRes, numSamples = 1000) {
+  async computeFormFactors2(xRes, yRes, numSamples = defaultNumSamples) {
     console.log("starting ffs");
     this.computePatches(xRes, yRes);
 
@@ -117,15 +119,28 @@ export default class SceneRepresentation {
     console.log("form factors done");
   }
 
-  async computeRadiosity(xRes, yRes, numSamples) {
+  async computeRadiosity(xRes, yRes, numSamples, totalEnergyApproach = true) {
     await this.computeFormFactors2(xRes, yRes, numSamples);
 
+    var threshold;
     // get abort threshold as % of max disply energy
-    const threshold =
-      0.01 *
-      Math.max(
-        ...this.objects.map((o) => o.getMaxUnshotPatch().unshotEnergy.length())
-      );
+    if (!totalEnergyApproach)
+      threshold =
+        threshP *
+        Math.max(
+          ...this.objects.map((o) =>
+            o.getMaxUnshotPatch().unshotEnergy.length()
+          )
+        );
+    else
+      threshold =
+        threshP *
+        this.objects
+          .reduce(
+            (pre, curr) => pre.add(curr.getSumUnshotEnergies()),
+            new Vector3(0, 0, 0)
+          )
+          .length();
 
     var i_counter = 0;
     var p_counter = 0;
@@ -150,8 +165,20 @@ export default class SceneRepresentation {
 
         const energy = currentShooter.unshotEnergy;
 
-        if (energy.length() < threshold) {
-          console.log("stopped radiating because of threshold");
+        if (!totalEnergyApproach && energy.length() < threshold) {
+          console.log("stopped radiating because of individual threshold");
+          break;
+        }
+        if (
+          totalEnergyApproach &&
+          this.objects
+            .reduce(
+              (pre, curr) => pre.add(curr.getSumUnshotEnergies()),
+              new Vector3(0, 0, 0)
+            )
+            .length() < threshold
+        ) {
+          console.log("stopped radiating because of total energy threshold");
           break;
         }
 
@@ -189,17 +216,18 @@ export default class SceneRepresentation {
             }
           }
         }
-        console.log(i_counter++);
+        i_counter++;
+        if (i_counter % 100 === 0) console.log(i_counter);
       }
     }
 
     if (i_counter < maxIterations) {
       console.log(
         "Made " +
-          i_counter +
-          " iterations before stopping for the threshold of <" +
-          threshold +
-          " energy.\n"
+        i_counter +
+        " iterations before stopping for the threshold of <" +
+        threshold +
+        " energy.\n"
       );
     } else {
       console.log(
