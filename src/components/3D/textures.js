@@ -72,14 +72,20 @@ export const unshotDensityTexture = (patches, width, height) => {
   return gridTexture(colors, width, height);
 };
 
-export const densityTexture = (patches, width, height, flipY) => {
+export const densityTexture = (
+  patches,
+  width,
+  height,
+  flipY,
+  extMaxDensity = null
+) => {
   const colors = patches.map((row) =>
     row.map((patch) => patch.getEnergyDensity())
   );
-  return gridTexture(colors, width, height, flipY);
+  return gridTexture(colors, width, height, flipY, extMaxDensity);
 };
 
-const gridTexture = (patches, width, height, flipY) => {
+const gridTexture = (patches, width, height, flipY, extMaxDensity = null) => {
   // TODO: a thing that takes into considerations cross.object max
   // TODO: determine if flipY is nesseccary
   // create canvas
@@ -87,16 +93,23 @@ const gridTexture = (patches, width, height, flipY) => {
   var context = canvas.getContext("2d");
 
   // determine the max energy in a single color channel.
-  const maxComponents = new Vector3(0, 0, 0);
-  for (var i = 0; i < patches.length; i++) {
-    for (var j = 0; j < patches[i].length; j++) {
-      if (patches[i][j]) {
-        // "If this vector's x, y or z value is less than the argument's x, y or z value, replace that value with the corresponding max value."
-        maxComponents.max(patches[i][j]);
+
+  var maxBrightness;
+
+  if (extMaxDensity) {
+    maxBrightness = extMaxDensity;
+  } else {
+    const maxComponents = new Vector3(0, 0, 0);
+    for (var i = 0; i < patches.length; i++) {
+      for (var j = 0; j < patches[i].length; j++) {
+        if (patches[i][j]) {
+          // "If this vector's x, y or z value is less than the argument's x, y or z value, replace that value with the corresponding max value."
+          maxComponents.max(patches[i][j]);
+        }
       }
     }
+    maxBrightness = Math.max(...maxComponents.toArray());
   }
-  const maxBrightness = Math.max(...maxComponents.toArray());
 
   for (var x = 0; x < patches.length; x++) {
     for (var y = 0; y < patches[x].length; y++) {

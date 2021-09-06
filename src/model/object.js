@@ -3,11 +3,11 @@ import MyImage from "./image";
 import generateClippedPatches from "controller/rasterizer/clipper";
 import { Vector3 } from "three";
 
-function max1D(arr) {
+export function max1D(arr, selector = (a) => a.unshotEnergy) {
   if (!arr || arr.length === 0) return null;
 
   return arr.reduce((pre, nu) =>
-    pre.unshotEnergy.length() > nu.unshotEnergy.length() ? pre : nu
+    selector(pre).length() > selector(nu).length() ? pre : nu
   );
 }
 export default class ObjectRepresentation {
@@ -61,12 +61,25 @@ export default class ObjectRepresentation {
     }
   }
 
-  getPatches() {
-    return this.patches;
+  getPatches1D() {
+    var re = [];
+    for (const row of this.patches) re = re.concat(row);
+
+    return re.filter((x) => x !== undefined);
   }
 
   getMaxUnshotPatch() {
     return max1D(this.patches.map((row) => max1D(row)));
+  }
+
+  getMaxEnergyPatch() {
+    return max1D(
+      this.patches.map(
+        (row) => max1D(row),
+        (a) => a.totalEnergy
+      ),
+      (a) => a.totalEnergy
+    );
   }
 
   getSumUnshotEnergies() {

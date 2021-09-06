@@ -9,6 +9,7 @@ import getHemisphereSamplepoints, {
   rotateSamplepoints,
 } from "formFactors/hemiSample";
 import { pointToDiscrete } from "controller/rasterizer/helpers";
+import { max1D } from "./object";
 
 const maxIterations = 100000;
 const threshP = 0.01;
@@ -224,10 +225,10 @@ export default class SceneRepresentation {
     if (i_counter < maxIterations) {
       console.log(
         "Made " +
-        i_counter +
-        " iterations before stopping for the threshold of <" +
-        threshold +
-        " energy.\n"
+          i_counter +
+          " iterations before stopping for the threshold of <" +
+          threshold +
+          " energy.\n"
       );
     } else {
       console.log(
@@ -236,12 +237,30 @@ export default class SceneRepresentation {
     }
     console.log("During this, patches were updated " + p_counter + " times.");
 
+    // generate textures:
+    // first, find out what value maps to 255:
+
+    var maxDensity = 0;
+
+    for (const o of this.objects) {
+      for (const p of o.getPatches1D()) {
+        for (const selector of [(a) => a.x, (a) => a.y, (a) => a.z]) {
+          if (selector(p.getEnergyDensity()) > maxDensity) {
+            maxDensity = selector(p.getEnergyDensity());
+          }
+        }
+      }
+    }
+    console.log("maximum energy density is " + maxDensity);
+
+    // Then, generate the final textures.
     for (const o of this.objects) {
       o.radMap = densityTexture(
         o.patches,
         o.patchRes[0],
         o.patchRes[1],
-        o.flipY
+        o.flipY,
+        maxDensity
       );
     }
   }

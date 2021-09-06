@@ -39,7 +39,7 @@ const App = () => {
     "notready",
     "notready",
   ]);
-  const [textureSize, setTextureSize] = useState([128, 128]);
+  const [textureSize, setTextureSize] = useState([16, 16]);
   const [useFilter, setUseFilter] = useState(false);
   const [numSamples, setNumSamples] = useState(1000);
 
