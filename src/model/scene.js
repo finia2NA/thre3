@@ -76,6 +76,7 @@ export default class SceneRepresentation {
   }
 
   async computeFormFactors2(xRes, yRes, numSamples = 1000) {
+    console.log("starting ffs");
     this.computePatches(xRes, yRes);
 
     // patches sind DA
@@ -175,7 +176,7 @@ export default class SceneRepresentation {
 
                 if (lightReaching.length() > energy.length()) {
                   lightReaching.divideScalar(
-                    1.5 * (lightReaching.length() / energy.length())
+                    1.5 * (lightReaching.length() / energy.length()) // TODO: why is this still needed? I think it isn't? remove!!!
                   );
                 }
 
@@ -201,7 +202,9 @@ export default class SceneRepresentation {
           " energy.\n"
       );
     } else {
-      console.log("stopped because iterations reached set limit of 10.000.");
+      console.log(
+        "stopped because iterations reached set limit of" + maxIterations
+      );
     }
     console.log("During this, patches were updated " + p_counter + " times.");
 

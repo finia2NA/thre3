@@ -39,7 +39,7 @@ const App = () => {
     "notready",
     "notready",
   ]);
-  const [textureSize, setTextureSize] = useState([64, 64]);
+  const [textureSize, setTextureSize] = useState([128, 128]);
   const [useFilter, setUseFilter] = useState(false);
   const [numSamples, setNumSamples] = useState(1000);
 
@@ -57,8 +57,8 @@ const App = () => {
   const calcPatches = () => {
     scene.current.computePatches();
 
-    // scene.current.objects[0].radMap = reflectanceTexture(
-    scene.current.objects[0].radMap = unshotDensityTexture(
+    scene.current.objects[0].radMap = reflectanceTexture(
+      // scene.current.objects[0].radMap = unshotDensityTexture(
       scene.current.objects[0].patches,
       scene.current.objects[0].patchRes[0],
       scene.current.objects[0].patchRes[1],

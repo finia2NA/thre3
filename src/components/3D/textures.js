@@ -80,6 +80,7 @@ export const densityTexture = (patches, width, height, flipY) => {
 };
 
 const gridTexture = (patches, width, height, flipY) => {
+  // TODO: a thing that takes into considerations cross.object max
   // TODO: determine if flipY is nesseccary
   // create canvas
   var canvas = new OffscreenCanvas(width, height);
