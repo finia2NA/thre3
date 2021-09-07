@@ -78,11 +78,7 @@ const Element3D = (props) => {
   const re = (
     <primitive object={scene.children[0]}>
       {
-        <meshBasicMaterial
-          attach="material"
-          transparent
-          side={THREE.DoubleSide}
-        >
+        <meshBasicMaterial attach="material" transparent side={THREE.FrontSide}>
           <primitive attach="map" object={texture} />
         </meshBasicMaterial>
       }

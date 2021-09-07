@@ -69,17 +69,11 @@ export default class ObjectRepresentation {
   }
 
   getMaxUnshotPatch() {
-    return max1D(this.patches.map((row) => max1D(row)));
+    return max1D(this.getPatches1D());
   }
 
   getMaxEnergyPatch() {
-    return max1D(
-      this.patches.map(
-        (row) => max1D(row),
-        (a) => a.totalEnergy
-      ),
-      (a) => a.totalEnergy
-    );
+    return max1D(this.getPatches1D(), (a) => a.totalEnergy);
   }
 
   getSumUnshotEnergies() {

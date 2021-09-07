@@ -39,7 +39,7 @@ const App = () => {
     "notready",
     "notready",
   ]);
-  const [textureSize, setTextureSize] = useState([16, 16]);
+  const [textureSize, setTextureSize] = useState([64, 64]);
   const [useFilter, setUseFilter] = useState(false);
   const [numSamples, setNumSamples] = useState(1000);
 
@@ -101,6 +101,12 @@ const App = () => {
       "robj/package/reflectance.png",
       "robj/package/meta.json"
     );
+    // const cornell = new ObjectRepresentation(
+    //   "cornel2/package/obj.obj",
+    //   "cornel2/package/light.png",
+    //   "cornel2/package/reflectance.png",
+    //   "cornel2/package/meta.json"
+    // );
 
     // const cornell = new ObjectRepresentation(
     //   "testobj2/package/obj.obj",

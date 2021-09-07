@@ -9,11 +9,10 @@ import getHemisphereSamplepoints, {
   rotateSamplepoints,
 } from "formFactors/hemiSample";
 import { pointToDiscrete } from "controller/rasterizer/helpers";
-import { max1D } from "./object";
 
 const maxIterations = 100000;
 const threshP = 0.01;
-const defaultNumSamples = 10000;
+const defaultNumSamples = 50000;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
