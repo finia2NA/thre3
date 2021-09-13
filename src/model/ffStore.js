@@ -77,6 +77,56 @@ export class BasicStore extends FFStore {
   }
 }
 
+export class SmallStore extends FFStore {
+  maxVal;
+  initializer;
+
+  constructor(dimensions, mode, precisionLevel = 1) {
+    super(dimensions, mode);
+
+    // initialize values for bit sizes
+    if (precisionLevel === 0) {
+      this.maxVal = Math.pow(2, 8) - 1;
+      this.initializer = (maxIndex) => new Uint8Array(maxIndex);
+    }
+    if (precisionLevel === 1) {
+      this.maxVal = Math.pow(2, 16) - 1;
+      this.initializer = (maxIndex) => new Uint16Array(maxIndex);
+    }
+    if (precisionLevel === 2) {
+      this.maxVal = Math.pow(2, 32) - 1;
+      this.initializer = (maxIndex) => new Uint32Array(maxIndex);
+    }
+
+    const maxIndex = dimensions.reduce((x, y) => x * y);
+
+    this.array = [];
+
+    for (var col = 0; col < maxIndex; col++)
+      this.array.push(this.initializer(maxIndex));
+  }
+
+  set(a, b, value) {
+    const aIndex = this.encode(a);
+    const bIndex = this.encode(b);
+    this.array[aIndex][bIndex] = value * this.maxVal;
+  }
+
+  get(a, b) {
+    const aIndex = this.encode(a);
+    const bIndex = this.encode(b);
+
+    return this.array[aIndex][bIndex] / this.maxVal;
+  }
+
+  add(a, b, value) {
+    const aIndex = this.encode(a);
+    const bIndex = this.encode(b);
+
+    this.array[aIndex][bIndex] += value * this.maxVal;
+  }
+}
+
 export default class SymStore extends FFStore {
   dimensions;
   array;

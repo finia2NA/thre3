@@ -3,7 +3,7 @@ import {
   defaultTexture,
   densityTexture,
 } from "components/3D/textures";
-import SymStore, { BasicStore } from "model/ffStore";
+import SymStore, { BasicStore, SmallStore } from "model/ffStore";
 import { Vector3 } from "three";
 import getHemisphereSamplepoints, {
   rotateSamplepoints,
@@ -12,7 +12,7 @@ import { pointToDiscrete } from "controller/rasterizer/helpers";
 
 const maxIterations = 500000;
 const threshP = 0.01;
-const defaultNumSamples = 1000000;
+const defaultNumSamples = 1000;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -65,6 +65,7 @@ export default class SceneRepresentation {
   }
 
   async computePatches() {
+    performance.mark("patches start");
     while (!this.mapsLoaded()) {
       await sleep(100);
     }
@@ -74,15 +75,19 @@ export default class SceneRepresentation {
       o.computePatches();
     }
 
+    performance.mark("patches end");
+    performance.measure("patches", "patches start", "patches end");
     console.log("patches: done");
   }
 
   async computeFormFactors2(xRes, yRes, numSamples = defaultNumSamples) {
-    console.log("starting ffs");
     this.computePatches(xRes, yRes);
+    console.log("starting ffs");
+    performance.mark("ffs start");
 
     // patches sind DA
-    this.formFactors = new BasicStore([this.objects.length, xRes, yRes]);
+    // this.formFactors = new BasicStore([this.objects.length, xRes, yRes]);
+    this.formFactors = new SmallStore([this.objects.length, xRes, yRes]);
 
     const samplePoints = getHemisphereSamplepoints(numSamples);
 
@@ -115,18 +120,26 @@ export default class SceneRepresentation {
         }
       }
     }
-
+    performance.mark("ffs end");
+    performance.measure("ffs", "ffs start", "ffs end");
     console.log("form factors done");
   }
 
-  async computeRadiosity(xRes, yRes, numSamples, totalEnergyApproach = true) {
+  async computeRadiosity(
+    xRes,
+    yRes,
+    numSamples,
+    stopValue = threshP,
+    totalEnergyApproach = true
+  ) {
     await this.computeFormFactors2(xRes, yRes, numSamples);
+    performance.mark("radiosity start");
 
     var threshold;
     // get abort threshold as % of max disply energy
     if (!totalEnergyApproach)
       threshold =
-        threshP *
+        stopValue *
         Math.max(
           ...this.objects.map((o) =>
             o.getMaxUnshotPatch().unshotEnergy.length()
@@ -134,7 +147,7 @@ export default class SceneRepresentation {
         );
     else
       threshold =
-        threshP *
+        stopValue *
         this.objects
           .reduce(
             (pre, curr) => pre.add(curr.getSumUnshotEnergies()),
@@ -146,7 +159,7 @@ export default class SceneRepresentation {
     var p_counter = 0;
 
     if (threshold) {
-      debugger;
+      console.log("threshold: " + threshold);
       while (i_counter < maxIterations) {
         // while (true) {
 
@@ -168,6 +181,7 @@ export default class SceneRepresentation {
 
         if (!totalEnergyApproach && energy.length() < threshold) {
           console.log("stopped radiating because of individual threshold");
+          console.log("the unshot energy was: " + energy.length());
           break;
         }
         if (
@@ -180,6 +194,15 @@ export default class SceneRepresentation {
             .length() < threshold
         ) {
           console.log("stopped radiating because of total energy threshold");
+          console.log(
+            "the unshot energy was: " +
+              this.objects
+                .reduce(
+                  (pre, curr) => pre.add(curr.getSumUnshotEnergies()),
+                  new Vector3(0, 0, 0)
+                )
+                .length()
+          );
           break;
         }
 
@@ -198,7 +221,6 @@ export default class SceneRepresentation {
               const ff = this.formFactors.get(a, b); // TODO: evaluate this
 
               if (ff > 0) {
-                debugger;
                 p_counter++;
 
                 const lightReaching = energy.clone().multiplyScalar(ff);
@@ -208,9 +230,10 @@ export default class SceneRepresentation {
                   lightReaching.divideScalar(
                     1.5 * (lightReaching.length() / energy.length()) // TODO: why is this still needed? I think it isn't? remove!!!
                   );
+                  console.error(
+                    "had to scale down energy, which is something that shouldn't happen!!!"
+                  );
                 }
-
-                // debugger;
 
                 if (!this.objects[i].patches[j][k]) continue;
 
@@ -220,7 +243,7 @@ export default class SceneRepresentation {
           }
         }
         i_counter++;
-        if (i_counter % 100 === 0) console.log(i_counter);
+        // if (i_counter % 100 === 0) console.log(i_counter);
       }
     }
 
@@ -239,6 +262,9 @@ export default class SceneRepresentation {
     }
     console.log("During this, patches were updated " + p_counter + " times.");
 
+    performance.mark("radiosity end");
+    performance.measure("radiosity", "radiosity start", "radiosity end");
+    performance.mark("tx start");
     // generate textures:
     // first, find out what value maps to 255:
 
@@ -265,6 +291,8 @@ export default class SceneRepresentation {
         maxDensity
       );
     }
+    performance.mark("tx end");
+    performance.measure("tx", "tx start", "tx end");
   }
 
   /**

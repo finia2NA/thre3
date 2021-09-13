@@ -39,13 +39,24 @@ const App = () => {
     "notready",
     "notready",
   ]);
-  const [textureSize, setTextureSize] = useState([256, 256]);
-  const [useFilter, setUseFilter] = useState(false);
-  const [numSamples, setNumSamples] = useState(1000);
+  const [textureSize, setTextureSize] = useState([64, 64]);
+  const [numSamples, setNumSamples] = useState(2500);
+  const threshP = 0.01;
 
+  const [useFilter, setUseFilter] = useState(false);
   const [sceneInitialized, setSceneInitialized] = useState(false);
 
   console.log("app reset");
+
+  const getPerformance = () => {
+    ["patches", "ffs", "radiosity", "tx"].map((name) => {
+      performance
+        .getEntriesByName(name)
+        .map((entry) =>
+          console.log(name, (entry.duration / 1000).toFixed(2) + "s")
+        );
+    });
+  };
 
   const setProgress = (index, value) => {
     const newProgresses = [...progresses];
@@ -79,7 +90,8 @@ const App = () => {
     await scene.current.computeRadiosity(
       textureSize[0],
       textureSize[1],
-      numSamples
+      numSamples,
+      threshP
     );
     setRadTextures(
       scene.current.objects.map((o) => o.radMap),
@@ -165,7 +177,7 @@ const App = () => {
           >
             ちょっとまって
           </Button>{" "}
-          <Button onClick={() => setProgress(1, 0.5)}>test</Button>
+          <Button onClick={() => getPerformance()}>Perf.log</Button>
           <br />
         </Controldiv>
       </Maindiv>
