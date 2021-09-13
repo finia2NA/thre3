@@ -10,9 +10,9 @@ import getHemisphereSamplepoints, {
 } from "formFactors/hemiSample";
 import { pointToDiscrete } from "controller/rasterizer/helpers";
 
-const maxIterations = 100000;
+const maxIterations = 500000;
 const threshP = 0.01;
-const defaultNumSamples = 50000;
+const defaultNumSamples = 1000000;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -84,7 +84,7 @@ export default class SceneRepresentation {
     // patches sind DA
     this.formFactors = new BasicStore([this.objects.length, xRes, yRes]);
 
-    const samplePoints = getHemisphereSamplepoints(1000);
+    const samplePoints = getHemisphereSamplepoints(numSamples);
 
     // go through every representation of a patch pair
     for (var objIndex = 0; objIndex < this.objects.length; objIndex++) {
@@ -146,6 +146,7 @@ export default class SceneRepresentation {
     var p_counter = 0;
 
     if (threshold) {
+      debugger;
       while (i_counter < maxIterations) {
         // while (true) {
 
@@ -197,11 +198,13 @@ export default class SceneRepresentation {
               const ff = this.formFactors.get(a, b); // TODO: evaluate this
 
               if (ff > 0) {
+                debugger;
                 p_counter++;
 
                 const lightReaching = energy.clone().multiplyScalar(ff);
 
                 if (lightReaching.length() > energy.length()) {
+                  debugger;
                   lightReaching.divideScalar(
                     1.5 * (lightReaching.length() / energy.length()) // TODO: why is this still needed? I think it isn't? remove!!!
                   );
