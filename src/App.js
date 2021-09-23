@@ -31,6 +31,11 @@ const Controldiv = styled.div`
 
 // App
 const App = () => {
+  // parameters
+  const [textureSize, setTextureSize] = useState([192, 192]);
+  const [numSamples, setNumSamples] = useState(3000);
+  const threshP = 0.01;
+
   // state
   const [displaymode, setDisplaymode] = useState("reflectance");
   const [radTextures, setRadTextures] = useState([]);
@@ -39,9 +44,6 @@ const App = () => {
     "notready",
     "notready",
   ]);
-  const [textureSize, setTextureSize] = useState([64, 64]);
-  const [numSamples, setNumSamples] = useState(2500);
-  const threshP = 0.01;
 
   const [useFilter, setUseFilter] = useState(false);
   const [sceneInitialized, setSceneInitialized] = useState(false);
@@ -107,11 +109,18 @@ const App = () => {
   useEffect(() => {
     scene.current = new SceneRepresentation();
 
+    // const cornell = new ObjectRepresentation(
+    //   "robj/package/obj.obj",
+    //   "robj/package/light.png",
+    //   "robj/package/reflectance.png",
+    //   "robj/package/meta.json"
+    // );
+
     const cornell = new ObjectRepresentation(
-      "robj3/cornelr4.obj",
+      "r4/r4.obj",
       "robj3/light.png",
-      "robj3/reflectance.png",
-      "robj3/meta.json"
+      "r4/reflectance.png",
+      "r4/meta.json"
     );
 
     // const cornell = new ObjectRepresentation(

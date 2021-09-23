@@ -80,25 +80,29 @@ export class BasicStore extends FFStore {
 export class SmallStore extends FFStore {
   maxVal;
   initializer;
+  bits;
 
   constructor(dimensions, mode, precisionLevel = 1) {
     super(dimensions, mode);
 
     // initialize values for bit sizes
     if (precisionLevel === 0) {
-      this.maxVal = Math.pow(2, 8) - 1;
+      this.bits = 8;
       this.initializer = (maxIndex) => new Uint8Array(maxIndex);
     }
     if (precisionLevel === 1) {
-      this.maxVal = Math.pow(2, 16) - 1;
+      this.bits = 16;
       this.initializer = (maxIndex) => new Uint16Array(maxIndex);
     }
     if (precisionLevel === 2) {
-      this.maxVal = Math.pow(2, 32) - 1;
+      this.bits = 32;
       this.initializer = (maxIndex) => new Uint32Array(maxIndex);
     }
+    this.maxVal = Math.pow(2, this.bits) - 1;
 
     const maxIndex = dimensions.reduce((x, y) => x * y);
+
+    console.log("array size:" + (maxIndex * maxIndex * this.bits) / 8);
 
     this.array = [];
 
