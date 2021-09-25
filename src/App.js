@@ -32,8 +32,8 @@ const Controldiv = styled.div`
 // App
 const App = () => {
   // parameters
-  const [textureSize, setTextureSize] = useState([192, 192]);
-  const [numSamples, setNumSamples] = useState(3000);
+  const [textureSize, setTextureSize] = useState([32, 32]);
+  const [numSamples, setNumSamples] = useState(1000);
   const threshP = 0.01;
 
   // state

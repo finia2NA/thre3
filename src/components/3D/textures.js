@@ -2,6 +2,35 @@ import { Vector3 } from "three";
 
 const rgbHex = require("rgb-hex");
 
+function downloadBlob(blob, name = "file.png") {
+  // credit: https://dev.to/nombrekeff/download-file-from-blob-21ho
+  // Convert your blob into a Blob URL (a special url that points to an object in the browser's memory)
+  const blobUrl = URL.createObjectURL(blob);
+
+  // Create a link element
+  const link = document.createElement("a");
+
+  // Set link's href to point to the Blob URL
+  link.href = blobUrl;
+  link.download = name;
+
+  // Append link to the body
+  document.body.appendChild(link);
+
+  // Dispatch click event on the link
+  // This is necessary as link.click() does not work on the latest firefox
+  link.dispatchEvent(
+    new MouseEvent("click", {
+      bubbles: true,
+      cancelable: true,
+      view: window,
+    })
+  );
+
+  // Remove link from body
+  document.body.removeChild(link);
+}
+
 /**
  * A checkerboard Testure that's suitable for discerning between texels.
  * @param {*} width
@@ -82,10 +111,17 @@ export const densityTexture = (
   const colors = patches.map((row) =>
     row.map((patch) => patch.getEnergyDensity())
   );
-  return gridTexture(colors, width, height, flipY, extMaxDensity);
+  return gridTexture(colors, width, height, flipY, extMaxDensity, true);
 };
 
-const gridTexture = (patches, width, height, flipY, extMaxDensity = null) => {
+const gridTexture = (
+  patches,
+  width,
+  height,
+  flipY,
+  extMaxDensity = null,
+  writeBlob = false
+) => {
   // TODO: a thing that takes into considerations cross.object max
   // TODO: determine if flipY is nesseccary
   // create canvas
@@ -133,6 +169,11 @@ const gridTexture = (patches, width, height, flipY, extMaxDensity = null) => {
       // const writey = flipY ? height - y : y;
       context.fillRect(writex, writey, 1, 1);
     }
+  }
+  if (writeBlob) {
+    canvas
+      .convertToBlob({ type: "image/png" })
+      .then((blob) => downloadBlob(blob));
   }
 
   return canvas.transferToImageBitmap();
