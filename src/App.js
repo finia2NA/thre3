@@ -8,12 +8,8 @@ import SceneRepresentation from "model/scene";
 
 import ObjectRepresentation from "model/object";
 import { Button } from "@material-ui/core";
-import { useState, useRef, useLayoutEffect, useEffect } from "react";
-import {
-  gridTexture,
-  reflectanceTexture,
-  unshotDensityTexture,
-} from "components/3D/textures";
+import { useState, useRef, useEffect } from "react";
+import { reflectanceTexture } from "components/3D/textures";
 
 // Components
 const Maindiv = styled.div`
@@ -32,7 +28,6 @@ const Controldiv = styled.div`
 // App
 const App = () => {
   // parameters
-  const [textureSize, setTextureSize] = useState([128, 128]);
   const [numSamples, setNumSamples] = useState(3000);
   const threshP = 0.01;
 
@@ -83,15 +78,19 @@ const App = () => {
   };
 
   const calcFF = () => {
-    scene.current.computeFormFactors2(textureSize[0], textureSize[1], 1000);
+    scene.current.computeFormFactors2(
+      textureSize.current[0],
+      textureSize.current[1],
+      1000
+    );
 
     setAllProgresses(["ready", "ready", "notready"]);
   };
 
   const calcRad = async () => {
     await scene.current.computeRadiosity(
-      textureSize[0],
-      textureSize[1],
+      textureSize.current[0],
+      textureSize.current[1],
       numSamples,
       threshP
     );
@@ -118,11 +117,19 @@ const App = () => {
 
     cornell.loadObjText();
 
-    cornell.patchRes = textureSize;
+    cornell.patchRes = textureSize.current;
     scene.current.addObject(cornell);
 
     setSceneInitialized(true);
   }, []);
+
+  const textureSize = useRef(null);
+  useEffect(() => {
+    textureSize.current = [32, 32];
+  }, []);
+  const setTextureSize = (newSize) => {
+    textureSize.current = newSize;
+  };
 
   return (
     sceneInitialized && (
