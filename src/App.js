@@ -32,8 +32,8 @@ const Controldiv = styled.div`
 // App
 const App = () => {
   // parameters
-  const [textureSize, setTextureSize] = useState([32, 32]);
-  const [numSamples, setNumSamples] = useState(1000);
+  const [textureSize, setTextureSize] = useState([128, 128]);
+  const [numSamples, setNumSamples] = useState(3000);
   const threshP = 0.01;
 
   // state
@@ -109,42 +109,12 @@ const App = () => {
   useEffect(() => {
     scene.current = new SceneRepresentation();
 
-    // const cornell = new ObjectRepresentation(
-    //   "robj/package/obj.obj",
-    //   "robj/package/light.png",
-    //   "robj/package/reflectance.png",
-    //   "robj/package/meta.json"
-    // );
-
     const cornell = new ObjectRepresentation(
       "r4/r4.obj",
       "robj3/light.png",
       "r4/reflectance.png",
       "r4/meta.json"
     );
-
-    // const cornell = new ObjectRepresentation(
-    //   "robj/package/obj.obj",
-    //   "robj/package/light.png",
-    //   "robj/package/reflectance.png",
-    //   "robj/package/meta.json"
-    // );
-
-    // const cornell = new ObjectRepresentation(
-    //   "cornel22/obj.obj",
-    //   "cornel22/light.png",
-    //   "cornel22/reflectance.png",
-    //   "cornel22/meta.json"
-    // );
-
-    // const cornell = new ObjectRepresentation(
-    //   "testobj2/package/obj.obj",
-    //   "testobj2/package/light.png",
-    //   "testobj2/package/reflectance.png",
-    //   "testobj2/package/meta.json",
-    //   16,
-    //   16
-    // );
 
     cornell.loadObjText();
 
@@ -186,7 +156,7 @@ const App = () => {
           >
             ちょっとまって
           </Button>{" "}
-          <Button onClick={() => getPerformance()}>Perf.log</Button>
+          <Button onClick={() => getPerformance()}>Log Performance</Button>
           <br />
         </Controldiv>
       </Maindiv>

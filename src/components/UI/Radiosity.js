@@ -24,15 +24,15 @@ const PreButtonDiv = styled.div`
 const Radiositypanel = (props) => {
   const [method, setMethod] = useState(0);
 
-  const txSliderFunction = (x) => 2 ** x;
+  const txSliderFunction = (x) => [8, 16, 32, 64, 128, 192][x];
 
   return (
     <div style={{ minWidth: "100" }}>
       <FormControl>
         <FormLabel>Texture Size</FormLabel>
         <Slider
-          min={4}
-          max={12}
+          min={0}
+          max={5}
           marks
           step={1}
           scale={txSliderFunction}
@@ -56,22 +56,22 @@ const Radiositypanel = (props) => {
           <div>
             <FormLabel>Unshot Radiosity Threshold</FormLabel>
             <Slider
-              min={-10}
-              max={-0.5}
-              step={0.5}
-              scale={(x) => -x / 10} // TODO: Figure out sensitivity
+              min={-100}
+              max={-1}
+              step={1}
+              scale={(x) => -x / 100}
               valueLabelDisplay="auto"
             />
           </div>
         )}
         <ButtonDiv>
           <PreButtonDiv>
-            <Button variant="contained" onClick={props.calcPatches}>
+            {/* <Button variant="contained" onClick={props.calcPatches}>
               ロ
             </Button>
             <Button variant="contained" onClick={props.calcFF}>
               FF
-            </Button>
+            </Button> */}
           </PreButtonDiv>
           <Button variant="contained" color="primary" onClick={props.calcRad}>
             下

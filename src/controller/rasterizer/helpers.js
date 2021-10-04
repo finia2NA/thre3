@@ -302,8 +302,8 @@ export function pfInterpolate(patch, fragment, xRes, yRes) {
   // new reflection is the average of the two reflections (weighted by area2)
   const reflectance = patch.reflectance
     .clone()
-    .multiplyScalar(patch.area2 / area2)
-    .add(fragment.reflectance.clone().multiplyScalar(fragment.area2 / area2));
+    .multiplyScalar(patch.area3 / area3)
+    .add(fragment.reflectance.clone().multiplyScalar(fragment.area3 / area3));
 
   const re = new Patch(
     position2,

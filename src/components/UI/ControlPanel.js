@@ -59,11 +59,11 @@ const Controldiv = styled.div`
 const Controlpanel = (props) => {
   return (
     <Controldiv>
-      <Collapsing name="Channel Box">
+      {/* <Collapsing name="Channel Box">
         <Channelbox />
-      </Collapsing>
+      </Collapsing> */}
 
-      <Collapsing name="Radiosity Controls">
+      <Collapsing name="Radiosity Controls" initiallyOpened={true}>
         <Radiositypanel
           calcPatches={props.calcPatches}
           calcFF={props.calcFF}
@@ -72,7 +72,7 @@ const Controlpanel = (props) => {
         />
       </Collapsing>
 
-      <Collapsing name="Display Controls">
+      <Collapsing name="Display Controls" initiallyOpened={true}>
         <Displaypanel
           setDisplaymode={props.setDisplaymode}
           readyflags={props.progresses.map((p) => p === "ready")}
@@ -80,9 +80,9 @@ const Controlpanel = (props) => {
         />
       </Collapsing>
 
-      <Collapsing name="Transfer Controls">
+      {/* <Collapsing name="Transfer Controls">
         <Exportpanel />
-      </Collapsing>
+      </Collapsing> */}
 
       <Collapsing name="Indicators" initiallyOpened={true}>
         <Indicators progresses={props.progresses} />

@@ -82,7 +82,7 @@ export class SmallStore extends FFStore {
   initializer;
   bits;
 
-  constructor(dimensions, mode, precisionLevel = 1) {
+  constructor(dimensions, precisionLevel = 1, mode) {
     super(dimensions, mode);
 
     // initialize values for bit sizes

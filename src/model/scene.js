@@ -87,7 +87,7 @@ export default class SceneRepresentation {
 
     // patches sind DA
     // this.formFactors = new BasicStore([this.objects.length, xRes, yRes]);
-    this.formFactors = new SmallStore([this.objects.length, xRes, yRes]);
+    this.formFactors = new SmallStore([this.objects.length, xRes, yRes], 1);
 
     const samplePoints = getHemisphereSamplepoints(numSamples);
 

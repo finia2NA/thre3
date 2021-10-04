@@ -7,10 +7,10 @@ const Displaypanel = (props) => {
     <div>
       <div>
         Display <br />
-        <FormControlLabel
+        {/* <FormControlLabel
           label="Use Phong Specularity"
           control={<Checkbox />}
-        />
+        /> */}
         <FormControlLabel
           label="Use Texel Interpolation"
           control={
