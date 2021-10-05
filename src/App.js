@@ -11,6 +11,11 @@ import { Button } from "@material-ui/core";
 import { useState, useRef, useEffect } from "react";
 import { reflectanceTexture } from "components/3D/textures";
 
+// Parameters
+const defaultTXSize = [32, 32];
+const defaultSamples = 3000;
+const defaultThreshP = 0.01;
+
 // Components
 const Maindiv = styled.div`
   display: flex;
@@ -27,11 +32,14 @@ const Controldiv = styled.div`
 
 // App
 const App = () => {
-  // parameters
-  const [numSamples, setNumSamples] = useState(3000);
-  const threshP = 0.01;
+  console.log("starting app render...");
 
-  // state
+  // RAD parameters
+  const [textureSize, setTextureSize] = useState(defaultTXSize);
+  const [numSamples, setNumSamples] = useState(defaultSamples);
+  const [threshP, setThreshP] = useState(defaultThreshP);
+
+  // other internal state
   const [displaymode, setDisplaymode] = useState("reflectance");
   const [radTextures, setRadTextures] = useState([]);
   const [progresses, setAllProgresses] = useState([
@@ -39,11 +47,8 @@ const App = () => {
     "notready",
     "notready",
   ]);
-
   const [useFilter, setUseFilter] = useState(false);
   const [sceneInitialized, setSceneInitialized] = useState(false);
-
-  console.log("app reset");
 
   const getPerformance = () => {
     ["patches", "ffs", "radiosity", "tx"].map((name) => {
@@ -78,19 +83,15 @@ const App = () => {
   };
 
   const calcFF = () => {
-    scene.current.computeFormFactors2(
-      textureSize.current[0],
-      textureSize.current[1],
-      1000
-    );
+    scene.current.computeFormFactors2(textureSize[0], textureSize[1], 1000);
 
     setAllProgresses(["ready", "ready", "notready"]);
   };
 
   const calcRad = async () => {
     await scene.current.computeRadiosity(
-      textureSize.current[0],
-      textureSize.current[1],
+      textureSize[0],
+      textureSize[1],
       numSamples,
       threshP
     );
@@ -117,19 +118,11 @@ const App = () => {
 
     cornell.loadObjText();
 
-    cornell.patchRes = textureSize.current;
+    cornell.patchRes = textureSize;
     scene.current.addObject(cornell);
 
     setSceneInitialized(true);
   }, []);
-
-  const textureSize = useRef(null);
-  useEffect(() => {
-    textureSize.current = [32, 32];
-  }, []);
-  const setTextureSize = (newSize) => {
-    textureSize.current = newSize;
-  };
 
   return (
     sceneInitialized && (
@@ -142,6 +135,7 @@ const App = () => {
             setRaycaster={scene.current.setRC}
             setScene3={scene.current.setScene3}
             useFilter={useFilter}
+            textureSize={textureSize}
           />
         </Viewdiv>
 
@@ -155,6 +149,10 @@ const App = () => {
             progresses={progresses}
             setUseFilter={setUseFilter}
             setNumSamples={setNumSamples}
+            setThreshP={setThreshP}
+            defaultTextureSize={defaultTXSize}
+            defaultThreshP={defaultThreshP}
+            defaultSamples={defaultSamples}
           />
           <Button
             onClick={() => {

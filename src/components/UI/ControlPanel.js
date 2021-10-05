@@ -59,6 +59,7 @@ const Controldiv = styled.div`
 const Controlpanel = (props) => {
   return (
     <Controldiv>
+      {/* Uncomment below to start implementation of a channel box, through wich objects can be moved, rotated and scaled */}
       {/* <Collapsing name="Channel Box">
         <Channelbox />
       </Collapsing> */}
@@ -69,6 +70,10 @@ const Controlpanel = (props) => {
           calcFF={props.calcFF}
           calcRad={props.calcRad}
           setTextureSize={props.setTextureSize}
+          setThreshP={props.setThreshP}
+          defaultTextureSize={props.defaultTextureSize}
+          defaultThreshP={props.defaultThreshP}
+          defaultSamples={props.defaultSamples}
         />
       </Collapsing>
 
@@ -80,6 +85,7 @@ const Controlpanel = (props) => {
         />
       </Collapsing>
 
+      {/* Uncomment below to start implementation of Transfer Panel, through which objects can be imported */}
       {/* <Collapsing name="Transfer Controls">
         <Exportpanel />
       </Collapsing> */}

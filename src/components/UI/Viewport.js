@@ -51,6 +51,7 @@ const Viewport = (props) => {
             key={i}
             name={"" + i}
             useFilter={props.useFilter}
+            textureSize={props.textureSize}
           />
         </Suspense>
       ))}

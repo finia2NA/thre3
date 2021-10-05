@@ -22,28 +22,21 @@ const PreButtonDiv = styled.div`
 `;
 
 const Radiositypanel = (props) => {
-  const [method, setMethod] = useState(0);
+  console.log(props);
 
-  const txSliderFunction = (x) => [8, 16, 32, 64, 128, 192][x];
+  const [radMethod, setMethod] = useState(0);
+  const [cachedRes, setCachedRes] = useState(0);
+
+  const txSteps = [8, 16, 32, 64, 128, 192];
+  const txSliderFunction = (x) => txSteps[x];
+  const threshPSliderFunction = (x) => -x / 100;
+  const reverseThreshPSliderFunction = (x) => -x * 100;
 
   return (
     <div style={{ minWidth: "100" }}>
       <FormControl>
-        <FormLabel>Texture Size</FormLabel>
-        <Slider
-          min={0}
-          max={5}
-          marks
-          step={1}
-          scale={txSliderFunction}
-          valueLabelDisplay="auto"
-          onChange={(event, val) => {
-            const newRes = txSliderFunction(val);
-            props.setTextureSize([newRes, newRes]);
-          }}
-        />
-        <FormLabel>Render Method</FormLabel>
-        <RadioGroup value={method}>
+        <FormLabel>Radiosity Method</FormLabel>
+        <RadioGroup value={radMethod}>
           <FormControlLabel
             value={0}
             control={<Radio />}
@@ -52,20 +45,53 @@ const Radiositypanel = (props) => {
           />
           {/* <FormControlLabel value={1} control={<Radio />} label="Matrix Solver" onClick={() => setMethod(1)} /> */}
         </RadioGroup>
-        {method === 0 && (
+        <FormLabel>Texture Size</FormLabel>
+        <Slider
+          defaultValue={txSteps.findIndex(
+            (x) => x === props.defaultTextureSize[0]
+          )}
+          min={0}
+          max={5}
+          marks
+          step={1}
+          scale={txSliderFunction}
+          valueLabelDisplay="auto"
+          onChange={(event, val) => {
+            const newRes = txSliderFunction(val);
+            if (newRes !== cachedRes) {
+              props.setTextureSize([newRes, newRes]);
+              setCachedRes(newRes);
+            }
+          }}
+        />
+        <FormLabel>Form Factor Samples</FormLabel>
+        <Slider
+          defaultValue={props.defaultSamples}
+          min={100}
+          max={5000}
+          step={100}
+          valueLabelDisplay="auto"
+        />
+        {radMethod === 0 && (
           <div>
             <FormLabel>Unshot Radiosity Threshold</FormLabel>
             <Slider
+              defaultValue={reverseThreshPSliderFunction(props.defaultThreshP)}
               min={-100}
               max={-1}
               step={1}
-              scale={(x) => -x / 100}
+              scale={threshPSliderFunction}
               valueLabelDisplay="auto"
+              onchange={(event, val) => {
+                const newThreshP = threshPSliderFunction(val);
+                props.setThreshP(newThreshP);
+              }}
             />
           </div>
         )}
         <ButtonDiv>
           <PreButtonDiv>
+            {/* Uncomment below for buttons to start only patch calculation / FF calculation */}
             {/* <Button variant="contained" onClick={props.calcPatches}>
               ロ
             </Button>

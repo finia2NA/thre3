@@ -10,7 +10,6 @@ import {
   defaultTexture,
   rainbowTexture,
   checkerboardTexture,
-  reflectanceTexture,
 } from "components/3D/textures";
 
 export const LoadingBox = (props) => {
@@ -25,7 +24,7 @@ export const LoadingBox = (props) => {
 const Element3D = (props) => {
   console.log("Element3D did something!");
   var texturePath = "defaultTexture.png";
-  var generated = defaultTexture(props.obj.patchRes[0], props.obj.patchRes[1]);
+  var generated = defaultTexture(props.textureSize[0], props.textureSize[1]);
   var useGenerated = false;
 
   switch (props.displaymode) {
@@ -41,13 +40,13 @@ const Element3D = (props) => {
       break;
     case "checkerboard":
       generated = checkerboardTexture(
-        props.obj.patchRes[0],
-        props.obj.patchRes[1]
+        props.textureSize[0],
+        props.textureSize[1]
       );
       useGenerated = true;
       break;
     case "rainbow":
-      generated = rainbowTexture(props.obj.patchRes[0], props.obj.patchRes[1]);
+      generated = rainbowTexture(props.textureSize[0], props.textureSize[1]);
       useGenerated = true;
       break;
     default:
