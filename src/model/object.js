@@ -108,6 +108,6 @@ export default class ObjectRepresentation {
       this.patchFlag = true;
     }
 
-    return this.patches; // TODO:translate
+    return this.patches; // TODO:if translation is to be implemented, here would be the place to do that
   }
 }

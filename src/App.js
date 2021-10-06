@@ -9,7 +9,6 @@ import SceneRepresentation from "model/scene";
 import ObjectRepresentation from "model/object";
 import { Button } from "@material-ui/core";
 import { useState, useRef, useEffect } from "react";
-import { reflectanceTexture } from "components/3D/textures";
 
 // Default Parameters
 const defaultTXSize = [64, 64];
@@ -105,11 +104,6 @@ const App = () => {
   };
 
   const calcRad = async () => {
-    // fix for when objects' texture size is missbehaving
-    // scene.current.objects.map((x) => {
-    //   x.patchRes = [...textureSize];
-    //   });
-
     setoneshot(false);
 
     // debugger;

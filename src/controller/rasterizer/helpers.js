@@ -5,7 +5,7 @@ import coolmod from "util/coolmod";
 
 /**
  * checks if a vector is normalized (to a numerically reasonable degree)
- * @param {*} vector
+ * @param {*} Vector
  * @returns
  */
 export function checkNormalized(vector) {

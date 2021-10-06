@@ -2,10 +2,12 @@ import React from "react";
 import Radiositypanel from "components/UI/Radiosity";
 import Displaypanel from "components/UI/Display";
 import Indicators from "components/UI/Indicators";
-import Exportpanel from "components/UI/Export";
-import Channelbox from "components/UI/Channelbox";
 import styled from "styled-components";
 import { Collapsing } from "components/UI/Containers";
+
+// uncomment to use commented out panels below
+// import Exportpanel from "components/UI/Export";
+// import Channelbox from "components/UI/Channelbox";
 
 /*
 Required Settings:

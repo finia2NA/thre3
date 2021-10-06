@@ -3,7 +3,7 @@ import { Vector3 } from "three";
 
 export function getSphereSamplepoints(endsample, startSample = 0) {
   // https://stackoverflow.com/questions/9600801/evenly-distributing-n-points-on-a-sphere/26127012#26127012
-  https: var points = [];
+  var points = [];
   const phi = Math.PI * (3 - Math.sqrt(5)); // golden angle in radians
 
   for (var i = startSample; i < endsample; i++) {
@@ -38,7 +38,7 @@ export function rotateSamplepoints(points, midVector) {
   const defaultOrientation = new Vector3(0, 1, 0);
 
   const rotationVector = getPlaneNormal(defaultOrientation, midVector);
-  const rotationAngle = defaultOrientation.angleTo(midVector); // TODO: maybe swapt the vectors
+  const rotationAngle = defaultOrientation.angleTo(midVector);
 
   return points.map((point) =>
     point.clone().applyAxisAngle(rotationVector, rotationAngle)

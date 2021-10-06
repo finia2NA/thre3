@@ -169,7 +169,6 @@ export default class SymStore extends FFStore {
     switch (this.mode) {
       case "vanilla":
         return value;
-        break;
 
       case "scaled":
         if (this.maxValue < 0.99) return value;

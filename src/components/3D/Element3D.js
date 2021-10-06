@@ -58,7 +58,7 @@ const Element3D = (props) => {
     const re = new THREE.CanvasTexture(generated);
     re.magFilter = props.useFilter ? THREE.LinearFilter : THREE.NearestFilter;
     return re;
-  }, [props.displaymode, generated, props.useFilter]);
+  }, [generated, props.useFilter]);
 
   const texture = useGenerated ? generatedTexture : fileTexture;
 

@@ -1,16 +1,15 @@
 import { Vector3 } from "three";
 
 class MyImage {
-  // TODO: find a better name (Image already taken)
-
   // "mostly from http://www.html5canvastutorials.com/advanced/html5-canvas-get-image-data-tutorial/";
+
   data;
   res;
   loaded;
   path; // only for debug purposes
 
   constructor(path) {
-    // TODO: do the res and data and so on parts of the constructor in the onload function https://stackoverflow.com/questions/623172/how-to-get-image-size-height-width-using-javascript .
+    // TODO: the res and data and so on parts of the constructor could be moved into an onload function https://stackoverflow.com/questions/623172/how-to-get-image-size-height-width-using-javascript .
 
     this.path = path;
 

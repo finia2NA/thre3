@@ -130,8 +130,6 @@ const gridTexture = (
   externalMax = null,
   writeBlob = false
 ) => {
-  // TODO: a thing that takes into considerations cross.object max
-  // TODO: determine if flipY is nesseccary
   // create canvas
   var canvas = new OffscreenCanvas(width, height);
   var context = canvas.getContext("2d");

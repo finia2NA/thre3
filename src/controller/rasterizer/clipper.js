@@ -1,5 +1,4 @@
-// https://en.wikipedia.org/wiki/Clipper
-import { Vector2 } from "three";
+// https://en.wikipedia.org/wiki/Clipper :)
 
 import {
   resolveActualValues,
@@ -18,7 +17,6 @@ import Patch from "model/patch";
 import { Boundingbox } from "./rasterclasses";
 
 const OBJFile = require("obj-file-parser");
-const polygonClipping = require("polygon-clipping");
 
 export default function generateClippedPatches(
   objText,
@@ -30,8 +28,8 @@ export default function generateClippedPatches(
   flipY
 ) {
   const patches = new Array(xRes).fill();
-  for (var i = 0; i < yRes; i++) {
-    patches[i] = new Array(yRes);
+  for (var i1 = 0; i1 < yRes; i1++) {
+    patches[i1] = new Array(yRes);
   }
 
   const parsed = new OBJFile(objText).parse();
@@ -55,8 +53,6 @@ export default function generateClippedPatches(
     // bb.xMax = xRes - 1;
     // bb.yMin = 0;
     // bb.yMax = yRes - 1;
-
-    const texelSize = 1 / (xRes * yRes);
 
     for (var x = bb.xMin; x < bb.xMax; x++) {
       for (var y = bb.yMin; y < bb.yMax; y++) {

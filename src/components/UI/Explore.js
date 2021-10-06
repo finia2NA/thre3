@@ -1,17 +1,14 @@
 import React, { useState } from "react";
 
 import {
-  Slider,
   FormControlLabel,
   FormLabel,
   RadioGroup,
-  Button,
   Radio,
 } from "@material-ui/core";
 
 const Explorepanel = (props) => {
   const [viewMode, setViewMode] = useState(0);
-  const [compareMethod, setMethod] = useState(0);
 
   const setView = (x) => {
     setViewMode(x);

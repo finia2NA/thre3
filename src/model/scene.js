@@ -37,7 +37,7 @@ export default class SceneRepresentation {
   test = () => {
     console.time("rays");
     for (var i = 0; i < 10000; i++) {
-      const re = this.raycast(new Vector3(0, 0, 0), new Vector3(1, 0, 0));
+      this.raycast(new Vector3(0, 0, 0), new Vector3(1, 0, 0));
     }
     console.timeEnd("rays");
   };
@@ -47,7 +47,6 @@ export default class SceneRepresentation {
    * @param {Raycaster} rc
    */
   setRC = (rc) => {
-    // TODO: adjust near in case of self-intersect on origin
     rc.near = 0.0005;
     console.log("rc.near = " + rc.near);
     this.rayCaster = rc;
@@ -216,7 +215,7 @@ export default class SceneRepresentation {
               ];
               const b = [i, j, k];
 
-              const ff = this.formFactors.get(a, b); // TODO: evaluate this
+              const ff = this.formFactors.get(a, b);
 
               if (ff > 0) {
                 p_counter++;

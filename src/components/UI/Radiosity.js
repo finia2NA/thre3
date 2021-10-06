@@ -111,7 +111,7 @@ const Radiositypanel = (props) => {
           </Button>
         </ButtonDiv>
         <FormControlLabel
-          label="Download Texture after Radiosity"
+          label="Download Texture after Computing Radiosity"
           control={
             <Checkbox
               onChange={(event, val) => {
