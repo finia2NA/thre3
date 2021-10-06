@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import {
+  Checkbox,
   Slider,
   FormControl,
   FormControlLabel,
@@ -100,10 +101,25 @@ const Radiositypanel = (props) => {
               FF
             </Button> */}
           </PreButtonDiv>
-          <Button variant="contained" color="primary" onClick={props.calcRad}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={props.calcRad}
+            disabled={!props.radPressable}
+          >
             下
           </Button>
         </ButtonDiv>
+        <FormControlLabel
+          label="Download Texture after Radiosity"
+          control={
+            <Checkbox
+              onChange={(event, val) => {
+                props.setDownloadTexture(val);
+              }}
+            />
+          }
+        />
       </FormControl>
     </div>
   );

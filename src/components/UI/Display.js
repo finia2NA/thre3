@@ -16,7 +16,6 @@ const Displaypanel = (props) => {
           control={
             <Checkbox
               onChange={(event, val) => {
-                console.log(val);
                 props.setUseFilter(val);
               }}
             />

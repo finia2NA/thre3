@@ -11,10 +11,11 @@ import { Button } from "@material-ui/core";
 import { useState, useRef, useEffect } from "react";
 import { reflectanceTexture } from "components/3D/textures";
 
-// Parameters
+// Default Parameters
 const defaultTXSize = [64, 64];
 const defaultSamples = 3000;
 const defaultThreshP = 0.01;
+const defaultDownloadTexture = false;
 
 // Components
 const Maindiv = styled.div`
@@ -38,6 +39,9 @@ const App = () => {
   const [textureSize, setTextureSize] = useState(defaultTXSize);
   const [numSamples, setNumSamples] = useState(defaultSamples);
   const [threshP, setThreshP] = useState(defaultThreshP);
+  const [downloadTexture, setDownloadTexture] = useState(
+    defaultDownloadTexture
+  );
 
   // other internal state
   const [displaymode, setDisplaymode] = useState("reflectance");
@@ -49,6 +53,7 @@ const App = () => {
   ]);
   const [useFilter, setUseFilter] = useState(false);
   const [sceneInitialized, setSceneInitialized] = useState(false);
+  const [oneshot, setoneshot] = useState(true);
 
   const getPerformance = () => {
     ["patches", "ffs", "radiosity", "tx"].map((name) => {
@@ -68,6 +73,8 @@ const App = () => {
 
   // functions
   const calcPatches = () => {
+    setoneshot(false);
+
     scene.current.computePatches(textureSize);
 
     // this code makes it so the *reflectivity* of the patches is displayed
@@ -87,6 +94,7 @@ const App = () => {
   };
 
   const calcFF = () => {
+    setoneshot(false);
     scene.current.computeFormFactors2(
       textureSize[0],
       textureSize[1],
@@ -102,11 +110,15 @@ const App = () => {
     //   x.patchRes = [...textureSize];
     //   });
 
+    setoneshot(false);
+
+    // debugger;
     await scene.current.computeRadiosity(
       textureSize[0],
       textureSize[1],
       numSamples,
-      threshP
+      threshP,
+      downloadTexture
     );
     setRadTextures(
       scene.current.objects.map((o) => o.radMap),
@@ -161,11 +173,14 @@ const App = () => {
             defaultTextureSize={defaultTXSize}
             defaultThreshP={defaultThreshP}
             defaultSamples={defaultSamples}
+            defaultDownloadTexture={defaultDownloadTexture}
+            setDownloadTexture={setDownloadTexture}
             setDisplaymode={setDisplaymode}
             setTextureSize={setTextureSize}
             setUseFilter={setUseFilter}
             setNumSamples={setNumSamples}
             setThreshP={setThreshP}
+            radPressable={oneshot}
           />
           <Button
             onClick={() => {

@@ -1,14 +1,10 @@
-import {
-  gridTexture,
-  defaultTexture,
-  densityTexture,
-} from "components/3D/textures";
-import SymStore, { BasicStore, SmallStore } from "model/ffStore";
-import { Vector3 } from "three";
+import { densityTexture } from "components/3D/textures";
+import { pointToDiscrete } from "controller/rasterizer/helpers";
 import getHemisphereSamplepoints, {
   rotateSamplepoints,
 } from "formFactors/hemiSample";
-import { pointToDiscrete } from "controller/rasterizer/helpers";
+import { SmallStore } from "model/ffStore";
+import { Vector3 } from "three";
 
 // after maxIterations, the simulation will stop, even if the threshold is not reached.
 const maxIterations = 500000;
@@ -66,7 +62,6 @@ export default class SceneRepresentation {
   }
 
   async computePatches(txResOverwrite) {
-    console.log("transmit:" + txResOverwrite + " end");
     performance.mark("patches start");
     while (!this.mapsLoaded()) {
       await sleep(100);
@@ -132,6 +127,7 @@ export default class SceneRepresentation {
     yRes,
     numSamples,
     stopValue = threshP,
+    downloadTexture = false,
     totalEnergyApproach = true
   ) {
     await this.computeFormFactors2(xRes, yRes, numSamples);
@@ -227,16 +223,6 @@ export default class SceneRepresentation {
 
                 const lightReaching = energy.clone().multiplyScalar(ff);
 
-                if (lightReaching.length() > energy.length()) {
-                  debugger;
-                  lightReaching.divideScalar(
-                    1.5 * (lightReaching.length() / energy.length()) // TODO: why is this still needed? I think it isn't? remove!!!
-                  );
-                  console.error(
-                    "had to scale down energy, which is something that shouldn't happen!!!"
-                  );
-                }
-
                 if (!this.objects[i].patches[j][k]) continue;
 
                 this.objects[i].patches[j][k].illuminate(lightReaching);
@@ -245,7 +231,6 @@ export default class SceneRepresentation {
           }
         }
         i_counter++;
-        // if (i_counter % 100 === 0) console.log(i_counter);
       }
     }
 
@@ -285,7 +270,14 @@ export default class SceneRepresentation {
 
     // Then, generate the final textures.
     for (const o of this.objects) {
-      o.radMap = densityTexture(o.patches, xRes, yRes, o.flipY, maxDensity);
+      o.radMap = densityTexture(
+        o.patches,
+        xRes,
+        yRes,
+        o.flipY,
+        maxDensity,
+        downloadTexture
+      );
     }
     performance.mark("tx end");
     performance.measure("tx", "tx start", "tx end");

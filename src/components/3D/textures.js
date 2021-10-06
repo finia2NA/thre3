@@ -106,12 +106,20 @@ export const densityTexture = (
   width,
   height,
   flipY,
-  extMaxDensity = null
+  extMaxDensity = null,
+  downloadTexture = false
 ) => {
   const colors = patches.map((row) =>
     row.map((patch) => patch.getEnergyDensity())
   );
-  return gridTexture(colors, width, height, flipY, extMaxDensity, true);
+  return gridTexture(
+    colors,
+    width,
+    height,
+    flipY,
+    extMaxDensity,
+    downloadTexture
+  );
 };
 
 const gridTexture = (
@@ -119,7 +127,7 @@ const gridTexture = (
   width,
   height,
   flipY,
-  extMaxDensity = null,
+  externalMax = null,
   writeBlob = false
 ) => {
   // TODO: a thing that takes into considerations cross.object max
@@ -132,8 +140,8 @@ const gridTexture = (
 
   var maxBrightness;
 
-  if (extMaxDensity) {
-    maxBrightness = extMaxDensity;
+  if (externalMax) {
+    maxBrightness = externalMax;
   } else {
     const maxComponents = new Vector3(0, 0, 0);
     for (var i = 0; i < patches.length; i++) {

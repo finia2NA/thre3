@@ -89,7 +89,7 @@ export default class ObjectRepresentation {
   async computePatches(txResOverwrite) {
     const localPatchRes = txResOverwrite ? txResOverwrite : this.patchRes;
 
-    if (localPatchRes || Math.min(...localPatchRes) <= 0) {
+    if (!localPatchRes || Math.min(...localPatchRes) <= 0) {
       console.error("no resolution for patches given");
     }
 

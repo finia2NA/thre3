@@ -75,6 +75,9 @@ const Controlpanel = (props) => {
           defaultTextureSize={props.defaultTextureSize}
           defaultThreshP={props.defaultThreshP}
           defaultSamples={props.defaultSamples}
+          radPressable={props.radPressable}
+          defaultDownloadTexture={props.defaultDownloadTexture}
+          setDownloadTexture={props.setDownloadTexture}
         />
       </Collapsing>
 
