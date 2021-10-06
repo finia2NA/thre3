@@ -86,8 +86,10 @@ export default class ObjectRepresentation {
     return this.reflectanceMap.loaded && this.luminanceMap.loaded;
   }
 
-  async computePatches() {
-    if (!this.patchRes || Math.min(...this.patchRes) <= 0) {
+  async computePatches(txResOverwrite) {
+    const localPatchRes = txResOverwrite ? txResOverwrite : this.patchRes;
+
+    if (localPatchRes || Math.min(...localPatchRes) <= 0) {
       console.error("no resolution for patches given");
     }
 
@@ -96,8 +98,8 @@ export default class ObjectRepresentation {
 
       this.patches = generateClippedPatches(
         this.objText,
-        this.patchRes[0],
-        this.patchRes[1],
+        localPatchRes[0],
+        localPatchRes[1],
         this.luminanceMap,
         this.reflectanceMap,
         this.luminanceFactor,

@@ -69,6 +69,7 @@ const Controlpanel = (props) => {
           calcPatches={props.calcPatches}
           calcFF={props.calcFF}
           calcRad={props.calcRad}
+          setNumSamples={props.setNumSamples}
           setTextureSize={props.setTextureSize}
           setThreshP={props.setThreshP}
           defaultTextureSize={props.defaultTextureSize}

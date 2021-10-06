@@ -12,7 +12,7 @@ import { useState, useRef, useEffect } from "react";
 import { reflectanceTexture } from "components/3D/textures";
 
 // Parameters
-const defaultTXSize = [32, 32];
+const defaultTXSize = [64, 64];
 const defaultSamples = 3000;
 const defaultThreshP = 0.01;
 
@@ -68,27 +68,40 @@ const App = () => {
 
   // functions
   const calcPatches = () => {
-    scene.current.computePatches();
+    scene.current.computePatches(textureSize);
 
-    scene.current.objects[0].radMap = reflectanceTexture(
-      // scene.current.objects[0].radMap = unshotDensityTexture(
-      scene.current.objects[0].patches,
-      scene.current.objects[0].patchRes[0],
-      scene.current.objects[0].patchRes[1],
-      scene.current.objects[0].flipY
-    );
-    setRadTextures([scene.current.objects[0].radMap]);
+    // this code makes it so the *reflectivity* of the patches is displayed
+    // in place of the radiosity after executing this first step.
+    // can be usefull in testing, but should not be in production, thus commented out
+
+    // scene.current.objects[0].radMap = reflectanceTexture(
+    //   // scene.current.objects[0].radMap = unshotDensityTexture(
+    //   scene.current.objects[0].patches,
+    //   scene.current.objects[0].patchRes[0],
+    //   scene.current.objects[0].patchRes[1],
+    //   scene.current.objects[0].flipY
+    // );
+    // setRadTextures([scene.current.objects[0].radMap]);
 
     setProgress(0, "ready");
   };
 
   const calcFF = () => {
-    scene.current.computeFormFactors2(textureSize[0], textureSize[1], 1000);
+    scene.current.computeFormFactors2(
+      textureSize[0],
+      textureSize[1],
+      numSamples
+    );
 
     setAllProgresses(["ready", "ready", "notready"]);
   };
 
   const calcRad = async () => {
+    // fix for when objects' texture size is missbehaving
+    // scene.current.objects.map((x) => {
+    //   x.patchRes = [...textureSize];
+    //   });
+
     await scene.current.computeRadiosity(
       textureSize[0],
       textureSize[1],
@@ -141,25 +154,25 @@ const App = () => {
 
         <Controldiv>
           <Controlpanel
-            setDisplaymode={setDisplaymode}
             calcPatches={calcPatches}
             calcFF={calcFF}
             calcRad={calcRad}
-            setTextureSize={setTextureSize}
             progresses={progresses}
-            setUseFilter={setUseFilter}
-            setNumSamples={setNumSamples}
-            setThreshP={setThreshP}
             defaultTextureSize={defaultTXSize}
             defaultThreshP={defaultThreshP}
             defaultSamples={defaultSamples}
+            setDisplaymode={setDisplaymode}
+            setTextureSize={setTextureSize}
+            setUseFilter={setUseFilter}
+            setNumSamples={setNumSamples}
+            setThreshP={setThreshP}
           />
           <Button
             onClick={() => {
               debugger;
             }}
           >
-            ちょっとまって
+            Debugger
           </Button>{" "}
           <Button onClick={() => getPerformance()}>Log Performance</Button>
           <br />

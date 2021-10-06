@@ -10,6 +10,7 @@ import getHemisphereSamplepoints, {
 } from "formFactors/hemiSample";
 import { pointToDiscrete } from "controller/rasterizer/helpers";
 
+// after maxIterations, the simulation will stop, even if the threshold is not reached.
 const maxIterations = 500000;
 const threshP = 0.01;
 const defaultNumSamples = 1000;
@@ -64,7 +65,8 @@ export default class SceneRepresentation {
     return this.objects.reduce((x, y) => x && y);
   }
 
-  async computePatches() {
+  async computePatches(txResOverwrite) {
+    console.log("transmit:" + txResOverwrite + " end");
     performance.mark("patches start");
     while (!this.mapsLoaded()) {
       await sleep(100);
@@ -72,7 +74,7 @@ export default class SceneRepresentation {
 
     for (var i = 0; i < this.objects.length; i++) {
       const o = this.objects[i];
-      o.computePatches();
+      o.computePatches(txResOverwrite);
     }
 
     performance.mark("patches end");
@@ -81,7 +83,7 @@ export default class SceneRepresentation {
   }
 
   async computeFormFactors2(xRes, yRes, numSamples = defaultNumSamples) {
-    this.computePatches(xRes, yRes);
+    this.computePatches([xRes, yRes]);
     console.log("starting ffs");
     performance.mark("ffs start");
 
@@ -283,13 +285,7 @@ export default class SceneRepresentation {
 
     // Then, generate the final textures.
     for (const o of this.objects) {
-      o.radMap = densityTexture(
-        o.patches,
-        o.patchRes[0],
-        o.patchRes[1],
-        o.flipY,
-        maxDensity
-      );
+      o.radMap = densityTexture(o.patches, xRes, yRes, o.flipY, maxDensity);
     }
     performance.mark("tx end");
     performance.measure("tx", "tx start", "tx end");

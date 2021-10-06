@@ -22,8 +22,6 @@ const PreButtonDiv = styled.div`
 `;
 
 const Radiositypanel = (props) => {
-  console.log(props);
-
   const [radMethod, setMethod] = useState(0);
   const [cachedRes, setCachedRes] = useState(0);
 
@@ -71,6 +69,9 @@ const Radiositypanel = (props) => {
           max={5000}
           step={100}
           valueLabelDisplay="auto"
+          onChange={(event, val) => {
+            props.setNumSamples(val);
+          }}
         />
         {radMethod === 0 && (
           <div>
@@ -82,7 +83,7 @@ const Radiositypanel = (props) => {
               step={1}
               scale={threshPSliderFunction}
               valueLabelDisplay="auto"
-              onchange={(event, val) => {
+              onChange={(event, val) => {
                 const newThreshP = threshPSliderFunction(val);
                 props.setThreshP(newThreshP);
               }}
