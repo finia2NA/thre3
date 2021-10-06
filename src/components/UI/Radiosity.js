@@ -22,6 +22,11 @@ const PreButtonDiv = styled.div`
   width: 100%;
 `;
 
+/**
+ * The panel to control the radiosity settings
+ * @param {*} props
+ * @returns
+ */
 const Radiositypanel = (props) => {
   const [radMethod, setMethod] = useState(0);
   const [cachedRes, setCachedRes] = useState(0);

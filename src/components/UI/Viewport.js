@@ -24,12 +24,20 @@ const CameraControls = () => {
   return <orbitControls ref={controls} args={[camera, domElement]} />;
 };
 
+/**
+ * The 3D Viewport that displays the scene
+ * @param {*} props
+ * @returns
+ */
 const Viewport = (props) => {
   return (
+    // Settings...
     <Canvas
       gl={{ antialias: true }}
       onCreated={({ gl, raycaster, scene }) => {
         gl.setClearColor("#222222");
+        // The raycaster and 3D scene are used in the raycasting function in the form factor calculation.
+        // Thus, they need to get passed out of here.
         props.setRaycaster(raycaster);
         props.setScene3(scene);
       }}
@@ -42,7 +50,10 @@ const Viewport = (props) => {
       <CameraControls />
 
       {/* Objects */}
+
       {props.scene.objects.map((o, i) => (
+        // Every object in the scene is displayed as an element3D, and has a uniuqe name used to identify it in the form factor calculation.
+        // It is suspended in a simple loading box, which is displayed while the object is loading.
         <Suspense fallback={<LoadingBox />} key={i}>
           <Element3D
             obj={o}

@@ -12,6 +12,11 @@ import {
   checkerboardTexture,
 } from "components/3D/textures";
 
+/**
+ * A small box that can be displyed as a stand-in for a 3D object that is being loaded.
+ * @param {*} props
+ * @returns
+ */
 export const LoadingBox = (props) => {
   return (
     <mesh>
@@ -20,9 +25,23 @@ export const LoadingBox = (props) => {
   );
 };
 
-// Takes an obj and a displaymode and displays it.
+/** 
+ * The 3-dimensional representation of a graphics object.
+ * 
+ * @param {*} props.displaymode the texture that should be displayed on the surface of the object
+ * @param {*} props.texturesize the size of generated textures to be displayed
+ * @param {*} props.obj the object to be displayed
+ * @param {*} props.useFilter wether a smoothing filter should be applied to the textures
+ * @param {*} props.radTexture the radiosity texture of the object
+ * @param {*} props.name the identifier of the object
+ * @param {*} props.reflectancePath the path of the reflectance texture of the object
+ * @param {*} props.luminancePath the path of the luminance texture of the object
+
+ */
 const Element3D = (props) => {
-  console.log("Element3D did something!");
+  console.log("Element3D rendering...");
+
+  // set texture
   var texturePath = "defaultTexture.png";
   var generated = defaultTexture(props.textureSize[0], props.textureSize[1]);
   var useGenerated = false;
@@ -64,6 +83,7 @@ const Element3D = (props) => {
 
   texture.flipY = props.obj.flipY;
 
+  // load object
   const scene = useLoader(OBJLoader, props.obj.meshPath);
   // scene.children[0].position.set(
   //   obj.translate[0],
@@ -71,9 +91,10 @@ const Element3D = (props) => {
   //   obj.translate[2]
   // );
 
-  // this name will be used in raytracing to see which object has been hit.
+  // set name, which will be used in raytracing to see which object has been hit.
   if (scene.children[0]) scene.children[0].name = props.name;
 
+  // finally, build the object and return it
   const re = (
     <primitive object={scene.children[0]}>
       {

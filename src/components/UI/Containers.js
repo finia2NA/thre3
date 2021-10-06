@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { Collapse } from "react-collapse";
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
 
+// This file countains various UI wrappers for components
+
 const LightContainer = styled.div`
   border-top: 1px solid grey;
   margin: 10px;

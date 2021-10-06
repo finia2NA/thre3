@@ -6,6 +6,11 @@ import {
 } from "@material-ui/core";
 import React from "react";
 
+/**
+ * A UI component to translate an object.
+ * @param {*} props
+ * @returns
+ */
 const Channelbox = (props) => {
   return (
     <div>

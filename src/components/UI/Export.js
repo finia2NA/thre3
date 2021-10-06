@@ -1,6 +1,10 @@
 import { Button } from "@material-ui/core";
 import React from "react";
 
+/**
+ * The Export panel allows users to import objects and export textures. currently unimplemented.
+ * @returns
+ */
 const Exportpanel = () => {
   return (
     <div>

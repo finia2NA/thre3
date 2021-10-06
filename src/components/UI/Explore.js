@@ -7,6 +7,11 @@ import {
   Radio,
 } from "@material-ui/core";
 
+/**
+ * The explore panel allows users to control the texturing of the scene.
+ * @param {*} props
+ * @returns
+ */
 const Explorepanel = (props) => {
   const [viewMode, setViewMode] = useState(0);
 

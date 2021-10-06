@@ -32,6 +32,11 @@ function CircularProgressWithLabel(props) {
   );
 }
 
+/**
+ * A single indicator, capable of displaying binary ready/notready status or a circular progress bar.
+ * @param {*} param0
+ * @returns
+ */
 const Indicator = ({ ready: progress }) => {
   return (
     <>
@@ -54,6 +59,11 @@ const Div1 = styled.div`
   margin: 2px 0px 2px;
 `;
 
+/**
+ * The indicator panel indicates the status of radiosity calculations.
+ * @param {*} props
+ * @returns
+ */
 const Indicators = (props) => {
   const labeledValues = zip(props.progresses, [
     "Patches",

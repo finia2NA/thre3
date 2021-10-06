@@ -2,6 +2,11 @@ import { Vector3 } from "three";
 
 const rgbHex = require("rgb-hex");
 
+/**
+ * Download a blob as a file.
+ * @param {*} blob
+ * @param {*} name
+ */
 function downloadBlob(blob, name = "file.png") {
   // credit: https://dev.to/nombrekeff/download-file-from-blob-21ho
   // Convert your blob into a Blob URL (a special url that points to an object in the browser's memory)
@@ -89,11 +94,22 @@ export const rainbowTexture = (width, height) => {
   return canvas.transferToImageBitmap();
 };
 
+/**
+ * A texture to display the patches' reflectance.
+ * @param {*} patches
+ * @param {*} width
+ * @param {*} height
+ * @param {*} flipY
+ * @returns
+ */
 export const reflectanceTexture = (patches, width, height, flipY) => {
   const colors = patches.map((row) => row.map((patch) => patch.reflectance));
   return gridTexture(colors, width, height, flipY);
 };
 
+/**
+ * A texture to display the patches' unshot energy.
+ */
 export const unshotDensityTexture = (patches, width, height) => {
   const colors = patches.map((row) =>
     row.map((patch) => patch.unshotEnergy.clone().divideScalar(patch.area3))
@@ -101,66 +117,87 @@ export const unshotDensityTexture = (patches, width, height) => {
   return gridTexture(colors, width, height);
 };
 
+/**
+ * A texture to display the patches total energy.
+ * @param {*} patches
+ * @param {*} width
+ * @param {*} height
+ * @param {*} flipY
+ * @param {*} externalMax overwrite which densite value maps to white
+ * @param {*} downloadTexture wether the texture should be downloaded in the end
+ * @returns
+ */
 export const densityTexture = (
   patches,
   width,
   height,
   flipY,
-  extMaxDensity = null,
+  externalMax = null,
   downloadTexture = false
 ) => {
   const colors = patches.map((row) =>
     row.map((patch) => patch.getEnergyDensity())
   );
+
   return gridTexture(
     colors,
     width,
     height,
     flipY,
-    extMaxDensity,
+    externalMax,
     downloadTexture
   );
 };
 
+/**
+ * A texture to display a grid of values
+ * @param {*} gridOfValues
+ * @param {*} width
+ * @param {*} height
+ * @param {*} flipY
+ * @param {*} externalMax overwrite which densite value maps to white
+ * @param {*} downloadTexture wether the texture should be downloaded in the end
+ * @returns
+ */
 const gridTexture = (
-  patches,
+  gridOfValues,
   width,
   height,
   flipY,
   externalMax = null,
-  writeBlob = false
+  downloadTexture = false
 ) => {
   // create canvas
   var canvas = new OffscreenCanvas(width, height);
   var context = canvas.getContext("2d");
 
-  // determine the max energy in a single color channel.
-
+  // determine the max energy in a single color channel. This might come from outside or need to be determined here.
   var maxBrightness;
 
   if (externalMax) {
     maxBrightness = externalMax;
   } else {
     const maxComponents = new Vector3(0, 0, 0);
-    for (var i = 0; i < patches.length; i++) {
-      for (var j = 0; j < patches[i].length; j++) {
-        if (patches[i][j]) {
+    for (var i = 0; i < gridOfValues.length; i++) {
+      for (var j = 0; j < gridOfValues[i].length; j++) {
+        if (gridOfValues[i][j]) {
           // "If this vector's x, y or z value is less than the argument's x, y or z value, replace that value with the corresponding max value."
-          maxComponents.max(patches[i][j]);
+          maxComponents.max(gridOfValues[i][j]);
         }
       }
     }
     maxBrightness = Math.max(...maxComponents.toArray());
   }
 
-  for (var x = 0; x < patches.length; x++) {
-    for (var y = 0; y < patches[x].length; y++) {
-      if (!patches[x][y]) {
+  // write the values to the canvas
+  for (var x = 0; x < gridOfValues.length; x++) {
+    for (var y = 0; y < gridOfValues[x].length; y++) {
+      if (!gridOfValues[x][y]) {
         // if there's no patch here there's nothing to do, eh? ^^
         continue;
       }
-      const patch = patches[x][y];
-      const wattage = patch.clone().multiplyScalar(255 / maxBrightness);
+      const value = gridOfValues[x][y];
+      const wattage = value.clone().multiplyScalar(255 / maxBrightness);
 
       context.fillStyle =
         "#" +
@@ -176,7 +213,9 @@ const gridTexture = (
       context.fillRect(writex, writey, 1, 1);
     }
   }
-  if (writeBlob) {
+
+  // if requested, download the texture
+  if (downloadTexture) {
     canvas
       .convertToBlob({ type: "image/png" })
       .then((blob) => downloadBlob(blob));

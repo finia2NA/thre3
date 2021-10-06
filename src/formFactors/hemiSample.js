@@ -1,6 +1,10 @@
 import { getPlaneNormal } from "rasterizer/helpers";
 import { Vector3 } from "three";
 
+/**
+ * gets a number of samplepoints in a sphere
+ * @param {*} endsample the number of samplepoints to calculate
+ */
 export function getSphereSamplepoints(endsample, startSample = 0) {
   // https://stackoverflow.com/questions/9600801/evenly-distributing-n-points-on-a-sphere/26127012#26127012
   var points = [];
@@ -20,6 +24,11 @@ export function getSphereSamplepoints(endsample, startSample = 0) {
   return points;
 }
 
+/**
+ * gets a number of samplepoints in a hemi-sphere
+ * @param {*} endsample the number of samplepoints to calculate
+ */
+
 export default function getHemisphereSamplepoints(samples) {
   // adapted using prev. method from https://stackoverflow.com/questions/34313200/distribute-points-evenly-on-a-unit-hemisphere
   const points = getSphereSamplepoints(2 * samples, samples);
@@ -34,6 +43,12 @@ export default function getHemisphereSamplepoints(samples) {
   return points;
 }
 
+/**
+ * Rotates a cloud of samplepoints to center around a given vector
+ * @param {*} points
+ * @param {*} midVector
+ * @returns
+ */
 export function rotateSamplepoints(points, midVector) {
   const defaultOrientation = new Vector3(0, 1, 0);
 

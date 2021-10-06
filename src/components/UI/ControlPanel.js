@@ -58,6 +58,11 @@ const Controldiv = styled.div`
   height: 95vh;
 `;
 
+/**
+ * The Control Panel that allows the user to modify computation and display
+ * @param {*} props
+ * @returns
+ */
 const Controlpanel = (props) => {
   return (
     <Controldiv>

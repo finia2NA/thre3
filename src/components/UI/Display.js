@@ -2,6 +2,11 @@ import { Checkbox, FormControlLabel } from "@material-ui/core";
 import React from "react";
 import Explorepanel from "./Explore";
 
+/**
+ * The display panel helps users control visualization options.
+ * @param {*} props
+ * @returns
+ */
 const Displaypanel = (props) => {
   return (
     <div>
