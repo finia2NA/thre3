@@ -1,4 +1,4 @@
-import { getPlaneNormal } from "controller/rasterizer/helpers";
+import { getPlaneNormal } from "rasterizer/helpers";
 import { Vector3 } from "three";
 
 export function getSphereSamplepoints(endsample, startSample = 0) {

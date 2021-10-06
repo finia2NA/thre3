@@ -1,6 +1,6 @@
 import { request } from "util/network.js";
 import MyImage from "./image";
-import generateClippedPatches from "controller/rasterizer/clipper";
+import generateClippedPatches from "rasterizer/clipper";
 import { Vector3 } from "three";
 
 export function max1D(arr, selector = (a) => a.unshotEnergy) {

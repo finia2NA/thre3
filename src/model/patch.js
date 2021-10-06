@@ -1,4 +1,4 @@
-import { checkNormalized } from "controller/rasterizer/helpers";
+import { checkNormalized } from "rasterizer/helpers";
 import { Vector3 } from "three";
 
 export default class Patch {

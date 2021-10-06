@@ -1,5 +1,5 @@
 import { densityTexture } from "components/3D/textures";
-import { pointToDiscrete } from "controller/rasterizer/helpers";
+import { pointToDiscrete } from "rasterizer/helpers";
 import getHemisphereSamplepoints, {
   rotateSamplepoints,
 } from "formFactors/hemiSample";

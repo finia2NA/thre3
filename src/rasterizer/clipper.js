@@ -10,7 +10,7 @@ import {
   getAreaConvex,
   convexMidpoint2,
   convexMidpoint3,
-} from "controller/rasterizer/helpers";
+} from "rasterizer/helpers";
 import { clip2 } from "./clip";
 
 import Patch from "model/patch";
