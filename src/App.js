@@ -130,7 +130,7 @@ const App = () => {
 
     const cornell = new ObjectRepresentation(
       "r4/r4.obj",
-      "robj3/light.png",
+      "r4/light.png",
       "r4/reflectance.png",
       "r4/meta.json"
     );
