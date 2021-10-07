@@ -10,6 +10,7 @@ export function max1D(arr, selector = (a) => a.unshotEnergy) {
     selector(pre).length() > selector(nu).length() ? pre : nu
   );
 }
+
 export default class ObjectRepresentation {
   translate;
 
@@ -52,6 +53,9 @@ export default class ObjectRepresentation {
     this.luminanceMap = new MyImage(luminancePath);
   }
 
+  /**
+   * load the obj text and accompanying information
+   */
   async loadObjText() {
     this.objText = await request(this.meshPath);
     if (this.jsonPath) {
@@ -61,6 +65,10 @@ export default class ObjectRepresentation {
     }
   }
 
+  /**
+   * get all the patches in a 1D array
+   * @returns {Array}
+   */
   getPatches1D() {
     var re = [];
     for (const row of this.patches) re = re.concat(row);
@@ -68,24 +76,44 @@ export default class ObjectRepresentation {
     return re.filter((x) => x !== undefined);
   }
 
+  /**
+   * get the patch with the maximum unshot energy
+   * @returns {Patch}
+   */
   getMaxUnshotPatch() {
     return max1D(this.getPatches1D());
   }
 
+  /**
+   * get the patch with the maximum total energy
+   * @returns {Patch}
+   */
   getMaxEnergyPatch() {
     return max1D(this.getPatches1D(), (a) => a.totalEnergy);
   }
 
+  /**
+   * get the total amount of unshot energy in the object
+   * @returns {number}
+   */
   getSumUnshotEnergies() {
     return this.patches
       .reduce((pre, row) => pre.concat(row.map((p) => p.unshotEnergy)), [])
       .reduce((pre, cur) => pre.add(cur), new Vector3(0, 0, 0));
   }
 
+  /**
+   * returns wether the maps of the objects have been loaded
+   * @returns {boolean}
+   */
   mapsLoaded() {
     return this.reflectanceMap.loaded && this.luminanceMap.loaded;
   }
 
+  /**
+   * compute the patches of the object
+   * @param {Array} txResOverwrite an overwrite for the resolution of the patches
+   */
   async computePatches(txResOverwrite) {
     const localPatchRes = txResOverwrite ? txResOverwrite : this.patchRes;
 

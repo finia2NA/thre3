@@ -34,7 +34,7 @@ const Controldiv = styled.div`
 const App = () => {
   console.log("starting app render...");
 
-  // RAD parameters
+  // RAD parameter states which can be modified in the panel
   const [textureSize, setTextureSize] = useState(defaultTXSize);
   const [numSamples, setNumSamples] = useState(defaultSamples);
   const [threshP, setThreshP] = useState(defaultThreshP);
@@ -54,6 +54,7 @@ const App = () => {
   const [sceneInitialized, setSceneInitialized] = useState(false);
   const [oneshot, setoneshot] = useState(true);
 
+  // functions used internally and passed down to panels and methods...
   const getPerformance = () => {
     ["patches", "ffs", "radiosity", "tx"].map((name) => {
       performance
@@ -70,7 +71,9 @@ const App = () => {
     setAllProgresses(newProgresses);
   };
 
-  // functions
+  /**
+   * calculate patches
+   */
   const calcPatches = () => {
     setoneshot(false);
 
@@ -92,6 +95,9 @@ const App = () => {
     setProgress(0, "ready");
   };
 
+  /**
+   * calculate patches + form factors
+   */
   const calcFF = () => {
     setoneshot(false);
     scene.current.computeFormFactors2(
@@ -103,10 +109,12 @@ const App = () => {
     setAllProgresses(["ready", "ready", "notready"]);
   };
 
+  /**
+   * calculate radiosity and prerequisites
+   */
   const calcRad = async () => {
     setoneshot(false);
 
-    // debugger;
     await scene.current.computeRadiosity(
       textureSize[0],
       textureSize[1],
@@ -122,7 +130,7 @@ const App = () => {
     setAllProgresses(["ready", "ready", "ready"]);
   };
 
-  // scene
+  // initialize scene
   const scene = useRef(null);
 
   useEffect(() => {
@@ -143,6 +151,7 @@ const App = () => {
     setSceneInitialized(true);
   }, []);
 
+  // The app. it consists of the viewport and the control panel, along with some testing buttons below
   return (
     sceneInitialized && (
       <Maindiv>

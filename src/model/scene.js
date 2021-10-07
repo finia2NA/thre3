@@ -7,6 +7,8 @@ import { SmallStore } from "model/ffStore";
 import { Vector3 } from "three";
 
 // after maxIterations, the simulation will stop, even if the threshold is not reached.
+// this is done to
+// in that case, a warning will be written to the console.
 const maxIterations = 500000;
 const threshP = 0.01;
 const defaultNumSamples = 1000;
@@ -14,6 +16,7 @@ const defaultNumSamples = 1000;
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
 export default class SceneRepresentation {
   objects;
   formFactors;
@@ -34,16 +37,8 @@ export default class SceneRepresentation {
     return this.objects;
   }
 
-  test = () => {
-    console.time("rays");
-    for (var i = 0; i < 10000; i++) {
-      this.raycast(new Vector3(0, 0, 0), new Vector3(1, 0, 0));
-    }
-    console.timeEnd("rays");
-  };
-
   /**
-   *
+   * Set the raycaster of the scene from the three js viewport.
    * @param {Raycaster} rc
    */
   setRC = (rc) => {
@@ -52,6 +47,10 @@ export default class SceneRepresentation {
     this.rayCaster = rc;
   };
 
+  /**
+   * Set the 3D scene representation from three js.
+   * @param {*} scene3
+   */
   setScene3 = (scene3) => {
     this.scene3 = scene3;
   };
@@ -60,12 +59,19 @@ export default class SceneRepresentation {
     return this.objects.reduce((x, y) => x && y);
   }
 
+  /**
+   * Initiates patch computation for all objects in the scene.
+   * @param {*} txResOverwrite an overwrite for the resolution of the desired lightmap texture.
+   */
   async computePatches(txResOverwrite) {
-    performance.mark("patches start");
+    // wait for all luminance and reflectance textures to be loaded
     while (!this.mapsLoaded()) {
       await sleep(100);
     }
 
+    performance.mark("patches start");
+
+    // compute patches for all objects
     for (var i = 0; i < this.objects.length; i++) {
       const o = this.objects[i];
       o.computePatches(txResOverwrite);
@@ -77,14 +83,16 @@ export default class SceneRepresentation {
   }
 
   async computeFormFactors2(xRes, yRes, numSamples = defaultNumSamples) {
+    // make sure the patches are there
     this.computePatches([xRes, yRes]);
+
     console.log("starting ffs");
     performance.mark("ffs start");
 
-    // patches sind DA
-    // this.formFactors = new BasicStore([this.objects.length, xRes, yRes]);
+    // create the form factor stores (16 bit)
     this.formFactors = new SmallStore([this.objects.length, xRes, yRes], 1);
 
+    // construct the hemisphere sample pattern
     const samplePoints = getHemisphereSamplepoints(numSamples);
 
     // go through every representation of a patch pair
@@ -98,10 +106,12 @@ export default class SceneRepresentation {
 
           const currentSamplePoints = rotateSamplepoints(samplePoints, normal);
 
+          // raycast from the patch's center in the direction of the rotated sample points
           const rtResults = currentSamplePoints.map((dir) =>
             this.raycast(origin, dir)
           );
 
+          // increase form factors according to patches hit by the sampling rays
           for (const res of rtResults) {
             if (!res) continue;
 
@@ -121,6 +131,15 @@ export default class SceneRepresentation {
     console.log("form factors done");
   }
 
+  /**
+   * Computes the radiosity of the scene
+   * @param {*} xRes
+   * @param {*} yRes
+   * @param {*} numSamples the number of samples to use in the FF computation
+   * @param {*} stopValue the stop threshold as a percentage of unshot energy
+   * @param {*} downloadTexture wether to download the texture or not
+   * @param {*} totalEnergyApproach wether the threshold relates to the unshot energy of the brightest patch or the sum of all unshot energy
+   */
   async computeRadiosity(
     xRes,
     yRes,
@@ -129,9 +148,11 @@ export default class SceneRepresentation {
     downloadTexture = false,
     totalEnergyApproach = true
   ) {
+    // first compute the form factors
     await this.computeFormFactors2(xRes, yRes, numSamples);
     performance.mark("radiosity start");
 
+    // then get the threshold, either as percent sum energy or individual energy
     var threshold;
     // get abort threshold as % of max disply energy
     if (!totalEnergyApproach)
@@ -152,14 +173,16 @@ export default class SceneRepresentation {
           )
           .length();
 
+    // counters for loop iterations and patch-illuminations
     var i_counter = 0;
     var p_counter = 0;
 
     if (threshold) {
       console.log("threshold: " + threshold);
-      while (i_counter < maxIterations) {
-        // while (true) {
 
+      // continually compute progressive radiosity until maxIterations
+      // or the threshold is reached (this is checked for below)
+      while (i_counter < maxIterations) {
         // get patch with max unshot rad
         const objectsMaxPatch = this.objects.map((o) => o.getMaxUnshotPatch());
         var currentShooter = objectsMaxPatch[0];
@@ -176,6 +199,7 @@ export default class SceneRepresentation {
 
         const energy = currentShooter.unshotEnergy;
 
+        // determine if the threshold is reached and the loop should be exited
         if (!totalEnergyApproach && energy.length() < threshold) {
           console.log("stopped radiating because of individual threshold");
           console.log("the unshot energy was: " + energy.length());
@@ -203,6 +227,7 @@ export default class SceneRepresentation {
           break;
         }
 
+        // shoot the energy of the shooting patch along the form factors
         currentShooter.unshotEnergy = new Vector3(0, 0, 0);
 
         for (var i = 0; i < this.objects.length; i++) {
@@ -233,6 +258,7 @@ export default class SceneRepresentation {
       }
     }
 
+    // log some info
     if (i_counter < maxIterations) {
       console.log(
         "Made " +
@@ -242,7 +268,7 @@ export default class SceneRepresentation {
           " energy.\n"
       );
     } else {
-      console.log(
+      console.warn(
         "stopped because iterations reached set limit of" + maxIterations
       );
     }
@@ -254,8 +280,8 @@ export default class SceneRepresentation {
     // generate textures:
     // first, find out what value maps to 255:
 
+    // determine the max energy density of a patch
     var maxDensity = 0;
-
     for (const o of this.objects) {
       for (const p of o.getPatches1D()) {
         for (const selector of [(a) => a.x, (a) => a.y, (a) => a.z]) {

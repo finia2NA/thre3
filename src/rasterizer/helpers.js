@@ -3,6 +3,8 @@ import { Vertex } from "./rasterclasses";
 import Patch from "model/patch";
 import coolmod from "util/coolmod";
 
+// this file contains a number of helper functions for the patch clipper
+
 /**
  * checks if a vector is normalized (to a numerically reasonable degree)
  * @param {*} Vector
@@ -268,6 +270,7 @@ function pointDistance(a, b) {
  * @returns
  */
 export function pfInterpolate(patch, fragment, xRes, yRes) {
+  // the details of this are described in the thesis
   const fNice =
     pointDistance(
       discreteToMidpoint(fragment.backwriteTX, xRes, yRes),
@@ -320,7 +323,7 @@ export function pfInterpolate(patch, fragment, xRes, yRes) {
 }
 
 /**
- * Checks if a given list is a 3D shape that is not just a horizontal or vertical line
+ * Checks if a given list of vertices is a 3D shape that is not just a horizontal or vertical line
  * @param {*} vertices
  * @returns
  */
@@ -341,6 +344,11 @@ export function dameCheck(vertices) {
   return xChanged && yChanged;
 }
 
+/**
+ * normalizeVector3(v) normalizes a vector3. So far so good.
+ * @param {*} v
+ * @returns
+ */
 export function normalizeVector3(v) {
   return v.clone().divideScalar(v.length());
 }

@@ -1,5 +1,8 @@
 import {} from "./helpers";
 
+/**
+ * class to represent a polygon bounding box
+ */
 export class Boundingbox {
   xMax;
   xMin;
@@ -17,6 +20,9 @@ export class Boundingbox {
   }
 }
 
+/**
+ * A class to represent a vertex with 3D and UV position, as well as a normal.
+ */
 export class Vertex {
   constructor(vertexCoord, txCoord, vertexNormal) {
     this.txCoord = txCoord;
