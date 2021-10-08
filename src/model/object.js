@@ -53,6 +53,12 @@ export default class ObjectRepresentation {
     this.luminanceMap = new MyImage(luminancePath);
   }
 
+  reset() {
+    this.patchFlag = false;
+    this.patches = [];
+    this.radMap = null;
+  }
+
   /**
    * load the obj text and accompanying information
    */

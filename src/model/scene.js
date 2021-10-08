@@ -29,6 +29,11 @@ export default class SceneRepresentation {
     console.log("scene ready");
   }
 
+  reset() {
+    this.formFactors = null;
+    this.objects.map((x) => x.reset());
+  }
+
   addObject(o) {
     this.objects.push(o);
   }

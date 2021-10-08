@@ -113,6 +113,10 @@ const App = () => {
    * calculate radiosity and prerequisites
    */
   const calcRad = async () => {
+    if (!oneshot) {
+      scene.current.reset();
+    }
+
     setoneshot(false);
 
     await scene.current.computeRadiosity(

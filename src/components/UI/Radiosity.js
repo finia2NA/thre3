@@ -110,7 +110,7 @@ const Radiositypanel = (props) => {
             variant="contained"
             color="primary"
             onClick={props.calcRad}
-            disabled={!props.radPressable}
+            // disabled={!props.radPressable}
           >
             下
           </Button>
